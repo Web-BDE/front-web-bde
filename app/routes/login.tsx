@@ -63,7 +63,7 @@ export const action: ActionFunction = async ({request}) => {
     return badRequest({fields, formError: "Email or Password incorrect"})
   }
 
-  return createUserSession(session.token, session.userInfo ,redirectTo)
+  return createUserSession(session.token, session.userId ,redirectTo)
 }
 
 export default function Login () {

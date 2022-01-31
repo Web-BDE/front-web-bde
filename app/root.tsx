@@ -1,19 +1,31 @@
 import {
   Links,
   LiveReload,
+  LoaderFunction,
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration
+  ScrollRestoration,
+  useLoaderData,
 } from "remix";
 import type { MetaFunction } from "remix";
 import NavBar from "./components/navbar";
+import { getUser, getUserId, User } from "./utils/authentication";
 
 export const meta: MetaFunction = () => {
   return { title: "New Remix App" };
 };
 
+type LoaderData = {
+  userInfo?: User;
+};
+
+export const loader: LoaderFunction = async ({ request }) => {
+  return { userInfo: await getUser(request) };
+};
+
 export default function App() {
+  const data = useLoaderData<LoaderData>();
   return (
     <html lang="en">
       <head>
@@ -23,7 +35,7 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <NavBar/>
+        <NavBar userInfo={data.userInfo} />
         <Outlet />
         <ScrollRestoration />
         <Scripts />
