@@ -11,6 +11,15 @@ export type Challenge = {
   creatorId: number;
 };
 
+export type Accomplishment = {
+  id: number;
+  userId: number;
+  challengeId: number;
+  createdAt: Date;
+  proof: string;
+  validation: 1 | -1 | null;
+};
+
 export async function getManyChallenge(request: Request) {
   let challenges;
   try {
@@ -76,4 +85,19 @@ export async function createAccomplishment(
   }
 
   return "Accomplishment created";
+}
+
+export async function getManyAccomplishment(request: Request) {
+  let accomplishments;
+  try {
+    accomplishments = await axios.get<Accomplishment[]>("/accomplishment", {
+      headers: { Authorization: `Bearer ${await getToken(request)}` },
+    });
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      return new Error(`${err.response?.data?.message || err.message}`);
+    }
+    throw err;
+  }
+  return accomplishments.data;
 }

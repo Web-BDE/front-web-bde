@@ -5,15 +5,21 @@ import {
   useActionData,
   useLoaderData,
 } from "remix";
-import { requireUserId } from "~/services/authentication";
+import { getUserId, requireUserId } from "~/services/authentication";
 import {
+  Accomplishment,
   Challenge,
   createAccomplishment,
   getChallenge,
+  getManyAccomplishment,
 } from "~/services/challenges";
 
 type LoaderData = {
   challenge?: Challenge;
+  accomplishments?: Accomplishment[];
+  userId: number;
+  challengeId: number;
+  accomplishlentInfo?: string;
 };
 
 type ActionData = {
@@ -40,7 +46,23 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   const challenge = await getChallenge(request, parseInt(params.challengeId));
 
-  return { challenge };
+  const accomplishmentsResult = await getManyAccomplishment(request);
+
+  if (accomplishmentsResult instanceof Error) {
+    return {
+      challenge,
+      userId: await getUserId(request),
+      challengeId: params.challengeId,
+      accomplishmentInfo: accomplishmentsResult.message,
+    };
+  }
+
+  return {
+    challenge,
+    accomplishments: accomplishmentsResult,
+    userId: await getUserId(request),
+    challengeId: parseInt(params.challengeId),
+  };
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -93,6 +115,33 @@ export default function Challenge() {
         </div>
         <button type="submit">Submit</button>
       </form>
+      <div>
+        <h1>Your accomplishments</h1>
+        {loaderData.accomplishments
+          ?.filter((accomplishment) => {
+            return (
+              accomplishment.userId === loaderData.userId &&
+              accomplishment.challengeId === loaderData.challengeId
+            );
+          })
+          .map((accomplishment) => {
+            return (
+              <div>
+                <p>{accomplishment.proof}</p>
+                <p>Created : {accomplishment.createdAt}</p>
+                <p>
+                  <b>
+                    {accomplishment.validation === 1
+                      ? "Acceptec"
+                      : accomplishment.validation === -1
+                      ? "Refused"
+                      : ""}
+                  </b>
+                </p>
+              </div>
+            );
+          })}
+      </div>
     </div>
   );
 }
