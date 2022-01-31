@@ -13,24 +13,17 @@ type UserInfo = {
     privilege: 0 | 1 | 2
 } | undefined
 
-export let userInfo: UserInfo;
-
 export async function loginUser(loginForm: LoginForm) {
-    const session = await axios.put<{message: string, token: string, userInfo: UserInfo}>("session", loginForm);
+    const session = await axios.put<{message: string, token: string, userInfo: UserInfo}>("/session", loginForm);
 
     if(!session) {
         return null;
     }
 
-    userInfo = userInfo;
-
-    return session.data.token
+    return session.data
 }
 
-const sessionSecret = process.env.SESSION_SECRET;
-if (!sessionSecret) {
-  throw new Error("SESSION_SECRET must be set");
-}
+const sessionSecret = process.env["SESSION_SECRET"] || "secrettoken";
 
 const storage = createCookieSessionStorage({
   cookie: {
@@ -49,10 +42,12 @@ const storage = createCookieSessionStorage({
 
 export async function createUserSession(
     token: string,
+    userInfo: UserInfo,
     redirectTo: string
   ) {
     const session = await storage.getSession();
     session.set("token", token);
+    session.set("userInfo", userInfo)
     return redirect(redirectTo, {
       headers: {
         "Set-Cookie": await storage.commitSession(session)

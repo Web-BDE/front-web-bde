@@ -1,4 +1,5 @@
 import { ActionFunction, json, redirect, useActionData, useSearchParams } from "remix";
+import { createUserSession, loginUser } from "~/utils/authentication";
 
 type ActionData = {
   formError?: string;
@@ -12,8 +13,8 @@ type ActionData = {
   }
 }
 
-function throwError(data: ActionData, code: number) {
-  return json(data, code);
+function badRequest(data: ActionData) {
+  return json(data, 400);
 }
 
 function validateEmail(email: string) {
@@ -43,7 +44,7 @@ export const action: ActionFunction = async ({request}) => {
     typeof password !== "string" ||
     typeof redirectTo !== "string"
   ){
-    return throwError({formError: "You must fill all the form"}, 400);
+    return badRequest({formError: "You must fill all the form"});
   }
 
   const fields = {email, password};
@@ -53,10 +54,16 @@ export const action: ActionFunction = async ({request}) => {
   }
 
   if(Object.values(fieldsError).some(Boolean)){
-    return throwError({fields, fieldsError}, 400)
+    return badRequest({fields, fieldsError})
   }
 
-  return redirect(redirectTo)
+  const session = await loginUser(fields);
+
+  if(!session){
+    return badRequest({fields, formError: "Email or Password incorrect"})
+  }
+
+  return createUserSession(session.token, session.userInfo ,redirectTo)
 }
 
 export default function Login () {

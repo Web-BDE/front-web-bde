@@ -1,6 +1,7 @@
 import { renderToString } from "react-dom/server";
 import { RemixServer } from "remix";
 import type { EntryContext } from "remix";
+import { initAxiosConfig } from "./utils/axios";
 
 export default function handleRequest(
   request: Request,
@@ -19,3 +20,5 @@ export default function handleRequest(
     headers: responseHeaders
   });
 }
+
+initAxiosConfig()
