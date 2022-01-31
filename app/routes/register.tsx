@@ -3,6 +3,7 @@ import {
   json,
   redirect,
   useActionData,
+  useCatch,
   useSearchParams,
 } from "remix";
 import {
@@ -73,7 +74,13 @@ export const action: ActionFunction = async ({ request }) => {
     return badRequest({ formError: "You must fill the required fields" });
   }
 
-  const fields = { email, password, pseudo, name: name? name : undefined, surname: surname? surname : undefined };
+  const fields = {
+    email,
+    password,
+    pseudo,
+    name: name ? name : undefined,
+    surname: surname ? surname : undefined,
+  };
   const fieldsError = {
     email: validateEmail(email),
     password: validatePassword(password),
@@ -95,7 +102,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   const session = await loginUser(fields);
 
-  if (!session) {
+  if (session instanceof Error) {
     return badRequest({
       fields,
       formError: "Something went wrong when loging user",
@@ -171,6 +178,27 @@ export default function Register() {
         <p>* Optional</p>
         <button type="submit">Submit</button>
       </form>
+    </div>
+  );
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  return (
+    <div>
+      <h1>Something went wrong</h1>
+      <p>{error.message}</p>
+    </div>
+  );
+}
+
+export function CatchBoundary() {
+  const caught = useCatch();
+
+  return (
+    <div>
+      <h1>
+        {caught.status} {caught.statusText}
+      </h1>
     </div>
   );
 }

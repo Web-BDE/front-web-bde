@@ -24,20 +24,35 @@ export type User = {
 };
 
 export async function registerUser(registerForm: RegisterForm) {
-  await axios.put("/user", registerForm);
+  try {
+    await axios.put("/user", registerForm);
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      return new Error(`${err.response?.data?.message || err.message}`);
+    }
+    throw err;
+  }
 
   return true;
 }
 
 export async function loginUser(loginForm: LoginForm) {
-  const session = await axios.put<{
-    message: string;
-    token: string;
-    userId: number;
-  }>("/session", loginForm);
+  let session;
+  try {
+    session = await axios.put<{
+      message: string;
+      token: string;
+      userId: number;
+    }>("/session", loginForm);
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      return new Error(`${err.response?.data?.message || err.message}`);
+    }
+    throw err;
+  }
 
   if (!session) {
-    return null;
+    return new Error("Unable to find user");
   }
 
   return session.data;
