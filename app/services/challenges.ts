@@ -20,6 +20,12 @@ export type Accomplishment = {
   validation: 1 | -1 | null;
 };
 
+type ChallengeForm = {
+  name: string;
+  description: string;
+  reward: number;
+};
+
 export async function getManyChallenge(request: Request) {
   let challenges;
   try {
@@ -64,6 +70,22 @@ export async function getChallenge(request: Request, challengeId: number) {
   }
 
   return challenge.data;
+}
+
+export async function createChallenge(
+  request: Request,
+  challengeForm: ChallengeForm
+) {
+  try {
+    await axios.put("/challenge", challengeForm, {
+      headers: { Authorization: `Bearer ${await getToken(request)}` },
+    });
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      return new Error(`${err.response?.data?.message || err.message}`);
+    }
+    throw err;
+  }
 }
 
 export async function createAccomplishment(
