@@ -1,4 +1,5 @@
 import { Link, LoaderFunction, useCatch, useLoaderData } from "remix";
+import { requireUserId } from "~/services/authentication";
 import { Challenge, getManyChallenge } from "~/services/challenges";
 
 type LoaderData = {
@@ -6,6 +7,8 @@ type LoaderData = {
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
+  await requireUserId(request, "/challenges");
+
   const challenges = await getManyChallenge(request);
 
   return { challenges };
