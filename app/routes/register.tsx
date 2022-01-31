@@ -10,7 +10,7 @@ import {
   createUserSession,
   loginUser,
   registerUser,
-} from "~/utils/authentication";
+} from "~/services/authentication";
 
 type ActionData = {
   formError?: string;
@@ -183,7 +183,7 @@ export default function Register() {
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
-  console.error(error)
+  console.error(error);
   return (
     <div>
       <h1>Something went wrong</h1>
@@ -200,6 +200,7 @@ export function CatchBoundary() {
       <h1>
         {caught.status} {caught.statusText}
       </h1>
+      <p>{caught.data}</p>
     </div>
   );
 }

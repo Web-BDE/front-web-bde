@@ -10,7 +10,7 @@ import {
 } from "remix";
 import type { MetaFunction } from "remix";
 import NavBar from "./components/navbar";
-import { getUser, getUserId, User } from "./utils/authentication";
+import { getUser, getUserId, User } from "./services/authentication";
 
 export const meta: MetaFunction = () => {
   return { title: "New Remix App" };

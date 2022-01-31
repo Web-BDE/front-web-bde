@@ -6,7 +6,7 @@ import {
   useCatch,
   useSearchParams,
 } from "remix";
-import { createUserSession, loginUser } from "~/utils/authentication";
+import { createUserSession, loginUser } from "~/services/authentication";
 
 type ActionData = {
   formError?: string;
@@ -130,6 +130,7 @@ export function CatchBoundary() {
       <h1>
         {caught.status} {caught.statusText}
       </h1>
+      <p>{caught.data}</p>
     </div>
   );
 }
