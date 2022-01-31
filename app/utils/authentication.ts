@@ -6,6 +6,14 @@ type LoginForm = {
   password: string;
 };
 
+type RegisterForm = {
+  email: string;
+  password: string;
+  pseudo: string;
+  name?: string;
+  surname?: string;
+};
+
 export type User = {
   id: number;
   pseudo: string;
@@ -14,6 +22,12 @@ export type User = {
   wallet: number;
   privilege: number;
 };
+
+export async function registerUser(registerForm: RegisterForm) {
+  await axios.put("/user", registerForm);
+
+  return true;
+}
 
 export async function loginUser(loginForm: LoginForm) {
   const session = await axios.put<{
@@ -52,7 +66,6 @@ export async function createUserSession(
   redirectTo: string
 ) {
   const session = await storage.getSession();
-  console.log(userId);
   session.set("token", token);
   session.set("userId", userId);
   return redirect(redirectTo, {
