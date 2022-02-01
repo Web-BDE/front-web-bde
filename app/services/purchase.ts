@@ -3,13 +3,13 @@ import { Goodies } from "~/models/Goodies";
 
 import { buildAxiosHeaders, handleAPIError } from "~/utils/axios";
 
-type PurchaseForm = {
+type PurchaseInfo = {
   goodiesId: number;
 };
 
 export async function createPurchase(
   request: Request,
-  purchaseForm: PurchaseForm
+  purchaseForm: PurchaseInfo
 ) {
   try {
     await axios.put(

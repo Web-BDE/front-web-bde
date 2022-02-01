@@ -16,7 +16,7 @@ export function handleAPIError(err: unknown) {
 export async function buildAxiosHeaders(request: Request) {
   let token;
   try {
-    token = await requireUserInfo(request);
+    token = (await requireUserInfo(request)).token;
   } catch {}
 
   return { Authorization: `Bearer ${token}` };

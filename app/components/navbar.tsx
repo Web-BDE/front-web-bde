@@ -1,5 +1,9 @@
-import { Link, LoaderFunction, useLoaderData } from "remix";
-import { getUserId, User } from "~/services/authentication";
+import { Link, LoaderFunction } from "remix";
+import { User } from "~/models/User";
+
+export const loader: LoaderFunction = () => {
+  console.log("test");
+};
 
 function displayAdminMenu(privilege: number) {
   if (privilege > 0) {
