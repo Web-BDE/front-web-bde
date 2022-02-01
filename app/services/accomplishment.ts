@@ -4,21 +4,21 @@ import { Accomplishment } from "~/models/Accomplishment";
 
 import { buildAxiosHeaders, handleAPIError } from "~/utils/axios";
 
-type AccomplishmentForm = {
+type AccomplishmentInfo = {
   proof: string;
-  challengeId: number;
 };
 
 export async function createAccomplishment(
   request: Request,
-  accomplishmentForm: AccomplishmentForm
+  accomplishmentInfo: AccomplishmentInfo,
+  challengeId: number
 ) {
   try {
     await axios.put(
       "/accomplishment",
       {
-        info: { proof: accomplishmentForm.proof },
-        challengeId: accomplishmentForm.challengeId,
+        info: accomplishmentInfo,
+        challengeId,
       },
       { headers: await buildAxiosHeaders(request) }
     );
@@ -27,6 +27,61 @@ export async function createAccomplishment(
   }
 
   return "Accomplishment created";
+}
+
+export async function updateAccomplishment(
+  request: Request,
+  accomplishmentInfo: AccomplishmentInfo,
+  accomplishmentId: number
+) {
+  try {
+    await axios.put(
+      `/accomplishment/${accomplishmentId}`,
+      {
+        info: accomplishmentInfo,
+      },
+      { headers: await buildAxiosHeaders(request) }
+    );
+  } catch (err) {
+    handleAPIError(err);
+  }
+
+  return "Accomplishment updated";
+}
+
+export async function deleteAccomplishment(
+  request: Request,
+  accomplishmentId: number
+) {
+  try {
+    await axios.delete(`/accomplishment/${accomplishmentId}`, {
+      headers: await buildAxiosHeaders(request),
+    });
+  } catch (err) {
+    handleAPIError(err);
+  }
+
+  return "Accomplishment deleted";
+}
+
+export async function getAccomplishment(
+  request: Request,
+  accomplishmentId: number
+) {
+  let accomplishment;
+  try {
+    accomplishment = (
+      await axios.get<{ message: string; accomplishments: Accomplishment[] }>(
+        `/accomplishment/${accomplishmentId}`,
+        {
+          headers: await buildAxiosHeaders(request),
+        }
+      )
+    ).data.accomplishments;
+  } catch (err) {
+    handleAPIError(err);
+  }
+  return accomplishment;
 }
 
 export async function getManyAccomplishment(request: Request) {
