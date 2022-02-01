@@ -132,7 +132,7 @@ export default function Challenge() {
                 <p>
                   <b>
                     {accomplishment.validation === 1
-                      ? "Acceptec"
+                      ? "Accepted"
                       : accomplishment.validation === -1
                       ? "Refused"
                       : ""}

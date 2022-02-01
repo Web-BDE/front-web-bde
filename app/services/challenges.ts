@@ -123,3 +123,24 @@ export async function getManyAccomplishment(request: Request) {
   }
   return accomplishments.data;
 }
+
+export async function validateAccomplishment(
+  request: Request,
+  validation: 1 | -1,
+  accomplishmentId: number
+) {
+  try {
+    await axios.patch(
+      `/accomplishment/validate/${accomplishmentId}`,
+      { state: validation },
+      { headers: { Authorization: `Bearer ${await getToken(request)}` } }
+    );
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      return new Error(`${err.response?.data?.message || err.message}`);
+    }
+    throw err;
+  }
+
+  return true;
+}
