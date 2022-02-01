@@ -23,16 +23,47 @@ export async function createPurchase(
     handleAPIError(err);
   }
 
-  return "Goodies created";
+  return "Purchase created";
 }
 
-export async function getManyPurchase(request: Request) {
+export async function deletePurchase(request: Request, purchaseId: number) {
   let purchase;
   try {
     purchase = (
+      await axios.delete(`/purchase/${purchaseId}`, {
+        headers: await buildAxiosHeaders(request),
+      })
+    ).data.purchase;
+  } catch (err) {
+    handleAPIError(err);
+  }
+  return "Purchase deleted";
+}
+
+export async function getManyPurchase(request: Request) {
+  let purchases;
+  try {
+    purchases = (
       await axios.get<{ message: string; purchase: Goodies[] }>("/purchase", {
         headers: await buildAxiosHeaders(request),
       })
+    ).data.purchase;
+  } catch (err) {
+    handleAPIError(err);
+  }
+  return purchases;
+}
+
+export async function getPurchase(request: Request, purchaseId: number) {
+  let purchase;
+  try {
+    purchase = (
+      await axios.get<{ message: string; purchase: Goodies[] }>(
+        `/purchase/${purchaseId}`,
+        {
+          headers: await buildAxiosHeaders(request),
+        }
+      )
     ).data.purchase;
   } catch (err) {
     handleAPIError(err);
