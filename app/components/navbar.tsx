@@ -1,5 +1,5 @@
 import { Link, LoaderFunction, useLoaderData } from "remix";
-import { getUserId, User } from "~/utils/authentication";
+import { getUserId, User } from "~/services/authentication";
 
 function displayAdminMenu(privilege: number) {
   if (privilege > 0) {
