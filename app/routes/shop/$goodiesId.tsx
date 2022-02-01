@@ -7,7 +7,7 @@ import {
 } from "remix";
 import { Goodies } from "~/models/Goodies";
 
-import { getUserId, requireUserId } from "~/services/authentication";
+import { requireUserInfo } from "~/services/authentication";
 import { getGoodies } from "~/services/goodies";
 import { createPurchase } from "~/services/purchase";
 
@@ -25,11 +25,11 @@ function badRequest(data: ActionData) {
 }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
-  await requireUserId(request, `/shop/${params.challengeId}`);
-
   if (!params.goodiesId) {
     throw json("Invalid goodies query", 400);
   }
+
+  await requireUserInfo(request, `/shop/${params.challengeId}`);
 
   const goodies = await getGoodies(request, parseInt(params.goodiesId));
 
@@ -37,15 +37,17 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
+  if (!params.goodiesId) {
+    throw json("Invalid goodies query", 404);
+  }
+
+  await requireUserInfo(request, `/shop/${params.challengeId}`);
+
   const form = await request.formData();
   const button = form.get("purchase");
 
   if (button !== "purchase") {
     return badRequest({ formError: "There was an error" });
-  }
-
-  if (!params.goodiesId) {
-    throw json("Invalid goodies query", 404);
   }
 
   try {

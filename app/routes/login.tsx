@@ -6,7 +6,7 @@ import {
   useSearchParams,
 } from "remix";
 
-import { createUserSession, loginUser } from "~/services/authentication";
+import { loginUser } from "~/services/authentication";
 
 type ActionData = {
   formError?: string;
@@ -63,9 +63,9 @@ export const action: ActionFunction = async ({ request }) => {
     return badRequest({ fields, fieldsError });
   }
 
-  let session;
+  let loginRedirection;
   try {
-    session = await loginUser(fields);
+    loginRedirection = await loginUser(fields, redirectTo);
   } catch (err) {
     if (err instanceof Error) {
       return badRequest({ formError: err.message, fields });
@@ -73,7 +73,7 @@ export const action: ActionFunction = async ({ request }) => {
     throw err;
   }
 
-  return createUserSession(session.token, session.userId, redirectTo);
+  return loginRedirection;
 };
 
 export default function Login() {

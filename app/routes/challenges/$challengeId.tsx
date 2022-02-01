@@ -13,7 +13,7 @@ import {
   createAccomplishment,
   getManyAccomplishment,
 } from "~/services/accomplishment";
-import { getUserId, requireUserId } from "~/services/authentication";
+import { requireUserInfo } from "~/services/authentication";
 import { getChallenge } from "~/services/challenges";
 
 type LoaderData = {
@@ -40,11 +40,14 @@ function badRequest(data: ActionData) {
 }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
-  await requireUserId(request, `/challenge/${params.challengeId}`);
-
   if (!params.challengeId) {
     throw json("Invalid challenge query", 400);
   }
+
+  const userInfo = await requireUserInfo(
+    request,
+    `/challenge/${params.challengeId}`
+  );
 
   const challenge = await getChallenge(request, parseInt(params.challengeId));
 
@@ -55,7 +58,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     if (err instanceof Error) {
       return {
         challenge,
-        userId: await getUserId(request),
+        userId: userInfo.userId,
         challengeId: params.challengeId,
         accomplishmentInfo: err.message,
       };
@@ -66,12 +69,18 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   return {
     challenge,
     accomplishments: accomplishments,
-    userId: await getUserId(request),
+    userId: userInfo.userId,
     challengeId: parseInt(params.challengeId),
   };
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
+  if (!params.challengeId) {
+    throw json("Invalid challenge query", 404);
+  }
+
+  await requireUserInfo(request, `/challenge/${params.challengeId}`);
+
   const form = await request.formData();
   const proof = form.get("proof");
 
@@ -79,15 +88,14 @@ export const action: ActionFunction = async ({ request, params }) => {
     return badRequest({ formError: "You must fill all fields" });
   }
 
-  if (!params.challengeId) {
-    throw json("Invalid challenge query", 404);
-  }
-
   try {
-    await createAccomplishment(request, {
-      proof,
-      challengeId: parseInt(params.challengeId),
-    });
+    await createAccomplishment(
+      request,
+      {
+        proof,
+      },
+      parseInt(params.challengeId)
+    );
   } catch (err) {
     if (err instanceof Error) {
       return {

@@ -2,7 +2,7 @@ import { Link, LoaderFunction, useCatch, useLoaderData } from "remix";
 
 import { Goodies } from "~/models/Goodies";
 
-import { requireUserId } from "~/services/authentication";
+import { requireUserInfo } from "~/services/authentication";
 import { getManyGoodies } from "~/services/goodies";
 
 type LoaderData = {
@@ -10,7 +10,7 @@ type LoaderData = {
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
-  await requireUserId(request, "/challenges");
+  await requireUserInfo(request, "/shop");
 
   const goodies = await getManyGoodies(request);
 

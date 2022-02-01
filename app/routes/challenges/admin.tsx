@@ -9,7 +9,7 @@ import {
 } from "remix";
 
 import { Accomplishment } from "~/models/Accomplishment";
-import { requireUserId } from "~/services/authentication";
+import { requireUserInfo } from "~/services/authentication";
 import { createChallenge } from "~/services/challenges";
 
 import {
@@ -54,7 +54,7 @@ function validateValidation(validation: number) {
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
-  await requireUserId(request, `/challenges/admin`);
+  await requireUserInfo(request, `/challenges/admin`);
 
   let accomplishments;
   try {
@@ -74,7 +74,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export const action: ActionFunction = async ({ request }) => {
-  await requireUserId(request);
+  await requireUserInfo(request, `/challenges/admin`);
+  
   const form = await request.formData();
   const redirectTo = form.get("redirectTo");
 
