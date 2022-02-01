@@ -2,7 +2,7 @@ import axios from "axios";
 import { Goodies } from "~/models/Goodies";
 import { buildAxiosHeaders, handleAPIError } from "~/utils/axios";
 
-type GoodiesForm = {
+type GoodiesInfo = {
   name: string;
   description: string;
   price: number;
@@ -52,7 +52,7 @@ export async function getGoodies(request: Request, goodiesId: number) {
 
 export async function createGoodies(
   request: Request,
-  goodiesForm: GoodiesForm
+  goodiesForm: GoodiesInfo
 ) {
   try {
     await axios.put("/goodies", goodiesForm, {
@@ -63,4 +63,32 @@ export async function createGoodies(
   }
 
   return "Goodies created";
+}
+
+export async function updateGoodies(
+  request: Request,
+  goodiesInfo: GoodiesInfo,
+  goodiesId: number
+) {
+  try {
+    await axios.patch(`/goodies/${goodiesId}`, goodiesInfo, {
+      headers: await buildAxiosHeaders(request),
+    });
+  } catch (err) {
+    handleAPIError(err);
+  }
+
+  return "Goodies updated";
+}
+
+export async function deleteGoodies(request: Request, goodiesId: number) {
+  try {
+    await axios.delete(`/goodies/${goodiesId}`, {
+      headers: await buildAxiosHeaders(request),
+    });
+  } catch (err) {
+    handleAPIError(err);
+  }
+
+  return "Goodies deleted";
 }
