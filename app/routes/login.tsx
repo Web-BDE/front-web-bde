@@ -1,11 +1,11 @@
 import {
   ActionFunction,
   json,
-  redirect,
   useActionData,
   useCatch,
   useSearchParams,
 } from "remix";
+
 import { createUserSession, loginUser } from "~/services/authentication";
 
 type ActionData = {
@@ -16,7 +16,6 @@ type ActionData = {
   };
   fields?: {
     email: string;
-    password: string;
   };
 };
 
@@ -64,10 +63,14 @@ export const action: ActionFunction = async ({ request }) => {
     return badRequest({ fields, fieldsError });
   }
 
-  const session = await loginUser(fields);
-
-  if (session instanceof Error) {
-    return badRequest({ fields, formError: session.message });
+  let session;
+  try {
+    session = await loginUser(fields);
+  } catch (err) {
+    if (err instanceof Error) {
+      return badRequest({ formError: err.message, fields });
+    }
+    throw err;
   }
 
   return createUserSession(session.token, session.userId, redirectTo);
@@ -98,12 +101,7 @@ export default function Login() {
         </div>
         <div>
           <label htmlFor="password-input">Password</label>
-          <input
-            type="password"
-            name="password"
-            id="password-input"
-            defaultValue={actionData?.fields?.password}
-          />
+          <input type="password" name="password" id="password-input" />
           <p>{actionData?.fieldsError?.password}</p>
         </div>
         <button type="submit">Submiut</button>

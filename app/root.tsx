@@ -6,11 +6,13 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useCatch,
   useLoaderData,
 } from "remix";
 import type { MetaFunction } from "remix";
 import NavBar from "./components/navbar";
-import { getUser, getUserId, User } from "./services/authentication";
+import { User } from "./models/User";
+import { getSelft } from "./services/user";
 
 export const meta: MetaFunction = () => {
   return { title: "New Remix App" };
@@ -21,7 +23,13 @@ type LoaderData = {
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
-  return { userInfo: await getUser(request) };
+  let userInfo;
+  try {
+    userInfo = await getSelft(request);
+  } catch {
+    return {};
+  }
+  return { userInfo };
 };
 
 export default function App() {
@@ -51,6 +59,19 @@ export function ErrorBoundary({ error }: { error: Error }) {
     <div>
       <h1>Something went wrong</h1>
       <p>{error.message}</p>
+    </div>
+  );
+}
+
+export function CatchBoundary() {
+  const caught = useCatch();
+
+  return (
+    <div>
+      <h1>
+        {caught.status} {caught.statusText}
+      </h1>
+      <p>{caught.data}</p>
     </div>
   );
 }

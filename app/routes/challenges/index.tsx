@@ -1,6 +1,9 @@
 import { Link, LoaderFunction, useCatch, useLoaderData } from "remix";
+
+import { Challenge } from "~/models/Challenge";
+
 import { requireUserId } from "~/services/authentication";
-import { Challenge, getManyChallenge } from "~/services/challenges";
+import { getManyChallenge } from "~/services/challenges";
 
 type LoaderData = {
   challenges?: Challenge[];

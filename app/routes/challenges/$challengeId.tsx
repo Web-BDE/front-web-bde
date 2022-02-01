@@ -5,14 +5,16 @@ import {
   useActionData,
   useLoaderData,
 } from "remix";
-import { getUserId, requireUserId } from "~/services/authentication";
+
+import { Accomplishment } from "~/models/Accomplishment";
+import { Challenge } from "~/models/Challenge";
+
 import {
-  Accomplishment,
-  Challenge,
   createAccomplishment,
-  getChallenge,
   getManyAccomplishment,
-} from "~/services/challenges";
+} from "~/services/accomplishment";
+import { getUserId, requireUserId } from "~/services/authentication";
+import { getChallenge } from "~/services/challenges";
 
 type LoaderData = {
   challenge?: Challenge;
@@ -46,20 +48,24 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   const challenge = await getChallenge(request, parseInt(params.challengeId));
 
-  const accomplishmentsResult = await getManyAccomplishment(request);
-
-  if (accomplishmentsResult instanceof Error) {
-    return {
-      challenge,
-      userId: await getUserId(request),
-      challengeId: params.challengeId,
-      accomplishmentInfo: accomplishmentsResult.message,
-    };
+  let accomplishments;
+  try {
+    accomplishments = await getManyAccomplishment(request);
+  } catch (err) {
+    if (err instanceof Error) {
+      return {
+        challenge,
+        userId: await getUserId(request),
+        challengeId: params.challengeId,
+        accomplishmentInfo: err.message,
+      };
+    }
+    throw err;
   }
 
   return {
     challenge,
-    accomplishments: accomplishmentsResult,
+    accomplishments: accomplishments,
     userId: await getUserId(request),
     challengeId: parseInt(params.challengeId),
   };
@@ -70,26 +76,28 @@ export const action: ActionFunction = async ({ request, params }) => {
   const proof = form.get("proof");
 
   if (typeof proof !== "string") {
-    return badRequest({ formError: "You must fill all the form" });
+    return badRequest({ formError: "You must fill all fields" });
   }
-
-  const fields = { proof };
 
   if (!params.challengeId) {
-    throw json("Invalid challenge query", 400);
+    throw json("Invalid challenge query", 404);
   }
 
-  const accomplishmentResult = await createAccomplishment(
-    request,
-    proof,
-    parseInt(params.challengeId)
-  );
-
-  if (accomplishmentResult instanceof Error) {
-    return badRequest({ fields, formError: accomplishmentResult.message });
+  try {
+    await createAccomplishment(request, {
+      proof,
+      challengeId: parseInt(params.challengeId),
+    });
+  } catch (err) {
+    if (err instanceof Error) {
+      return {
+        formError: err.message,
+      };
+    }
+    throw err;
   }
 
-  return json({ formSuccess: accomplishmentResult }, 201);
+  return json({ formSuccess: "Accomplishment created" }, 201);
 };
 
 export default function Challenge() {
@@ -135,7 +143,7 @@ export default function Challenge() {
                       ? "Accepted"
                       : accomplishment.validation === -1
                       ? "Refused"
-                      : ""}
+                      : "Pending"}
                   </b>
                 </p>
               </div>

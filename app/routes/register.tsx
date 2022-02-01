@@ -6,11 +6,9 @@ import {
   useCatch,
   useSearchParams,
 } from "remix";
-import {
-  createUserSession,
-  loginUser,
-  registerUser,
-} from "~/services/authentication";
+
+import { createUserSession, loginUser } from "~/services/authentication";
+import { registerUser } from "~/services/user";
 
 type ActionData = {
   formError?: string;
@@ -21,7 +19,6 @@ type ActionData = {
   };
   fields?: {
     email: string;
-    password: string;
     pseudo: string;
     name?: string;
     surname?: string;
@@ -42,7 +39,10 @@ function validateEmail(email: string) {
   }
 }
 
-function validatePassword(password: string) {
+function validatePassword(password: string, confirm: string) {
+  if (password !== confirm) {
+    return "Passwords need to match";
+  }
   if (password.length < 8) {
     return "Password is too small";
   }
@@ -58,6 +58,7 @@ export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
   const email = form.get("email");
   const password = form.get("password");
+  const confirm = form.get("confirm-password");
   const pseudo = form.get("pseudo");
   const name = form.get("name");
   const surname = form.get("surname");
@@ -66,6 +67,7 @@ export const action: ActionFunction = async ({ request }) => {
   if (
     typeof email !== "string" ||
     typeof password !== "string" ||
+    typeof confirm !== "string" ||
     typeof redirectTo !== "string" ||
     typeof pseudo !== "string" ||
     (typeof name !== "string" && name !== null) ||
@@ -83,7 +85,7 @@ export const action: ActionFunction = async ({ request }) => {
   };
   const fieldsError = {
     email: validateEmail(email),
-    password: validatePassword(password),
+    password: validatePassword(password, confirm),
     pseudo: validatePseudo(pseudo),
   };
 
@@ -91,22 +93,23 @@ export const action: ActionFunction = async ({ request }) => {
     return badRequest({ fields, fieldsError });
   }
 
-  const user = await registerUser(fields);
-
-  if (!user) {
-    return badRequest({
-      fields,
-      formError: "Something went wrong when creating user",
-    });
+  try {
+    await registerUser(fields);
+  } catch (err) {
+    if (err instanceof Error) {
+      return badRequest({ formError: err.message, fields });
+    }
+    throw err;
   }
 
-  const session = await loginUser(fields);
-
-  if (session instanceof Error) {
-    return badRequest({
-      fields,
-      formError: "Something went wrong when loging user",
-    });
+  let session;
+  try {
+    session = await loginUser(fields);
+  } catch (err) {
+    if (err instanceof Error) {
+      return badRequest({ formError: err.message, fields });
+    }
+    throw err;
   }
 
   return createUserSession(session.token, session.userId, redirectTo);
@@ -137,11 +140,15 @@ export default function Register() {
         </div>
         <div>
           <label htmlFor="password-input">Password</label>
+          <input type="password" name="password" id="password-input" />
+          <p>{actionData?.fieldsError?.password}</p>
+        </div>
+        <div>
+          <label htmlFor="confirm-password-input">Confirm Password</label>
           <input
             type="password"
-            name="password"
-            id="password-input"
-            defaultValue={actionData?.fields?.password}
+            name="confirm-password"
+            id="confirm-password-input"
           />
           <p>{actionData?.fieldsError?.password}</p>
         </div>

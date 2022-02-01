@@ -1,4 +1,5 @@
 import { ActionFunction, LoaderFunction, redirect } from "remix";
+
 import { logout } from "~/services/authentication";
 
 export const action: ActionFunction = async ({ request }) => {

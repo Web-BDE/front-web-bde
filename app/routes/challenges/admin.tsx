@@ -7,13 +7,15 @@ import {
   useLoaderData,
   useSearchParams,
 } from "remix";
+
+import { Accomplishment } from "~/models/Accomplishment";
 import { requireUserId } from "~/services/authentication";
+import { createChallenge } from "~/services/challenges";
+
 import {
-  Accomplishment,
-  createChallenge,
   getManyAccomplishment,
   validateAccomplishment,
-} from "~/services/challenges";
+} from "~/services/accomplishment";
 
 type ActionData = {
   formError?: string;
@@ -51,19 +53,23 @@ function validateValidation(validation: number) {
   }
 }
 
-export const loader: LoaderFunction = async ({ request, params }) => {
+export const loader: LoaderFunction = async ({ request }) => {
   await requireUserId(request, `/challenges/admin`);
 
-  const accomplishmentsResult = await getManyAccomplishment(request);
-
-  if (accomplishmentsResult instanceof Error) {
-    return {
-      accomplishmentInfo: accomplishmentsResult.message,
-    };
+  let accomplishments;
+  try {
+    accomplishments = await getManyAccomplishment(request);
+  } catch (err) {
+    if (err instanceof Error) {
+      return {
+        accomplishmentInfo: err.message,
+      };
+    }
+    throw err;
   }
 
   return {
-    accomplishments: accomplishmentsResult,
+    accomplishments: accomplishments,
   };
 };
 
@@ -93,14 +99,17 @@ export const action: ActionFunction = async ({ request }) => {
       return badRequest({ validationError: validationError });
     }
 
-    const validationResult = await validateAccomplishment(
-      request,
-      validation === "1" ? 1 : -1,
-      parseInt(accomplishmentId)
-    );
-
-    if (validationResult instanceof Error) {
-      return badRequest({ validationError: validationResult.message });
+    try {
+      await validateAccomplishment(
+        request,
+        validation === "1" ? 1 : -1,
+        parseInt(accomplishmentId)
+      );
+    } catch (err) {
+      if (err instanceof Error) {
+        return badRequest({ validationError: err.message });
+      }
+      throw err;
     }
   } else {
     const name = form.get("name");
@@ -124,10 +133,12 @@ export const action: ActionFunction = async ({ request }) => {
       return badRequest({ fields, fieldsError });
     }
 
-    const challengeResult = await createChallenge(request, fields);
-
-    if (challengeResult instanceof Error) {
-      return badRequest({ formError: challengeResult.message, fields });
+    try {
+      await createChallenge(request, fields);
+    } catch (err) {
+      if (err instanceof Error) {
+        return badRequest({ formError: err.message, fields });
+      }
     }
   }
 
