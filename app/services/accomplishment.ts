@@ -5,7 +5,7 @@ import { Accomplishment } from "~/models/Accomplishment";
 import { buildAxiosHeaders, handleAPIError } from "~/utils/axios";
 
 type AccomplishmentInfo = {
-  proof: string;
+  proof?: string;
 };
 
 export async function createAccomplishment(
