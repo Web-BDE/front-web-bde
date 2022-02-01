@@ -1,6 +1,6 @@
 import axios from "axios";
-import { createCookieSessionStorage, redirect } from "remix";
-import { User } from "~/models/User";
+import { createCookieSessionStorage, json, redirect } from "remix";
+import { buildAxiosHeaders, handleAPIError } from "~/utils/axios";
 
 type LoginForm = {
   email: string;
@@ -30,8 +30,10 @@ export async function createUserSession(
   redirectTo: string
 ) {
   const session = await storage.getSession();
+
   session.set("token", token);
   session.set("userId", userId);
+
   return redirect(redirectTo, {
     headers: {
       "Set-Cookie": await storage.commitSession(session),
@@ -42,23 +44,22 @@ export async function createUserSession(
 export async function loginUser(loginForm: LoginForm) {
   let session;
   try {
-    session = await axios.put<{
-      message: string;
-      token: string;
-      userId: number;
-    }>("/session", loginForm);
+    session = (
+      await axios.put<{
+        message: string;
+        token: string;
+        userId: number;
+      }>("/session", loginForm)
+    ).data;
   } catch (err) {
-    if (axios.isAxiosError(err)) {
-      return new Error(`${err.response?.data?.message || err.message}`);
-    }
-    throw err;
+    handleAPIError(err);
   }
 
   if (!session) {
-    return new Error("Unable to find user");
+    throw new Error("Unable to find user");
   }
 
-  return session.data;
+  return { token: session.token, userId: session.userId };
 }
 
 function getUserSession(request: Request) {
@@ -68,18 +69,22 @@ function getUserSession(request: Request) {
 export async function getUserId(request: Request) {
   const session = await getUserSession(request);
   const userId: number = session.get("userId");
+
   if (!userId || typeof userId !== "number") {
     return null;
   }
+
   return userId;
 }
 
 export async function getToken(request: Request) {
   const session = await getUserSession(request);
   const token: string = session.get("token");
+
   if (!token || typeof token !== "string") {
     return null;
   }
+
   return token;
 }
 
@@ -89,15 +94,24 @@ export async function requireUserId(
 ) {
   const session = await getUserSession(request);
   const userId: number = session.get("userId");
+
   if (!userId || typeof userId !== "number") {
     const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
     throw redirect(`/login?${searchParams}`);
   }
+
   return userId;
 }
 
 export async function logout(request: Request) {
   const session = await storage.getSession(request.headers.get("Cookie"));
+
+  try {
+    await axios.delete(`/session`, {
+      headers: await buildAxiosHeaders(request),
+    });
+  } catch {}
+
   return redirect("/", {
     headers: {
       "Set-Cookie": await storage.destroySession(session),

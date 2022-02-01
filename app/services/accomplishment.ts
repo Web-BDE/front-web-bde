@@ -1,6 +1,8 @@
 import axios from "axios";
+
 import { Accomplishment } from "~/models/Accomplishment";
-import { getToken } from "./authentication";
+
+import { buildAxiosHeaders, handleAPIError } from "~/utils/axios";
 
 type AccomplishmentForm = {
   proof: string;
@@ -14,14 +16,14 @@ export async function createAccomplishment(
   try {
     await axios.put(
       "/accomplishment",
-      { info: { proof: accomplishmentForm.proof }, challengeId: accomplishmentForm.challengeId },
-      { headers: { Authorization: `Bearer ${await getToken(request)}` } }
+      {
+        info: { proof: accomplishmentForm.proof },
+        challengeId: accomplishmentForm.challengeId,
+      },
+      { headers: await buildAxiosHeaders(request) }
     );
   } catch (err) {
-    if (axios.isAxiosError(err)) {
-      return new Error(`${err.response?.data?.message || err.message}`);
-    }
-    throw err;
+    handleAPIError(err);
   }
 
   return "Accomplishment created";
@@ -30,16 +32,18 @@ export async function createAccomplishment(
 export async function getManyAccomplishment(request: Request) {
   let accomplishments;
   try {
-    accomplishments = await axios.get<Accomplishment[]>("/accomplishment", {
-      headers: { Authorization: `Bearer ${await getToken(request)}` },
-    });
+    accomplishments = (
+      await axios.get<{ message: string; accomplishments: Accomplishment[] }>(
+        "/accomplishment",
+        {
+          headers: await buildAxiosHeaders(request),
+        }
+      )
+    ).data.accomplishments;
   } catch (err) {
-    if (axios.isAxiosError(err)) {
-      return new Error(`${err.response?.data?.message || err.message}`);
-    }
-    throw err;
+    handleAPIError(err);
   }
-  return accomplishments.data;
+  return accomplishments;
 }
 
 export async function validateAccomplishment(
@@ -51,14 +55,11 @@ export async function validateAccomplishment(
     await axios.patch(
       `/accomplishment/validate/${accomplishmentId}`,
       { state: validation },
-      { headers: { Authorization: `Bearer ${await getToken(request)}` } }
+      { headers: await buildAxiosHeaders(request) }
     );
   } catch (err) {
-    if (axios.isAxiosError(err)) {
-      return new Error(`${err.response?.data?.message || err.message}`);
-    }
-    throw err;
+    handleAPIError(err);
   }
 
-  return true;
+  return "Accomplishment validation changed";
 }

@@ -1,6 +1,6 @@
 import axios from "axios";
-import { redirect } from "remix";
 import { User } from "~/models/User";
+import { handleAPIError } from "~/utils/axios";
 import { getToken, getUserId, logout } from "./authentication";
 
 type RegisterForm = {
@@ -15,28 +15,25 @@ export async function registerUser(registerForm: RegisterForm) {
   try {
     await axios.put("/user", registerForm);
   } catch (err) {
-    if (axios.isAxiosError(err)) {
-      return new Error(`${err.response?.data?.message || err.message}`);
-    }
-    throw err;
+    handleAPIError(err);
   }
 
-  return true;
+  return "User registered";
 }
 
-export async function getUser(request: Request) {
+export async function getSelft(request: Request) {
   const userId = await getUserId(request);
   const token = await getToken(request);
-  if (typeof userId !== "number" || typeof token !== "string") {
-    return null;
-  }
 
+  let user;
   try {
-    const user = await axios.get<User>(`/user/${userId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return user.data;
+    user = (
+      await axios.get<{ message: string; user: User }>(`/user/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+    ).data.user;
   } catch {
     throw logout(request);
   }
+  return user;
 }

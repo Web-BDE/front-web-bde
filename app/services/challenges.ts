@@ -1,7 +1,6 @@
 import axios from "axios";
-import { json } from "remix";
 import { Challenge } from "~/models/Challenge";
-import { getToken } from "./authentication";
+import { buildAxiosHeaders, handleAPIError } from "~/utils/axios";
 
 type ChallengeForm = {
   name: string;
@@ -12,47 +11,45 @@ type ChallengeForm = {
 export async function getManyChallenge(request: Request) {
   let challenges;
   try {
-    challenges = await axios.get<Challenge[]>("/challenge", {
-      headers: { Authorization: `Bearer ${await getToken(request)}` },
-    });
+    challenges = (
+      await axios.get<{ message: string; challenges: Challenge[] }>(
+        "/challenge",
+        {
+          headers: await buildAxiosHeaders(request),
+        }
+      )
+    ).data.challenges;
   } catch (err) {
-    if (axios.isAxiosError(err) && err.response?.data) {
-      throw json(
-        `${err.response?.data?.message}`,
-        err.response?.data?.statusCode
-      );
-    }
-    throw err;
+    handleAPIError(err);
   }
 
   if (!challenges) {
-    throw json("Unable to find any challenge", 404);
+    throw new Error("Unable to find any challenge");
   }
 
-  return challenges.data;
+  return challenges;
 }
 
 export async function getChallenge(request: Request, challengeId: number) {
   let challenge;
   try {
-    challenge = await axios.get<Challenge>(`/challenge/${challengeId}`, {
-      headers: { Authorization: `Bearer ${await getToken(request)}` },
-    });
+    challenge = (
+      await axios.get<{ message: string; challenge: Challenge }>(
+        `/challenge/${challengeId}`,
+        {
+          headers: await buildAxiosHeaders(request),
+        }
+      )
+    ).data.challenge;
   } catch (err) {
-    if (axios.isAxiosError(err) && err.response?.data) {
-      throw json(
-        `${err.response?.data?.message}`,
-        err.response?.data?.statusCode
-      );
-    }
-    throw err;
+    handleAPIError(err);
   }
 
   if (!challenge) {
-    throw json("Unable to find challenge", 404);
+    throw new Error("Unable to find challenge");
   }
 
-  return challenge.data;
+  return challenge;
 }
 
 export async function createChallenge(
@@ -61,12 +58,11 @@ export async function createChallenge(
 ) {
   try {
     await axios.put("/challenge", challengeForm, {
-      headers: { Authorization: `Bearer ${await getToken(request)}` },
+      headers: await buildAxiosHeaders(request),
     });
   } catch (err) {
-    if (axios.isAxiosError(err)) {
-      return new Error(`${err.response?.data?.message || err.message}`);
-    }
-    throw err;
+    handleAPIError(err);
   }
+
+  return "Challenge created";
 }
