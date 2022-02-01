@@ -1,11 +1,11 @@
 import {
   ActionFunction,
   json,
-  redirect,
   useActionData,
   useCatch,
   useSearchParams,
 } from "remix";
+
 import { createUserSession, loginUser } from "~/services/authentication";
 
 type ActionData = {

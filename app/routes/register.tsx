@@ -1,16 +1,13 @@
 import {
   ActionFunction,
   json,
-  redirect,
   useActionData,
   useCatch,
   useSearchParams,
 } from "remix";
-import {
-  createUserSession,
-  loginUser,
-  registerUser,
-} from "~/services/authentication";
+
+import { createUserSession, loginUser } from "~/services/authentication";
+import { registerUser } from "~/services/user";
 
 type ActionData = {
   formError?: string;

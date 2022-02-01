@@ -1,62 +1,11 @@
 import axios from "axios";
 import { createCookieSessionStorage, redirect } from "remix";
+import { User } from "~/models/User";
 
 type LoginForm = {
   email: string;
   password: string;
 };
-
-type RegisterForm = {
-  email: string;
-  password: string;
-  pseudo: string;
-  name?: string;
-  surname?: string;
-};
-
-export type User = {
-  id: number;
-  pseudo: string;
-  name: string;
-  surname: string;
-  wallet: number;
-  privilege: number;
-};
-
-export async function registerUser(registerForm: RegisterForm) {
-  try {
-    await axios.put("/user", registerForm);
-  } catch (err) {
-    if (axios.isAxiosError(err)) {
-      return new Error(`${err.response?.data?.message || err.message}`);
-    }
-    throw err;
-  }
-
-  return true;
-}
-
-export async function loginUser(loginForm: LoginForm) {
-  let session;
-  try {
-    session = await axios.put<{
-      message: string;
-      token: string;
-      userId: number;
-    }>("/session", loginForm);
-  } catch (err) {
-    if (axios.isAxiosError(err)) {
-      return new Error(`${err.response?.data?.message || err.message}`);
-    }
-    throw err;
-  }
-
-  if (!session) {
-    return new Error("Unable to find user");
-  }
-
-  return session.data;
-}
 
 const sessionSecret = process.env["SESSION_SECRET"] || "secrettoken";
 
@@ -90,7 +39,29 @@ export async function createUserSession(
   });
 }
 
-export function getUserSession(request: Request) {
+export async function loginUser(loginForm: LoginForm) {
+  let session;
+  try {
+    session = await axios.put<{
+      message: string;
+      token: string;
+      userId: number;
+    }>("/session", loginForm);
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      return new Error(`${err.response?.data?.message || err.message}`);
+    }
+    throw err;
+  }
+
+  if (!session) {
+    return new Error("Unable to find user");
+  }
+
+  return session.data;
+}
+
+function getUserSession(request: Request) {
   return storage.getSession(request.headers.get("Cookie"));
 }
 
@@ -123,23 +94,6 @@ export async function requireUserId(
     throw redirect(`/login?${searchParams}`);
   }
   return userId;
-}
-
-export async function getUser(request: Request) {
-  const userId = await getUserId(request);
-  const token = await getToken(request);
-  if (typeof userId !== "number" || typeof token !== "string") {
-    return null;
-  }
-
-  try {
-    const user = await axios.get<User>(`/user/${userId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return user.data;
-  } catch {
-    throw logout(request);
-  }
 }
 
 export async function logout(request: Request) {

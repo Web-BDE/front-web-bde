@@ -5,14 +5,16 @@ import {
   useActionData,
   useLoaderData,
 } from "remix";
-import { getUserId, requireUserId } from "~/services/authentication";
+
+import { Accomplishment } from "~/models/Accomplishment";
+import { Challenge } from "~/models/Challenge";
+
 import {
-  Accomplishment,
-  Challenge,
   createAccomplishment,
-  getChallenge,
   getManyAccomplishment,
-} from "~/services/challenges";
+} from "~/services/accomplishment";
+import { getUserId, requireUserId } from "~/services/authentication";
+import { getChallenge } from "~/services/challenges";
 
 type LoaderData = {
   challenge?: Challenge;
@@ -79,11 +81,10 @@ export const action: ActionFunction = async ({ request, params }) => {
     throw json("Invalid challenge query", 400);
   }
 
-  const accomplishmentResult = await createAccomplishment(
-    request,
+  const accomplishmentResult = await createAccomplishment(request, {
     proof,
-    parseInt(params.challengeId)
-  );
+    challengeId: parseInt(params.challengeId),
+  });
 
   if (accomplishmentResult instanceof Error) {
     return badRequest({ fields, formError: accomplishmentResult.message });

@@ -7,13 +7,14 @@ import {
   useLoaderData,
   useSearchParams,
 } from "remix";
+
+import { Accomplishment } from "~/models/Accomplishment";
 import { requireUserId } from "~/services/authentication";
 import {
-  Accomplishment,
   createChallenge,
-  getManyAccomplishment,
-  validateAccomplishment,
 } from "~/services/challenges";
+
+import { getManyAccomplishment, validateAccomplishment } from "~/services/accomplishment";
 
 type ActionData = {
   formError?: string;

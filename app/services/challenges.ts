@@ -1,24 +1,7 @@
 import axios from "axios";
 import { json } from "remix";
+import { Challenge } from "~/models/Challenge";
 import { getToken } from "./authentication";
-
-export type Challenge = {
-  id: number;
-  name: string;
-  description: string;
-  reward: number;
-  createdAt: Date;
-  creatorId: number;
-};
-
-export type Accomplishment = {
-  id: number;
-  userId: number;
-  challengeId: number;
-  createdAt: Date;
-  proof: string;
-  validation: 1 | -1 | null;
-};
 
 type ChallengeForm = {
   name: string;
@@ -86,61 +69,4 @@ export async function createChallenge(
     }
     throw err;
   }
-}
-
-export async function createAccomplishment(
-  request: Request,
-  proof: string,
-  challengeId: number
-) {
-  try {
-    await axios.put(
-      "/accomplishment",
-      { info: { proof }, challengeId },
-      { headers: { Authorization: `Bearer ${await getToken(request)}` } }
-    );
-  } catch (err) {
-    if (axios.isAxiosError(err)) {
-      return new Error(`${err.response?.data?.message || err.message}`);
-    }
-    throw err;
-  }
-
-  return "Accomplishment created";
-}
-
-export async function getManyAccomplishment(request: Request) {
-  let accomplishments;
-  try {
-    accomplishments = await axios.get<Accomplishment[]>("/accomplishment", {
-      headers: { Authorization: `Bearer ${await getToken(request)}` },
-    });
-  } catch (err) {
-    if (axios.isAxiosError(err)) {
-      return new Error(`${err.response?.data?.message || err.message}`);
-    }
-    throw err;
-  }
-  return accomplishments.data;
-}
-
-export async function validateAccomplishment(
-  request: Request,
-  validation: 1 | -1,
-  accomplishmentId: number
-) {
-  try {
-    await axios.patch(
-      `/accomplishment/validate/${accomplishmentId}`,
-      { state: validation },
-      { headers: { Authorization: `Bearer ${await getToken(request)}` } }
-    );
-  } catch (err) {
-    if (axios.isAxiosError(err)) {
-      return new Error(`${err.response?.data?.message || err.message}`);
-    }
-    throw err;
-  }
-
-  return true;
 }
