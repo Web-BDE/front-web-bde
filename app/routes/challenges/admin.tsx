@@ -17,24 +17,30 @@ import {
   validateAccomplishment,
 } from "~/services/accomplishment";
 
+import AccomplishmentsAdmin from "~/components/accomplishmentsAdmin";
+
 type ActionData = {
-  formError?: string;
-  fieldsError?: {
-    name?: string;
-    description?: string;
-    reward?: string;
+  createChallenge?: {
+    formError?: string;
+    fieldsError?: {
+      name?: string;
+      description?: string;
+      reward?: string;
+    };
+    fields?: {
+      name: string;
+      description?: string;
+      reward: number;
+    };
   };
-  fields?: {
-    name: string;
-    description: string;
-    reward: number;
+  validateChallenge?: {
+    validationError?: string;
   };
-  validationError?: string;
 };
 
 type LoaderData = {
   accomplishments?: Accomplishment[];
-  accomplishmentInfo?: string;
+  accomplishmentError?: string;
 };
 
 function badRequest(data: ActionData) {
@@ -54,15 +60,18 @@ function validateValidation(validation: number) {
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
+  //User need to be logged in
   await requireUserInfo(request, `/challenges/admin`);
 
+  //Try to get accomplishments
   let accomplishments;
   try {
     accomplishments = await getManyAccomplishment(request);
   } catch (err) {
+    //We don't want to throw API errors, we will show the in the component instead
     if (err instanceof Error) {
       return {
-        accomplishmentInfo: err.message,
+        accomplishmenError: err.message,
       };
     }
     throw err;
@@ -74,32 +83,42 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export const action: ActionFunction = async ({ request }) => {
+  //User need to be logged in
   await requireUserInfo(request, `/challenges/admin`);
 
   const form = await request.formData();
   const redirectTo = form.get("redirectTo");
 
+  //Redirection undefined, should never happend
   if (typeof redirectTo !== "string") {
-    return badRequest({ formError: "Invalid form data" });
+    return badRequest({ createChallenge: { formError: "Invalid form data" } });
   }
 
+  //Validation request
   if (form.has("validation")) {
     const validation = form.get("validation");
     const accomplishmentId = form.get("accomplishmentId");
 
+    //Should never happend
     if (
       typeof validation !== "string" ||
       typeof accomplishmentId !== "string"
     ) {
-      return badRequest({ validationError: "There was an error" });
+      return badRequest({
+        validateChallenge: { validationError: "There was an error" },
+      });
     }
 
+    //Check for an error in the validation format
     const validationError = validateValidation(parseInt(validation));
 
     if (validationError) {
-      return badRequest({ validationError: validationError });
+      return badRequest({
+        validateChallenge: { validationError: validationError },
+      });
     }
 
+    //Try to validate challenge
     try {
       await validateAccomplishment(
         request,
@@ -107,38 +126,50 @@ export const action: ActionFunction = async ({ request }) => {
         parseInt(accomplishmentId)
       );
     } catch (err) {
+      //We don't want to throw API errors, we will show the in the form instead
       if (err instanceof Error) {
-        return badRequest({ validationError: err.message });
+        return badRequest({
+          validateChallenge: { validationError: err.message },
+        });
       }
       throw err;
     }
+    //Challenge creation request
   } else {
     const name = form.get("name");
     const description = form.get("description");
     const reward = form.get("reward");
 
+    //Check for undefined values
     if (
       typeof name !== "string" ||
-      typeof description !== "string" ||
+      (typeof description !== "string" && typeof description !== "undefined") ||
       typeof reward !== "string"
     ) {
-      return badRequest({ formError: "You must fill all the fields" });
+      return badRequest({
+        createChallenge: { formError: "You must fill all the fields" },
+      });
     }
 
+    //Check fields format errors
     const fields = { name, description, reward: parseInt(reward) };
     const fieldsError = {
       reward: validateReward(parseInt(reward)),
     };
 
     if (Object.values(fieldsError).some(Boolean)) {
-      return badRequest({ fields, fieldsError });
+      return badRequest({ createChallenge: { fields, fieldsError } });
     }
 
+    //Try to create challenge
     try {
       await createChallenge(request, fields);
     } catch (err) {
+      //We don't want to throw API errors, we will show the in the form instead
       if (err instanceof Error) {
-        return badRequest({ formError: err.message, fields });
+        return badRequest({
+          createChallenge: { formError: err.message, fields },
+        });
       }
     }
   }
@@ -150,11 +181,12 @@ export default function ChallengesAdmin() {
   const actionData = useActionData<ActionData>();
   const [searchParams] = useSearchParams();
   const loaderData = useLoaderData<LoaderData>();
+  
   return (
     <div>
       <h1>Challenges Admin</h1>
       <form method="post">
-        <p>{actionData?.formError}</p>
+        <p>{actionData?.createChallenge?.formError}</p>
         <input
           type="hidden"
           name="redirectTo"
@@ -166,9 +198,9 @@ export default function ChallengesAdmin() {
             type="text"
             name="name"
             id="name-input"
-            defaultValue={actionData?.fields?.name}
+            defaultValue={actionData?.createChallenge?.fields?.name}
           />
-          <p>{actionData?.fieldsError?.name}</p>
+          <p>{actionData?.createChallenge?.fieldsError?.name}</p>
         </div>
         <div>
           <label htmlFor="description-input">Description</label>
@@ -176,9 +208,9 @@ export default function ChallengesAdmin() {
             type="text"
             name="description"
             id="description-input"
-            defaultValue={actionData?.fields?.description}
+            defaultValue={actionData?.createChallenge?.fields?.description}
           />
-          <p>{actionData?.fieldsError?.description}</p>
+          <p>{actionData?.createChallenge?.fieldsError?.description}</p>
         </div>
         <div>
           <label htmlFor="reward-input">Reward</label>
@@ -187,50 +219,13 @@ export default function ChallengesAdmin() {
             name="reward"
             id="reward-input"
             min="0"
-            defaultValue={actionData?.fields?.reward || 0}
+            defaultValue={actionData?.createChallenge?.fields?.reward || 0}
           />
-          <p>{actionData?.fieldsError?.reward}</p>
+          <p>{actionData?.createChallenge?.fieldsError?.reward}</p>
         </div>
         <button type="submit">Submit</button>
       </form>
-      <h1>Accomplishments to validate</h1>
-      <p>{loaderData.accomplishmentInfo}</p>
-      <p>{actionData?.validationError}</p>
-      {loaderData.accomplishments
-        ?.filter((accomplishment) => {
-          return !accomplishment.validation;
-        })
-        .sort((a, b) => {
-          return (
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          );
-        })
-        .map((accomplishment) => {
-          return (
-            <div key={accomplishment.id}>
-              <p>{accomplishment.proof}</p>
-              <p>Created : {accomplishment.createdAt}</p>
-              <form method="post">
-                <input
-                  type="hidden"
-                  name="redirectTo"
-                  value={"/challenges/admin"}
-                />
-                <input
-                  type="hidden"
-                  name="accomplishmentId"
-                  value={accomplishment.id}
-                />
-                <button type="submit" name="validation" value="1">
-                  Validate
-                </button>
-                <button type="submit" name="validation" value="-1">
-                  Refuse
-                </button>
-              </form>
-            </div>
-          );
-        })}
+      <AccomplishmentsAdmin loaderData={loaderData} actionData={actionData} />
     </div>
   );
 }
