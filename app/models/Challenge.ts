@@ -3,6 +3,6 @@ export type Challenge = {
   name: string;
   description: string;
   reward: number;
-  createdAt: Date;
+  createdAt: string; //But should be converted as Date
   creatorId: number;
 };
