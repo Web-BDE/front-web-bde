@@ -147,7 +147,7 @@ export default function Challenge() {
           })
           .map((accomplishment) => {
             return (
-              <div>
+              <div key={accomplishment.id}>
                 <p>{accomplishment.proof}</p>
                 <p>Created : {accomplishment.createdAt}</p>
                 <p>
