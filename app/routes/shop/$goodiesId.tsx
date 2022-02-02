@@ -7,14 +7,25 @@ import {
   useLoaderData,
 } from "remix";
 import { Goodies } from "~/models/Goodies";
+import { Purchase } from "~/models/Purchase";
 
 import { requireUserInfo } from "~/services/authentication";
 import { deleteGoodies, getGoodies, updateGoodies } from "~/services/goodies";
-import { createPurchase } from "~/services/purchase";
+import {
+  createPurchase,
+  deletePurchase,
+  getManyPurchase,
+} from "~/services/purchase";
+import { getSelft } from "~/services/user";
 
 type LoaderData = {
   goodies: Goodies;
   userId: number;
+  privilege: number;
+  purchases?: {
+    purchases?: Purchase[];
+    purchasesError?: string;
+  };
 };
 
 type ActionData = {
@@ -39,6 +50,10 @@ type ActionData = {
     };
   };
   deleteGoodies?: {
+    formError?: string;
+    formSuccess?: string;
+  };
+  refundGoodies?: {
     formError?: string;
     formSuccess?: string;
   };
@@ -70,9 +85,28 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     `/shop/${params.challengeId}`
   );
 
+  const privilege = (await getSelft(request)).privilege;
+
   const goodies = await getGoodies(request, parseInt(params.goodiesId));
 
-  return { goodies, userId: userInfo.userId };
+  let purchases;
+  try {
+    purchases = await getManyPurchase(request);
+  } catch (err) {
+    return {
+      goodies,
+      userId: userInfo.userId,
+      privilege,
+      purchases: { purchasesError: err },
+    };
+  }
+
+  return {
+    goodies,
+    userId: userInfo.userId,
+    privilege,
+    purchases: { purchases },
+  };
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -162,6 +196,26 @@ export const action: ActionFunction = async ({ request, params }) => {
       }
 
       return redirect("/shop");
+    case "refund-goodies":
+      const purchaseId = form.get("purchaseId");
+
+      if (typeof purchaseId !== "string") {
+        return badRequest({
+          refundGoodies: { formError: "There was an error" },
+        });
+      }
+
+      try {
+        await deletePurchase(request, parseInt(purchaseId));
+      } catch (err) {
+        if (err instanceof Error) {
+          return badRequest({
+            refundGoodies: { formError: err.message },
+          });
+        }
+      }
+
+      return json({ refundGoodies: { formSuccess: "Goodies refuned" } }, 200);
     default:
       throw new Error("There was an error during form handling");
   }
