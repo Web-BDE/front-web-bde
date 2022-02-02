@@ -75,7 +75,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export const action: ActionFunction = async ({ request }) => {
   await requireUserInfo(request, `/challenges/admin`);
-  
+
   const form = await request.formData();
   const redirectTo = form.get("redirectTo");
 
@@ -199,6 +199,11 @@ export default function ChallengesAdmin() {
       {loaderData.accomplishments
         ?.filter((accomplishment) => {
           return !accomplishment.validation;
+        })
+        .sort((a, b) => {
+          return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
         })
         .map((accomplishment) => {
           return (

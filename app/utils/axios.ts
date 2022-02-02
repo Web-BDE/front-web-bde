@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getToken } from "~/services/authentication";
+import { requireUserInfo } from "~/services/authentication";
 
 export function initAxiosConfig() {
   axios.defaults.baseURL = process.env["API_URL"] || "http://localhost:4000";
@@ -14,5 +14,10 @@ export function handleAPIError(err: unknown) {
 }
 
 export async function buildAxiosHeaders(request: Request) {
-  return { Authorization: `Bearer ${await getToken(request)}` };
+  let token;
+  try {
+    token = (await requireUserInfo(request)).token;
+  } catch {}
+
+  return { Authorization: `Bearer ${token}` };
 }

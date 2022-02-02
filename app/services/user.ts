@@ -3,7 +3,7 @@ import { User } from "~/models/User";
 import { handleAPIError } from "~/utils/axios";
 import { logout, requireUserInfo } from "./authentication";
 
-type RegisterForm = {
+type RegisterInfo = {
   email: string;
   password: string;
   pseudo: string;
@@ -11,14 +11,24 @@ type RegisterForm = {
   surname?: string;
 };
 
-export async function registerUser(registerForm: RegisterForm) {
+export async function registerUser(registerInfo: RegisterInfo) {
   try {
-    await axios.put("/user", registerForm);
+    await axios.put("/user", registerInfo);
   } catch (err) {
     handleAPIError(err);
   }
 
   return "User registered";
+}
+
+export async function updateSelf(registerInfo: RegisterInfo) {
+  try {
+    await axios.patch("/user", registerInfo);
+  } catch (err) {
+    handleAPIError(err);
+  }
+
+  return "User Updated";
 }
 
 export async function getSelft(request: Request) {

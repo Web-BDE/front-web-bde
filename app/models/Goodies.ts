@@ -4,6 +4,6 @@ export type Goodies = {
   description: string;
   price: number;
   buyLimit: number;
-  createdAt: Date;
+  createdAt: string; //But should be converted as Date
   creatorId: number;
 };

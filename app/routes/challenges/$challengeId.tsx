@@ -5,6 +5,7 @@ import {
   useActionData,
   useLoaderData,
 } from "remix";
+import Accomplishments from "~/components/accomplishments";
 
 import { Accomplishment } from "~/models/Accomplishment";
 import { Challenge } from "~/models/Challenge";
@@ -12,27 +13,42 @@ import { Challenge } from "~/models/Challenge";
 import {
   createAccomplishment,
   getManyAccomplishment,
+  updateAccomplishment,
 } from "~/services/accomplishment";
 import { requireUserInfo } from "~/services/authentication";
 import { getChallenge } from "~/services/challenges";
 
 type LoaderData = {
   challenge?: Challenge;
-  accomplishments?: Accomplishment[];
-  userId: number;
-  challengeId: number;
-  accomplishlentInfo?: string;
+  accomplishments?: {
+    accomplishments?: Accomplishment[];
+    error?: string;
+    userId: number;
+    challengeId: number;
+  };
 };
 
 type ActionData = {
-  formError?: string;
-  fieldsError?: {
-    proof?: string;
+  creacteAccomplishment?: {
+    formError?: string;
+    formSuccess?: string;
+    fieldsError?: {
+      proof?: string;
+    };
+    fields?: {
+      proof: string;
+    };
   };
-  fields?: {
-    proof: string;
+  updateAccomplishment?: {
+    formError?: string;
+    formSuccess?: string;
+    fieldsError?: {
+      proof?: string;
+    };
+    fields?: {
+      proof: string;
+    };
   };
-  formSuccess?: string;
 };
 
 function badRequest(data: ActionData) {
@@ -54,23 +70,27 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   let accomplishments;
   try {
     accomplishments = await getManyAccomplishment(request);
-  } catch (err) {
-    if (err instanceof Error) {
+  } catch (error) {
+    if (error instanceof Error) {
       return {
         challenge,
-        userId: userInfo.userId,
-        challengeId: params.challengeId,
-        accomplishmentInfo: err.message,
+        accomplishments: {
+          error,
+          userId: userInfo.userId,
+          challengeId: challenge.id,
+        },
       };
     }
-    throw err;
+    throw error;
   }
 
   return {
     challenge,
-    accomplishments: accomplishments,
-    userId: userInfo.userId,
-    challengeId: parseInt(params.challengeId),
+    accomplishments: {
+      accomplishments,
+      userId: userInfo.userId,
+      challengeId: challenge.id,
+    },
   };
 };
 
@@ -83,29 +103,76 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   const form = await request.formData();
   const proof = form.get("proof");
+  const method = form.get("method");
 
-  if (typeof proof !== "string") {
-    return badRequest({ formError: "You must fill all fields" });
+  switch (method) {
+    case "create":
+      if (typeof proof !== "string") {
+        return badRequest({
+          creacteAccomplishment: { formError: "You must fill all fields" },
+        });
+      }
+
+      try {
+        await createAccomplishment(
+          request,
+          {
+            proof,
+          },
+          parseInt(params.challengeId)
+        );
+      } catch (err) {
+        if (err instanceof Error) {
+          return badRequest({
+            creacteAccomplishment: { formError: err.message },
+          });
+        }
+        throw err;
+      }
+
+      return json(
+        { createAccomplishment: { formSuccess: "Accomplishment created" } },
+        201
+      );
+    case "update":
+      const accomplishmendId = form.get("accomplishmentId");
+
+      if (typeof accomplishmendId !== "string") {
+        return badRequest({
+          updateAccomplishment: { formError: "There was an error" },
+        });
+      }
+
+      if (typeof proof !== "string") {
+        return badRequest({
+          updateAccomplishment: { formError: "You must fill all fields" },
+        });
+      }
+
+      try {
+        await updateAccomplishment(
+          request,
+          {
+            proof,
+          },
+          parseInt(accomplishmendId)
+        );
+      } catch (err) {
+        if (err instanceof Error) {
+          return badRequest({
+            updateAccomplishment: { formError: err.message },
+          });
+        }
+        throw err;
+      }
+
+      return json(
+        { updateAccomplishment: { formSuccess: "Accomplishment updated" } },
+        201
+      );
+    default:
+      throw new Error("There was an error during form handling");
   }
-
-  try {
-    await createAccomplishment(
-      request,
-      {
-        proof,
-      },
-      parseInt(params.challengeId)
-    );
-  } catch (err) {
-    if (err instanceof Error) {
-      return {
-        formError: err.message,
-      };
-    }
-    throw err;
-  }
-
-  return json({ formSuccess: "Accomplishment created" }, 201);
 };
 
 export default function Challenge() {
@@ -123,41 +190,26 @@ export default function Challenge() {
       <p>Created : {loaderData.challenge?.createdAt}</p>
       <h1>Submit accomplishment</h1>
       <form method="post">
-        <p>{actionData?.formError || actionData?.formSuccess}</p>
+        <p>
+          {actionData?.creacteAccomplishment?.formError ||
+            actionData?.creacteAccomplishment?.formSuccess}
+        </p>
+        <input type="hidden" name="method" value="create" />
         <div>
           <label htmlFor="proof-input">Proof</label>
           <input type="text" name="proof" id="proof-input" />
-          <p>{actionData?.fieldsError?.proof}</p>
+          <p>{actionData?.creacteAccomplishment?.fieldsError?.proof}</p>
         </div>
         <button type="submit">Submit</button>
       </form>
-      <div>
-        <h1>Your accomplishments</h1>
-        {loaderData.accomplishments
-          ?.filter((accomplishment) => {
-            return (
-              accomplishment.userId === loaderData.userId &&
-              accomplishment.challengeId === loaderData.challengeId
-            );
-          })
-          .map((accomplishment) => {
-            return (
-              <div>
-                <p>{accomplishment.proof}</p>
-                <p>Created : {accomplishment.createdAt}</p>
-                <p>
-                  <b>
-                    {accomplishment.validation === 1
-                      ? "Accepted"
-                      : accomplishment.validation === -1
-                      ? "Refused"
-                      : "Pending"}
-                  </b>
-                </p>
-              </div>
-            );
-          })}
-      </div>
+      {loaderData.accomplishments ? (
+        <Accomplishments
+          accomplishments={loaderData.accomplishments}
+          formData={actionData?.updateAccomplishment}
+        />
+      ) : (
+        ""
+      )}
     </div>
   );
 }

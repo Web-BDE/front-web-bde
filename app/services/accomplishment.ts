@@ -5,7 +5,7 @@ import { Accomplishment } from "~/models/Accomplishment";
 import { buildAxiosHeaders, handleAPIError } from "~/utils/axios";
 
 type AccomplishmentInfo = {
-  proof: string;
+  proof?: string;
 };
 
 export async function createAccomplishment(
@@ -35,7 +35,7 @@ export async function updateAccomplishment(
   accomplishmentId: number
 ) {
   try {
-    await axios.put(
+    await axios.patch(
       `/accomplishment/${accomplishmentId}`,
       {
         info: accomplishmentInfo,
