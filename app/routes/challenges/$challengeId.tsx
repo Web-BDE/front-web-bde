@@ -2,6 +2,7 @@ import {
   ActionFunction,
   json,
   LoaderFunction,
+  redirect,
   useActionData,
   useLoaderData,
 } from "remix";
@@ -9,17 +10,25 @@ import Accomplishments from "~/components/accomplishments";
 
 import { Accomplishment } from "~/models/Accomplishment";
 import { Challenge } from "~/models/Challenge";
+import { User } from "~/models/User";
 
 import {
   createAccomplishment,
+  deleteAccomplishment,
   getManyAccomplishment,
   updateAccomplishment,
 } from "~/services/accomplishment";
 import { requireUserInfo } from "~/services/authentication";
-import { getChallenge } from "~/services/challenges";
+import {
+  deleteChallenge,
+  getChallenge,
+  updateChallenge,
+} from "~/services/challenges";
+import { getSelft } from "~/services/user";
 
 type LoaderData = {
-  challenge?: Challenge;
+  challenge: Challenge;
+  userId: number;
   accomplishments?: {
     accomplishments?: Accomplishment[];
     error?: string;
@@ -49,10 +58,38 @@ type ActionData = {
       proof: string;
     };
   };
+  updateChallenge?: {
+    formError?: string;
+    formSuccess?: string;
+    fieldsError?: {
+      name?: string;
+      description?: string;
+      reward?: string;
+    };
+    fields?: {
+      name: string;
+      description?: string;
+      reward: number;
+    };
+  };
+  deleteAccomplishment?: {
+    formError?: string;
+    formSuccess?: string;
+  };
+  deleteChallenge?: {
+    formError?: string;
+    formSuccess?: string;
+  };
 };
 
 function badRequest(data: ActionData) {
   return json(data, 400);
+}
+
+function validateReward(reward: number) {
+  if (reward < 0) {
+    return "Reward must be positive";
+  }
 }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -86,6 +123,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   return {
     challenge,
+    userId: userInfo.userId,
     accomplishments: {
       accomplishments,
       userId: userInfo.userId,
@@ -104,9 +142,12 @@ export const action: ActionFunction = async ({ request, params }) => {
   const form = await request.formData();
   const proof = form.get("proof");
   const method = form.get("method");
+  const accomplishmendId = form.get("accomplishmentId");
+
+  console.log(method);
 
   switch (method) {
-    case "create":
+    case "create-accomplishment":
       if (typeof proof !== "string") {
         return badRequest({
           creacteAccomplishment: { formError: "You must fill all fields" },
@@ -134,9 +175,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         { createAccomplishment: { formSuccess: "Accomplishment created" } },
         201
       );
-    case "update":
-      const accomplishmendId = form.get("accomplishmentId");
-
+    case "update-accomplishment":
       if (typeof accomplishmendId !== "string") {
         return badRequest({
           updateAccomplishment: { formError: "There was an error" },
@@ -170,10 +209,163 @@ export const action: ActionFunction = async ({ request, params }) => {
         { updateAccomplishment: { formSuccess: "Accomplishment updated" } },
         201
       );
+    case "update-challenge":
+      const name = form.get("name");
+      const description = form.get("description");
+      const reward = form.get("reward");
+
+      //Check for undefined values
+      if (
+        typeof name !== "string" ||
+        (typeof description !== "string" &&
+          typeof description !== "undefined") ||
+        typeof reward !== "string"
+      ) {
+        return badRequest({
+          updateChallenge: { formError: "You must fill all the fields" },
+        });
+      }
+
+      //Check fields format errors
+      const fields = { name, description, reward: parseInt(reward) };
+      const fieldsError = {
+        reward: validateReward(parseInt(reward)),
+      };
+
+      if (Object.values(fieldsError).some(Boolean)) {
+        return badRequest({ updateChallenge: { fields, fieldsError } });
+      }
+
+      //Try to update challenge
+      try {
+        await updateChallenge(request, fields, parseInt(params.challengeId));
+      } catch (err) {
+        //We don't want to throw API errors, we will show the in the form instead
+        if (err instanceof Error) {
+          return badRequest({
+            updateChallenge: { formError: err.message, fields },
+          });
+        }
+      }
+
+      return json(
+        { updateChallenge: { formSuccess: "Challenge updated" } },
+        201
+      );
+    case "delete-accomplishment":
+      if (typeof accomplishmendId !== "string") {
+        return badRequest({
+          updateAccomplishment: { formError: "There was an error" },
+        });
+      }
+      //Try to delete accomplishment
+      try {
+        await deleteAccomplishment(request, parseInt(accomplishmendId));
+      } catch (err) {
+        //We don't want to throw API errors, we will show the in the form instead
+        if (err instanceof Error) {
+          return badRequest({
+            deleteAccomplishment: { formError: err.message },
+          });
+        }
+      }
+
+      return json(
+        { updateChallenge: { formSuccess: "Accomplishment deleted" } },
+        201
+      );
+    case "delete-challenge":
+      //Try to delete accomplishment
+      try {
+        await deleteChallenge(request, parseInt(params.challengeId));
+      } catch (err) {
+        //We don't want to throw API errors, we will show the in the form instead
+        if (err instanceof Error) {
+          return badRequest({
+            deleteChallenge: { formError: err.message },
+          });
+        }
+      }
+
+      return redirect("/challenges");
     default:
       throw new Error("There was an error during form handling");
   }
 };
+
+function displayChallenge(
+  challenge: Challenge,
+  userId: number,
+  actionData?: ActionData
+) {
+  if (userId === challenge.creatorId) {
+    return (
+      <div>
+        <form method="post">
+          <p>
+            {actionData?.updateChallenge?.formError ||
+              actionData?.updateChallenge?.formSuccess}
+          </p>
+          <input type="hidden" name="method" value="update-challenge" />
+          <div>
+            <label htmlFor="name-input">Name</label>
+            <input
+              type="text"
+              name="name"
+              id="name-input"
+              defaultValue={
+                actionData?.updateChallenge?.fields?.name || challenge.name
+              }
+            />
+            <p>{actionData?.updateChallenge?.fieldsError?.name}</p>
+          </div>
+          <div>
+            <label htmlFor="reward-input">Reward</label>
+            <input
+              type="text"
+              name="reward"
+              id="reward-input"
+              defaultValue={
+                actionData?.updateChallenge?.fields?.reward || challenge.reward
+              }
+            />
+            <p>{actionData?.updateChallenge?.fieldsError?.reward}</p>
+          </div>
+          <div>
+            <label htmlFor="description-input">Description</label>
+            <input
+              type="text"
+              name="description"
+              id="description-input"
+              defaultValue={
+                actionData?.updateChallenge?.fields?.description ||
+                challenge.description
+              }
+            />
+            <p>{actionData?.updateChallenge?.fieldsError?.description}</p>
+          </div>
+          <p>Created : {challenge.createdAt}</p>
+          <button type="submit">Update</button>
+        </form>
+        <form method="post">
+          <input type="hidden" name="method" value="delete-challenge" />
+          <button type="submit">Delete</button>
+        </form>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <h2>{challenge.name}</h2>
+        <p>
+          <b>Reward : {challenge.reward}</b>
+        </p>
+        <p>{challenge.description}</p>
+        <p>Created : {challenge.createdAt}</p>
+      </div>
+    );
+  }
+}
 
 export default function Challenge() {
   const loaderData = useLoaderData<LoaderData>();
@@ -182,19 +374,14 @@ export default function Challenge() {
   return (
     <div>
       <h1>Challenge</h1>
-      <h2>{loaderData.challenge?.name}</h2>
-      <p>
-        <b>Reward : {loaderData.challenge?.reward}</b>
-      </p>
-      <p>{loaderData.challenge?.description}</p>
-      <p>Created : {loaderData.challenge?.createdAt}</p>
+      {displayChallenge(loaderData.challenge, loaderData.userId, actionData)}
       <h1>Submit accomplishment</h1>
       <form method="post">
         <p>
           {actionData?.creacteAccomplishment?.formError ||
             actionData?.creacteAccomplishment?.formSuccess}
         </p>
-        <input type="hidden" name="method" value="create" />
+        <input type="hidden" name="method" value="create-accomplishment" />
         <div>
           <label htmlFor="proof-input">Proof</label>
           <input type="text" name="proof" id="proof-input" />
