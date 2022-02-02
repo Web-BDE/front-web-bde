@@ -2,7 +2,7 @@ import { Link, LoaderFunction, useCatch, useLoaderData } from "remix";
 
 import { Challenge } from "~/models/Challenge";
 
-import { requireUserId } from "~/services/authentication";
+import { requireUserInfo } from "~/services/authentication";
 import { getManyChallenge } from "~/services/challenges";
 
 type LoaderData = {
@@ -10,7 +10,7 @@ type LoaderData = {
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
-  await requireUserId(request, "/challenges");
+  await requireUserInfo(request, "/challenges");
 
   const challenges = await getManyChallenge(request);
 

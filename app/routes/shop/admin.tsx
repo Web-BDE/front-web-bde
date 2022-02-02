@@ -6,7 +6,7 @@ import {
   useSearchParams,
 } from "remix";
 
-import { requireUserId } from "~/services/authentication";
+import { requireUserInfo } from "~/services/authentication";
 import { createGoodies } from "~/services/goodies";
 
 type ActionData = {
@@ -43,7 +43,7 @@ function validateBuyLimit(buyLimit: number) {
 }
 
 export const action: ActionFunction = async ({ request }) => {
-  await requireUserId(request);
+  await requireUserInfo(request, "/shop/admin");
   const form = await request.formData();
   const redirectTo = form.get("redirectTo");
 

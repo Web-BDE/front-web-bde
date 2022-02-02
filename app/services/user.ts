@@ -1,7 +1,7 @@
 import axios from "axios";
 import { User } from "~/models/User";
 import { handleAPIError } from "~/utils/axios";
-import { getToken, getUserId, logout } from "./authentication";
+import { logout, requireUserInfo } from "./authentication";
 
 type RegisterForm = {
   email: string;
@@ -22,15 +22,17 @@ export async function registerUser(registerForm: RegisterForm) {
 }
 
 export async function getSelft(request: Request) {
-  const userId = await getUserId(request);
-  const token = await getToken(request);
+  const userInfo = await requireUserInfo(request, "/");
 
   let user;
   try {
     user = (
-      await axios.get<{ message: string; user: User }>(`/user/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      await axios.get<{ message: string; user: User }>(
+        `/user/${userInfo.userId}`,
+        {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        }
+      )
     ).data.user;
   } catch {
     throw logout(request);
