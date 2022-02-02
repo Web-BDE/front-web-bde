@@ -140,6 +140,11 @@ export default function Challenge() {
               accomplishment.challengeId === loaderData.challengeId
             );
           })
+          .sort((a, b) => {
+            return (
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            );
+          })
           .map((accomplishment) => {
             return (
               <div>
