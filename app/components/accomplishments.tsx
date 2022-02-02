@@ -38,21 +38,32 @@ function displayValidation(
       );
     default:
       return (
-        <form method="post">
-          <p>{formData?.formError || formData?.formSuccess}</p>
-          <input type="hidden" name="method" value="update-accomplishment" />
-          <input
-            type="hidden"
-            name="accomplishmentId"
-            value={accomplishmentId}
-          />
-          <div>
-            <label htmlFor="proof-input">Proof</label>
-            <input type="text" name="proof" id="proof-input" />
-            <p>{formData?.fieldsError?.proof}</p>
-          </div>
-          <button type="submit">Submit</button>
-        </form>
+        <div>
+          <form method="post">
+            <p>{formData?.formError || formData?.formSuccess}</p>
+            <input type="hidden" name="method" value="update-accomplishment" />
+            <input
+              type="hidden"
+              name="accomplishmentId"
+              value={accomplishmentId}
+            />
+            <div>
+              <label htmlFor="proof-input">Proof</label>
+              <input type="text" name="proof" id="proof-input" />
+              <p>{formData?.fieldsError?.proof}</p>
+            </div>
+            <button type="submit">Submit</button>
+          </form>
+          <form method="post">
+            <input type="hidden" name="method" value="delete-accomplishment" />
+            <input
+              type="hidden"
+              name="accomplishmentId"
+              value={accomplishmentId}
+            />
+            <button type="submit">Delete</button>
+          </form>
+        </div>
       );
   }
 }

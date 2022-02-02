@@ -2,6 +2,7 @@ import {
   ActionFunction,
   json,
   LoaderFunction,
+  redirect,
   useActionData,
   useLoaderData,
 } from "remix";
@@ -13,11 +14,16 @@ import { User } from "~/models/User";
 
 import {
   createAccomplishment,
+  deleteAccomplishment,
   getManyAccomplishment,
   updateAccomplishment,
 } from "~/services/accomplishment";
 import { requireUserInfo } from "~/services/authentication";
-import { getChallenge, updateChallenge } from "~/services/challenges";
+import {
+  deleteChallenge,
+  getChallenge,
+  updateChallenge,
+} from "~/services/challenges";
 import { getSelft } from "~/services/user";
 
 type LoaderData = {
@@ -65,6 +71,14 @@ type ActionData = {
       description?: string;
       reward: number;
     };
+  };
+  deleteAccomplishment?: {
+    formError?: string;
+    formSuccess?: string;
+  };
+  deleteChallenge?: {
+    formError?: string;
+    formSuccess?: string;
   };
 };
 
@@ -128,6 +142,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const form = await request.formData();
   const proof = form.get("proof");
   const method = form.get("method");
+  const accomplishmendId = form.get("accomplishmentId");
 
   console.log(method);
 
@@ -161,8 +176,6 @@ export const action: ActionFunction = async ({ request, params }) => {
         201
       );
     case "update-accomplishment":
-      const accomplishmendId = form.get("accomplishmentId");
-
       if (typeof accomplishmendId !== "string") {
         return badRequest({
           updateAccomplishment: { formError: "There was an error" },
@@ -223,7 +236,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         return badRequest({ updateChallenge: { fields, fieldsError } });
       }
 
-      //Try to create challenge
+      //Try to update challenge
       try {
         await updateChallenge(request, fields, parseInt(params.challengeId));
       } catch (err) {
@@ -239,6 +252,42 @@ export const action: ActionFunction = async ({ request, params }) => {
         { updateChallenge: { formSuccess: "Challenge updated" } },
         201
       );
+    case "delete-accomplishment":
+      if (typeof accomplishmendId !== "string") {
+        return badRequest({
+          updateAccomplishment: { formError: "There was an error" },
+        });
+      }
+      //Try to delete accomplishment
+      try {
+        await deleteAccomplishment(request, parseInt(accomplishmendId));
+      } catch (err) {
+        //We don't want to throw API errors, we will show the in the form instead
+        if (err instanceof Error) {
+          return badRequest({
+            deleteAccomplishment: { formError: err.message },
+          });
+        }
+      }
+
+      return json(
+        { updateChallenge: { formSuccess: "Accomplishment deleted" } },
+        201
+      );
+    case "delete-challenge":
+      //Try to delete accomplishment
+      try {
+        await deleteChallenge(request, parseInt(params.challengeId));
+      } catch (err) {
+        //We don't want to throw API errors, we will show the in the form instead
+        if (err instanceof Error) {
+          return badRequest({
+            deleteChallenge: { formError: err.message },
+          });
+        }
+      }
+
+      return redirect("/challenges");
     default:
       throw new Error("There was an error during form handling");
   }
@@ -251,52 +300,58 @@ function displayChallenge(
 ) {
   if (userId === challenge.creatorId) {
     return (
-      <form method="post">
-        <p>
-          {actionData?.updateChallenge?.formError ||
-            actionData?.updateChallenge?.formSuccess}
-        </p>
-        <input type="hidden" name="method" value="update-challenge" />
-        <div>
-          <label htmlFor="name-input">Name</label>
-          <input
-            type="text"
-            name="name"
-            id="name-input"
-            defaultValue={
-              actionData?.updateChallenge?.fields?.name || challenge.name
-            }
-          />
-          <p>{actionData?.updateChallenge?.fieldsError?.name}</p>
-        </div>
-        <div>
-          <label htmlFor="reward-input">Reward</label>
-          <input
-            type="text"
-            name="reward"
-            id="reward-input"
-            defaultValue={
-              actionData?.updateChallenge?.fields?.reward || challenge.reward
-            }
-          />
-          <p>{actionData?.updateChallenge?.fieldsError?.reward}</p>
-        </div>
-        <div>
-          <label htmlFor="description-input">Description</label>
-          <input
-            type="text"
-            name="description"
-            id="description-input"
-            defaultValue={
-              actionData?.updateChallenge?.fields?.description ||
-              challenge.description
-            }
-          />
-          <p>{actionData?.updateChallenge?.fieldsError?.description}</p>
-        </div>
-        <p>Created : {challenge.createdAt}</p>
-        <button type="submit">Update</button>
-      </form>
+      <div>
+        <form method="post">
+          <p>
+            {actionData?.updateChallenge?.formError ||
+              actionData?.updateChallenge?.formSuccess}
+          </p>
+          <input type="hidden" name="method" value="update-challenge" />
+          <div>
+            <label htmlFor="name-input">Name</label>
+            <input
+              type="text"
+              name="name"
+              id="name-input"
+              defaultValue={
+                actionData?.updateChallenge?.fields?.name || challenge.name
+              }
+            />
+            <p>{actionData?.updateChallenge?.fieldsError?.name}</p>
+          </div>
+          <div>
+            <label htmlFor="reward-input">Reward</label>
+            <input
+              type="text"
+              name="reward"
+              id="reward-input"
+              defaultValue={
+                actionData?.updateChallenge?.fields?.reward || challenge.reward
+              }
+            />
+            <p>{actionData?.updateChallenge?.fieldsError?.reward}</p>
+          </div>
+          <div>
+            <label htmlFor="description-input">Description</label>
+            <input
+              type="text"
+              name="description"
+              id="description-input"
+              defaultValue={
+                actionData?.updateChallenge?.fields?.description ||
+                challenge.description
+              }
+            />
+            <p>{actionData?.updateChallenge?.fieldsError?.description}</p>
+          </div>
+          <p>Created : {challenge.createdAt}</p>
+          <button type="submit">Update</button>
+        </form>
+        <form method="post">
+          <input type="hidden" name="method" value="delete-challenge" />
+          <button type="submit">Delete</button>
+        </form>
+      </div>
     );
   } else {
     return (
