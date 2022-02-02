@@ -18,7 +18,11 @@ type AccomplishmentData = {
   challengeId: number;
 };
 
-function displayValidation(state: number | null, formData?: FormData) {
+function displayValidation(
+  state: number | null,
+  formData?: FormData,
+  accomplishmentId?: number
+) {
   switch (state) {
     case 1:
       return (
@@ -36,7 +40,12 @@ function displayValidation(state: number | null, formData?: FormData) {
       return (
         <form method="post">
           <p>{formData?.formError || formData?.formSuccess}</p>
-          <input type="hidden" name="method" value="update" />
+          <input type="hidden" name="method" value="update-accomplishment" />
+          <input
+            type="hidden"
+            name="accomplishmentId"
+            value={accomplishmentId}
+          />
           <div>
             <label htmlFor="proof-input">Proof</label>
             <input type="text" name="proof" id="proof-input" />
@@ -75,7 +84,11 @@ export default function Accomplishments({
             <div key={accomplishment.id}>
               <p>{accomplishment.proof}</p>
               <p>Created : {accomplishment.createdAt}</p>
-              {displayValidation(accomplishment.validation, formData)}
+              {displayValidation(
+                accomplishment.validation,
+                formData,
+                accomplishment.id
+              )}
             </div>
           );
         })}
