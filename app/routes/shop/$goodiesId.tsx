@@ -236,7 +236,9 @@ function displayGoodies(
           </p>
           <input type="hidden" name="method" value="update-goodies" />
           <div>
-            <label htmlFor="name-input">Name</label>
+            <div>
+              <label htmlFor="name-input">Name</label>
+            </div>
             <input
               type="text"
               name="name"
@@ -248,7 +250,9 @@ function displayGoodies(
             <p>{actionData?.updateGoodies?.fieldsError?.name}</p>
           </div>
           <div>
-            <label htmlFor="description-input">Description</label>
+            <div>
+              <label htmlFor="description-input">Description</label>
+            </div>
             <input
               type="text"
               name="description"
@@ -261,7 +265,9 @@ function displayGoodies(
             <p>{actionData?.updateGoodies?.fieldsError?.description}</p>
           </div>
           <div>
-            <label htmlFor="price-input">Price</label>
+            <div>
+              <label htmlFor="price-input">Price</label>
+            </div>
             <input
               type="number"
               name="price"
@@ -274,7 +280,9 @@ function displayGoodies(
             <p>{actionData?.updateGoodies?.fieldsError?.price}</p>
           </div>
           <div>
-            <label htmlFor="buy-limit-input">Buy limit</label>
+            <div>
+              <label htmlFor="buy-limit-input">Buy limit</label>
+            </div>
             <input
               type="number"
               name="buy-limit"
@@ -313,7 +321,7 @@ export default function Goodies() {
   const actionData = useActionData<ActionData>();
 
   return (
-    <div>
+    <div className="container">
       <h2>Goodies</h2>
       {displayGoodies(loaderData.goodies, loaderData.userId, actionData)}
       <form method="post">

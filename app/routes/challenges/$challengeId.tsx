@@ -372,10 +372,10 @@ export default function Challenge() {
   const actionData = useActionData<ActionData>();
 
   return (
-    <div>
+    <div className="container">
       <h2>Challenge</h2>
       {displayChallenge(loaderData.challenge, loaderData.userId, actionData)}
-      <h1>Submit accomplishment</h1>
+      <h2>Submit accomplishment</h2>
       <form method="post">
         <p>
           {actionData?.creacteAccomplishment?.formError ||
