@@ -67,9 +67,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const accomplishments = await loadAccomplishments(request);
 
-  return {
-    accomplishments: accomplishments,
-  };
+  return accomplishments;
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -156,6 +154,8 @@ export default function ChallengesAdmin() {
   const actionData = useActionData<ActionData>();
   const [searchParams] = useSearchParams();
   const loaderData = useLoaderData<LoaderData>();
+
+  console.log(loaderData);
 
   return (
     <div className="container">

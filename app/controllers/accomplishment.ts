@@ -22,7 +22,7 @@ export async function loadAccomplishments(request: Request) {
     }
     throw err;
   }
-  return accomplishments;
+  return { accomplishments };
 }
 
 export async function handleValidateAccomplishment(
