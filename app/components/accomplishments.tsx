@@ -48,7 +48,9 @@ function displayValidation(
               value={accomplishmentId}
             />
             <div>
-              <label htmlFor="proof-input">Proof</label>
+              <div>
+                <label htmlFor="proof-input">Proof</label>
+              </div>
               <input type="text" name="proof" id="proof-input" />
               <p>{formData?.fieldsError?.proof}</p>
             </div>

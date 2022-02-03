@@ -383,7 +383,9 @@ export default function Challenge() {
         </p>
         <input type="hidden" name="method" value="create-accomplishment" />
         <div>
-          <label htmlFor="proof-input">Proof</label>
+          <div>
+            <label htmlFor="proof-input">Proof</label>
+          </div>
           <input type="text" name="proof" id="proof-input" />
           <p>{actionData?.creacteAccomplishment?.fieldsError?.proof}</p>
         </div>
