@@ -1,6 +1,7 @@
 import {
   ActionFunction,
   json,
+  LinksFunction,
   LoaderFunction,
   redirect,
   useActionData,
@@ -18,6 +19,17 @@ import {
 } from "~/services/accomplishment";
 
 import AccomplishmentsAdmin from "~/components/accomplishmentsAdmin";
+
+import contentDisplayStylesheet from "../../styles/contentdisplay.css";
+
+export const links: LinksFunction = () => {
+  return [
+    {
+      rel: "stylesheet",
+      href: contentDisplayStylesheet,
+    },
+  ];
+};
 
 type ActionData = {
   createChallenge?: {
@@ -181,10 +193,10 @@ export default function ChallengesAdmin() {
   const actionData = useActionData<ActionData>();
   const [searchParams] = useSearchParams();
   const loaderData = useLoaderData<LoaderData>();
-  
+
   return (
-    <div>
-      <h1>Challenges Admin</h1>
+    <div className="container">
+      <h2>Challenges Admin</h2>
       <form method="post">
         <p>{actionData?.createChallenge?.formError}</p>
         <input

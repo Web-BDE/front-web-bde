@@ -1,9 +1,26 @@
-import { Link, LoaderFunction, useCatch, useLoaderData } from "remix";
+import {
+  Link,
+  LinksFunction,
+  LoaderFunction,
+  useCatch,
+  useLoaderData,
+} from "remix";
 
 import { Challenge } from "~/models/Challenge";
 
 import { requireUserInfo } from "~/services/authentication";
 import { getManyChallenge } from "~/services/challenges";
+
+import contentDisplayStylesheet from "../../styles/contentdisplay.css";
+
+export const links: LinksFunction = () => {
+  return [
+    {
+      rel: "stylesheet",
+      href: contentDisplayStylesheet,
+    },
+  ];
+};
 
 type LoaderData = {
   challenges?: Challenge[];
@@ -22,16 +39,18 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function Challenges() {
   const data = useLoaderData<LoaderData>();
   return (
-    <div>
-      <h1>Challenges</h1>
-      {data.challenges?.map((challenge) => {
-        return (
-          <Link to={`/challenges/${challenge.id}`} key={challenge.id}>
-            <h2>{challenge.name}</h2>
-            <p>Reward : {challenge.reward}</p>
-          </Link>
-        );
-      })}
+    <div className="container">
+      <h2>Challenges</h2>
+      <div className="table">
+        {data.challenges?.map((challenge) => {
+          return (
+            <Link to={`/challenges/${challenge.id}`} key={challenge.id}>
+              <h3>{challenge.name}</h3>
+              <p>Reward : {challenge.reward}</p>
+            </Link>
+          );
+        })}
+      </div>
     </div>
   );
 }

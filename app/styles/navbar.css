@@ -1,0 +1,23 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: solid black 2px;
+    width: 100%;
+    height: 125px;
+}
+.user {
+    padding-right: 20px;
+    padding-bottom: 5px;
+}
+.links {
+    margin-top: auto; margin-bottom: auto;
+    padding-left: 10px;
+}
+.link {
+    margin-left: 5px; margin-right: 5px;
+    margin-top: 10px; margin-bottom: 10px;
+}
+.user-name {
+    padding: 2px;
+    margin: 0;
+}

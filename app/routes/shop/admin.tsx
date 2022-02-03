@@ -94,8 +94,8 @@ export default function ShopAdmin() {
   const actionData = useActionData<ActionData>();
   const [searchParams] = useSearchParams();
   return (
-    <div>
-      <h1>Shop Admin</h1>
+    <div className="container">
+      <h2>Shop Admin</h2>
       <form method="post">
         <p>{actionData?.formError}</p>
         <input

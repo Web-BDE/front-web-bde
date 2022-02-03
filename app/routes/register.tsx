@@ -119,7 +119,7 @@ export default function Register() {
   const actionData = useActionData<ActionData>();
   const [searchparams] = useSearchParams();
   return (
-    <div>
+    <div className="container">
       <h1>Register</h1>
       <form method="post">
         <p>{actionData?.formError}</p>
@@ -129,7 +129,9 @@ export default function Register() {
           value={searchparams.get("redirectTo") || "/"}
         />
         <div>
-          <label htmlFor="email-input">Email</label>
+          <div>
+            <label htmlFor="email-input">Email</label>
+          </div>
           <input
             type="text"
             name="email"
@@ -139,12 +141,16 @@ export default function Register() {
           <p>{actionData?.fieldsError?.email}</p>
         </div>
         <div>
-          <label htmlFor="password-input">Password</label>
+          <div>
+            <label htmlFor="password-input">Password</label>
+          </div>
           <input type="password" name="password" id="password-input" />
           <p>{actionData?.fieldsError?.password}</p>
         </div>
         <div>
-          <label htmlFor="confirm-password-input">Confirm Password</label>
+          <div>
+            <label htmlFor="confirm-password-input">Confirm Password</label>
+          </div>
           <input
             type="password"
             name="confirm-password"
@@ -153,7 +159,9 @@ export default function Register() {
           <p>{actionData?.fieldsError?.password}</p>
         </div>
         <div>
-          <label htmlFor="pseudo-input">pseudo</label>
+          <div>
+            <label htmlFor="pseudo-input">pseudo</label>
+          </div>
           <input
             type="pseudo"
             name="pseudo"
@@ -163,7 +171,9 @@ export default function Register() {
           <p>{actionData?.fieldsError?.pseudo}</p>
         </div>
         <div>
-          <label htmlFor="name-input">name*</label>
+          <div>
+            <label htmlFor="name-input">name*</label>
+          </div>
           <input
             type="name"
             name="name"
@@ -173,7 +183,9 @@ export default function Register() {
           <p></p>
         </div>
         <div>
-          <label htmlFor="surname-input">surname*</label>
+          <div>
+            <label htmlFor="surname-input">surname*</label>
+          </div>
           <input
             type="surname"
             name="surname"
