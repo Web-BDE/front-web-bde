@@ -34,11 +34,12 @@ export async function updateAccomplishment(
   accomplishmentInfo: AccomplishmentInfo,
   accomplishmentId: number
 ) {
+  console.log(accomplishmentInfo);
   try {
     await axios.patch(
       `/accomplishment/${accomplishmentId}`,
       {
-        info: accomplishmentInfo,
+        proof: accomplishmentInfo.proof,
       },
       { headers: await buildAxiosHeaders(request) }
     );

@@ -1,4 +1,4 @@
-import { json } from "remix";
+import { json, redirect } from "remix";
 import {
   createChallenge,
   deleteChallenge,
@@ -25,14 +25,15 @@ export async function loadChallenges(request: Request) {
     }
     throw err;
   }
-  return challenges;
+  return { challenges };
 }
 
 export async function handleChallengeCreation(
   request: Request,
   name: string,
   description: string,
-  reward: number
+  reward: number,
+  redirectTo: string
 ) {
   //Check fields format errors
   const fields = { name, description, reward: reward };
@@ -59,7 +60,7 @@ export async function handleChallengeCreation(
     }
   }
 
-  return "Challenge Created";
+  return redirect(redirectTo);
 }
 
 export async function handleChallengeUpdate(
@@ -93,6 +94,8 @@ export async function handleChallengeUpdate(
       );
     }
   }
+
+  return json({ updateChallenge: { formSuccess: "Challenge updated" } }, 201);
 }
 
 export async function handleDeleteChallenge(

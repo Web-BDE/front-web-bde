@@ -57,7 +57,7 @@ function displayValidation(
               <input type="text" name="proof" id="proof-input" />
               <span>{formData?.fieldsError?.proof}</span>
             </div>
-            <button type="submit">Submit</button>
+            <button type="submit">Update</button>
           </form>
           {/* Form to delete the accomplishment */}
           <form method="post">

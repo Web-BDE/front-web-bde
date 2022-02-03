@@ -35,9 +35,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   //Require user to be logged in
   await requireUserInfo(request, "/challenges");
 
-  const challenges = await loadChallenges(request);
-
-  return { challenges };
+  return await loadChallenges(request);
 };
 
 export default function Challenges() {

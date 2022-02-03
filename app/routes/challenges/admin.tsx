@@ -65,9 +65,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   //User need to be logged in
   await requireUserInfo(request, `/challenges/admin`);
 
-  const accomplishments = await loadAccomplishments(request);
-
-  return accomplishments;
+  return await loadAccomplishments(request);
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -114,15 +112,11 @@ export const action: ActionFunction = async ({ request }) => {
         );
       }
 
-      await handleValidateAccomplishment(
+      return await handleValidateAccomplishment(
         request,
         validation,
         parseInt(accomplishmentId)
       );
-
-      return json({
-        validateChallenge: { validationSuccess: "Challenge Validated" },
-      });
 
     case "create-challenge":
       //Check for undefined values
@@ -137,17 +131,14 @@ export const action: ActionFunction = async ({ request }) => {
         });
       }
 
-      await handleChallengeCreation(
+      return await handleChallengeCreation(
         request,
         name,
         description,
-        parseInt(reward)
+        parseInt(reward),
+        redirectTo
       );
-
-      return redirect(redirectTo);
   }
-
-  return redirect(redirectTo);
 };
 
 export default function ChallengesAdmin() {

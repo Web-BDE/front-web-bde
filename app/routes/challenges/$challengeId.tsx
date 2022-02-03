@@ -21,16 +21,9 @@ import {
 import { Accomplishment } from "~/models/Accomplishment";
 import { Challenge } from "~/models/Challenge";
 
-import {
-  deleteAccomplishment,
-  getManyAccomplishment,
-} from "~/services/accomplishment";
+import { getManyAccomplishment } from "~/services/accomplishment";
 import { requireUserInfo } from "~/services/authentication";
-import {
-  deleteChallenge,
-  getChallenge,
-  updateChallenge,
-} from "~/services/challenges";
+import { getChallenge } from "~/services/challenges";
 import { APIError } from "~/utils/axios";
 
 import {
@@ -166,15 +159,10 @@ export const action: ActionFunction = async ({ request, params }) => {
         );
       }
 
-      await handleAccomplishmentCreation(
+      return await handleAccomplishmentCreation(
         request,
         proof,
         parseInt(params.challengeId)
-      );
-
-      return json(
-        { createAccomplishment: { formSuccess: "Accomplishment created" } },
-        201
       );
     case "update-accomplishment":
       if (typeof accomplishmentId !== "string") {
@@ -197,15 +185,10 @@ export const action: ActionFunction = async ({ request, params }) => {
         );
       }
 
-      await handleAccomplishmentUpdate(
+      return await handleAccomplishmentUpdate(
         request,
         proof,
         parseInt(accomplishmentId)
-      );
-
-      return json(
-        { updateAccomplishment: { formSuccess: "Accomplishment updated" } },
-        201
       );
     case "update-challenge":
       if (
@@ -222,17 +205,12 @@ export const action: ActionFunction = async ({ request, params }) => {
         );
       }
 
-      await handleChallengeUpdate(
+      return await handleChallengeUpdate(
         request,
         name,
         description,
         parseInt(reward),
         parseInt(params.challengeId)
-      );
-
-      return json(
-        { updateChallenge: { formSuccess: "Challenge updated" } },
-        201
       );
     case "delete-accomplishment":
       if (typeof accomplishmentId !== "string") {
@@ -244,11 +222,9 @@ export const action: ActionFunction = async ({ request, params }) => {
         );
       }
 
-      await handleDeleteAccomplishment(request, parseInt(accomplishmentId));
-
-      return json(
-        { updateChallenge: { formSuccess: "Accomplishment deleted" } },
-        201
+      return await handleDeleteAccomplishment(
+        request,
+        parseInt(accomplishmentId)
       );
     case "delete-challenge":
       await handleDeleteChallenge(request, parseInt(params.challengeId));

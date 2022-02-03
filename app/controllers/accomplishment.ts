@@ -69,7 +69,9 @@ export async function handleValidateAccomplishment(
     throw err;
   }
 
-  return "Accomplishment Validated";
+  return json({
+    validateChallenge: { validationSuccess: "Challenge Validated" },
+  });
 }
 
 export async function handleAccomplishmentCreation(
@@ -97,7 +99,10 @@ export async function handleAccomplishmentCreation(
     throw err;
   }
 
-  return "Accomplishment Created";
+  return json(
+    { createAccomplishment: { formSuccess: "Accomplishment created" } },
+    201
+  );
 }
 
 export async function handleAccomplishmentUpdate(
@@ -124,6 +129,11 @@ export async function handleAccomplishmentUpdate(
     }
     throw err;
   }
+
+  return json(
+    { updateAccomplishment: { formSuccess: "Accomplishment updated" } },
+    201
+  );
 }
 
 export async function handleDeleteAccomplishment(
@@ -144,4 +154,9 @@ export async function handleDeleteAccomplishment(
       );
     }
   }
+
+  return json(
+    { updateChallenge: { formSuccess: "Accomplishment deleted" } },
+    201
+  );
 }
