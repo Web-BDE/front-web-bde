@@ -8,6 +8,8 @@ COPY package*.json ./
 
 RUN npm install
 
+RUN npm run build
+
 # Copying rest of the application to app directory
 COPY . /app
 

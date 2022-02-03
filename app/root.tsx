@@ -89,10 +89,10 @@ export default function App() {
 
 export function CatchBoundary() {
   const caught = useCatch();
-  generateExpectedError(caught);
+  return generateExpectedError(caught);
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
   console.error(error);
-  generateUnexpectedError(error);
+  return generateUnexpectedError(error);
 }

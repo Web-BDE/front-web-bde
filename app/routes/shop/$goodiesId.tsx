@@ -8,6 +8,18 @@ import {
   useCatch,
   useLoaderData,
 } from "remix";
+import {
+  generateExpectedError,
+  generateUnexpectedError,
+} from "~/controllers/error";
+import {
+  handleDeleteGoodies,
+  handleUpdateGoodies,
+} from "~/controllers/goodies";
+import {
+  handleCreatePurchase,
+  handleDeletePurchase,
+} from "~/controllers/purchase";
 import { Goodies } from "~/models/Goodies";
 import { Purchase } from "~/models/Purchase";
 
@@ -62,22 +74,6 @@ type ActionData = {
   };
 };
 
-function badRequest(data: ActionData) {
-  return json(data, 400);
-}
-
-function validatePrice(price: number) {
-  if (price < 0) {
-    return "Price must be positive";
-  }
-}
-
-function validateBuyLimit(buyLimit: number) {
-  if (buyLimit < 1) {
-    return "Buy limit must be more than 1";
-  }
-}
-
 export const loader: LoaderFunction = async ({ request, params }) => {
   if (!params.goodiesId) {
     throw json("Invalid goodies query", 400);
@@ -92,6 +88,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   const goodies = await getGoodies(request, parseInt(params.goodiesId));
 
+  //Load purchase, we don't want to throwAPI errors
   let purchases;
   try {
     purchases = await getManyPurchase(request);
@@ -119,111 +116,73 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   await requireUserInfo(request, `/shop/${params.challengeId}`);
 
+  //Initialize form fields
   const form = await request.formData();
-  const button = form.get("purchase");
   const method = form.get("method");
+  //Button to buy goodies
+  const button = form.get("purchase");
+  //Goodies update fields
+  const name = form.get("name");
+  const description = form.get("description");
+  const price = form.get("price");
+  const buyLimit = form.get("buy-limit");
+  //Refund goodies fields
+  const purchaseId = form.get("purchaseId");
 
   switch (method) {
     case "purchase-goodies":
       if (button !== "purchase") {
-        return badRequest({
-          purchaseGoodies: { formError: "There was an error" },
-        });
+        return json(
+          {
+            purchaseGoodies: { formError: "There was an error" },
+          },
+          400
+        );
       }
 
-      try {
-        await createPurchase(request, {
-          goodiesId: parseInt(params.goodiesId),
-        });
-      } catch (err) {
-        if (err instanceof APIError) {
-          return badRequest({ purchaseGoodies: { formError: err.error.message } });
-        }
-      }
-
-      return json({ purchaseGoodies: { formSuccess: "Goodies bought" } }, 201);
+      return await handleCreatePurchase(request, parseInt(params.goodiesId));
     case "update-goodies":
-      const name = form.get("name");
-      const description = form.get("description");
-      const price = form.get("price");
-      const buyLimit = form.get("buy-limit");
-
       if (
         typeof name !== "string" ||
         typeof description !== "string" ||
         typeof price !== "string" ||
         typeof buyLimit !== "string"
       ) {
-        return badRequest({
-          updateGoodies: { formError: "You must fill all the fields" },
-        });
+        return json(
+          {
+            updateGoodies: { formError: "You must fill all the fields" },
+          },
+          400
+        );
       }
 
-      const fields = {
+      return await handleUpdateGoodies(
+        request,
         name,
         description,
-        price: parseInt(price),
-        buyLimit: parseInt(buyLimit),
-      };
-      const fieldsError = {
-        reward: validatePrice(parseInt(price)),
-        buyLimit: validateBuyLimit(parseInt(buyLimit)),
-      };
-
-      if (Object.values(fieldsError).some(Boolean)) {
-        return badRequest({ updateGoodies: { fields, fieldsError } });
-      }
-
-      try {
-        await updateGoodies(request, fields, parseInt(params.goodiesId));
-      } catch (err) {
-        if (err instanceof APIError) {
-          return badRequest({
-            updateGoodies: { formError: err.error.message, fields },
-          });
-        }
-      }
-
-      return json({ updateGoodies: { formSuccess: "Goodies updated" } }, 200);
+        parseInt(price),
+        parseInt(buyLimit),
+        parseInt(params.goodiesId)
+      );
     case "delete-goodies":
-      //Try to delete accomplishment
-      try {
-        await deleteGoodies(request, parseInt(params.goodiesId));
-      } catch (err) {
-        //We don't want to throw API errors, we will show the in the form instead
-        if (err instanceof APIError) {
-          return badRequest({
-            deleteGoodies: { formError: err.error.message },
-          });
-        }
-      }
-
-      return redirect("/shop");
+      return await handleDeleteGoodies(request, parseInt(params.goodiesId));
     case "refund-goodies":
-      const purchaseId = form.get("purchaseId");
-
       if (typeof purchaseId !== "string") {
-        return badRequest({
-          refundGoodies: { formError: "There was an error" },
-        });
+        return json(
+          {
+            refundGoodies: { formError: "There was an error" },
+          },
+          400
+        );
       }
 
-      try {
-        await deletePurchase(request, parseInt(purchaseId));
-      } catch (err) {
-        if (err instanceof APIError) {
-          return badRequest({
-            refundGoodies: { formError: err.error.message },
-          });
-        }
-      }
-
-      return json({ refundGoodies: { formSuccess: "Goodies refuned" } }, 200);
+      return await handleDeletePurchase(request, parseInt(purchaseId));
     default:
       throw new Error("There was an error during form handling");
   }
 };
 
+// For the creator of the goodies, replace displays by inputs
 function displayGoodies(
   goodies: Goodies,
   userId: number,
@@ -233,11 +192,13 @@ function displayGoodies(
     return (
       <div>
         <form method="post">
-          <p>
+          <span>
             {actionData?.updateGoodies?.formError ||
               actionData?.updateGoodies?.formSuccess}
-          </p>
+          </span>
+          {/* Method input */}
           <input type="hidden" name="method" value="update-goodies" />
+          {/* Name field */}
           <div>
             <div>
               <label htmlFor="name-input">Name</label>
@@ -250,8 +211,9 @@ function displayGoodies(
                 actionData?.updateGoodies?.fields?.name || goodies.name
               }
             />
-            <p>{actionData?.updateGoodies?.fieldsError?.name}</p>
+            <span>{actionData?.updateGoodies?.fieldsError?.name}</span>
           </div>
+          {/* Description field */}
           <div>
             <div>
               <label htmlFor="description-input">Description</label>
@@ -265,8 +227,9 @@ function displayGoodies(
                 goodies.description
               }
             />
-            <p>{actionData?.updateGoodies?.fieldsError?.description}</p>
+            <span>{actionData?.updateGoodies?.fieldsError?.description}</span>
           </div>
+          {/* Price field */}
           <div>
             <div>
               <label htmlFor="price-input">Price</label>
@@ -280,8 +243,9 @@ function displayGoodies(
                 actionData?.updateGoodies?.fields?.price || goodies.price
               }
             />
-            <p>{actionData?.updateGoodies?.fieldsError?.price}</p>
+            <span>{actionData?.updateGoodies?.fieldsError?.price}</span>
           </div>
+          {/* Buy limit field */}
           <div>
             <div>
               <label htmlFor="buy-limit-input">Buy limit</label>
@@ -295,10 +259,11 @@ function displayGoodies(
                 actionData?.updateGoodies?.fields?.buyLimit || goodies.buyLimit
               }
             />
-            <p>{actionData?.updateGoodies?.fieldsError?.buyLimit}</p>
+            <span>{actionData?.updateGoodies?.fieldsError?.buyLimit}</span>
           </div>
           <button type="submit">Update</button>
         </form>
+        {/* Form to delete goodies, only for creator */}
         <form method="post">
           <input type="hidden" name="method" value="delete-goodies" />
           <button type="submit">Delete</button>
@@ -327,11 +292,12 @@ export default function Goodies() {
     <div className="container">
       <h2>Goodies</h2>
       {displayGoodies(loaderData.goodies, loaderData.userId, actionData)}
+      {/* Form to buy goodies */}
       <form method="post">
-        <p>
+        <span>
           {actionData?.purchaseGoodies?.formError ||
             actionData?.purchaseGoodies?.formSuccess}
-        </p>
+        </span>
         <input type="hidden" name="method" value="purchase-goodies" />
         <button type="submit" name="purchase" value="purchase">
           Buy
@@ -343,38 +309,10 @@ export default function Goodies() {
 
 export function CatchBoundary() {
   const caught = useCatch();
-
-  switch (caught.status) {
-    case 401:
-      return (
-        <div className="container">
-          <p>
-            You must be <Link to="/login">logged in</Link> to see this data
-          </p>
-        </div>
-      );
-    case 403:
-      return (
-        <div className="container">
-          <p>Sorry, you don't have the rights to see this</p>
-        </div>
-      );
-    default:
-      <div className="container">
-        <h1>
-          {caught.status} {caught.statusText}
-        </h1>
-        <p>{caught.data}</p>
-      </div>;
-  }
+  return generateExpectedError(caught);
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
   console.error(error);
-  return (
-    <div className="container">
-      <h1>Something went wrong</h1>
-      <p>{error.message}</p>
-    </div>
-  );
+  return generateUnexpectedError(error);
 }

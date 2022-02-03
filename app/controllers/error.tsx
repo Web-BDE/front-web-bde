@@ -1,28 +1,37 @@
 import { Link, ThrownResponse } from "remix";
 
 export function generateExpectedError(caught: ThrownResponse) {
+  console.log(caught);
   switch (caught.status) {
     case 401:
       return (
         <div className="container">
-          <p>
+          <h3>
             You must be <Link to="/login">logged in</Link> to see this data
-          </p>
+          </h3>
         </div>
       );
     case 403:
       return (
         <div className="container">
-          <p>Sorry, you don't have the rights to see this</p>
+          <h3>Sorry, you don't have the rights to see this</h3>
+        </div>
+      );
+    case 404:
+      return (
+        <div className="container">
+          <h3>There is nothing to see here</h3>
         </div>
       );
     default:
-      <div className="container">
-        <h1>
-          {caught.status} {caught.statusText}
-        </h1>
-        <p>{caught.data}</p>
-      </div>;
+      return (
+        <div className="container">
+          <h1>
+            {caught.status} {caught.statusText}
+          </h1>
+          <p>{caught.data}</p>
+        </div>
+      );
   }
 }
 
