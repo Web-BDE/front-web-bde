@@ -1,13 +1,16 @@
 import {
   ActionFunction,
   json,
+  Link,
   redirect,
   useActionData,
+  useCatch,
   useSearchParams,
 } from "remix";
 
 import { requireUserInfo } from "~/services/authentication";
 import { createGoodies } from "~/services/goodies";
+import { APIError } from "~/utils/axios";
 
 type ActionData = {
   formError?: string;
@@ -82,8 +85,8 @@ export const action: ActionFunction = async ({ request }) => {
   try {
     await createGoodies(request, fields);
   } catch (err) {
-    if (err instanceof Error) {
-      return badRequest({ formError: err.message, fields });
+    if (err instanceof APIError) {
+      return badRequest({ formError: err.error.message, fields });
     }
   }
 
@@ -155,6 +158,44 @@ export default function ShopAdmin() {
         </div>
         <button type="submit">Submit</button>
       </form>
+    </div>
+  );
+}
+
+export function CatchBoundary() {
+  const caught = useCatch();
+
+  switch (caught.status) {
+    case 401:
+      return (
+        <div className="container">
+          <p>
+            You must be <Link to="/login">logged in</Link> to see this data
+          </p>
+        </div>
+      );
+    case 403:
+      return (
+        <div className="container">
+          <p>Sorry, you don't have the rights to see this</p>
+        </div>
+      );
+    default:
+      <div className="container">
+        <h1>
+          {caught.status} {caught.statusText}
+        </h1>
+        <p>{caught.data}</p>
+      </div>;
+  }
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  console.error(error);
+  return (
+    <div className="container">
+      <h1>Something went wrong</h1>
+      <p>{error.message}</p>
     </div>
   );
 }

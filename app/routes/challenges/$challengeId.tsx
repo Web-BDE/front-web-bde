@@ -1,9 +1,11 @@
 import {
   ActionFunction,
   json,
+  Link,
   LoaderFunction,
   redirect,
   useActionData,
+  useCatch,
   useLoaderData,
 } from "remix";
 import Accomplishments from "~/components/accomplishments";
@@ -25,6 +27,7 @@ import {
   updateChallenge,
 } from "~/services/challenges";
 import { getSelft } from "~/services/user";
+import { APIError } from "~/utils/axios";
 
 type LoaderData = {
   challenge: Challenge;
@@ -108,11 +111,11 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   try {
     accomplishments = await getManyAccomplishment(request);
   } catch (error) {
-    if (error instanceof Error) {
+    if (error instanceof APIError) {
       return {
         challenge,
         accomplishments: {
-          error,
+          error: error.error.message,
           userId: userInfo.userId,
           challengeId: challenge.id,
         },
@@ -163,9 +166,9 @@ export const action: ActionFunction = async ({ request, params }) => {
           parseInt(params.challengeId)
         );
       } catch (err) {
-        if (err instanceof Error) {
+        if (err instanceof APIError) {
           return badRequest({
-            creacteAccomplishment: { formError: err.message },
+            creacteAccomplishment: { formError: err.error.message },
           });
         }
         throw err;
@@ -197,9 +200,9 @@ export const action: ActionFunction = async ({ request, params }) => {
           parseInt(accomplishmendId)
         );
       } catch (err) {
-        if (err instanceof Error) {
+        if (err instanceof APIError) {
           return badRequest({
-            updateAccomplishment: { formError: err.message },
+            updateAccomplishment: { formError: err.error.message },
           });
         }
         throw err;
@@ -241,9 +244,9 @@ export const action: ActionFunction = async ({ request, params }) => {
         await updateChallenge(request, fields, parseInt(params.challengeId));
       } catch (err) {
         //We don't want to throw API errors, we will show the in the form instead
-        if (err instanceof Error) {
+        if (err instanceof APIError) {
           return badRequest({
-            updateChallenge: { formError: err.message, fields },
+            updateChallenge: { formError: err.error.message, fields },
           });
         }
       }
@@ -263,9 +266,9 @@ export const action: ActionFunction = async ({ request, params }) => {
         await deleteAccomplishment(request, parseInt(accomplishmendId));
       } catch (err) {
         //We don't want to throw API errors, we will show the in the form instead
-        if (err instanceof Error) {
+        if (err instanceof APIError) {
           return badRequest({
-            deleteAccomplishment: { formError: err.message },
+            deleteAccomplishment: { formError: err.error.message },
           });
         }
       }
@@ -280,9 +283,9 @@ export const action: ActionFunction = async ({ request, params }) => {
         await deleteChallenge(request, parseInt(params.challengeId));
       } catch (err) {
         //We don't want to throw API errors, we will show the in the form instead
-        if (err instanceof Error) {
+        if (err instanceof APIError) {
           return badRequest({
-            deleteChallenge: { formError: err.message },
+            deleteChallenge: { formError: err.error.message },
           });
         }
       }
@@ -399,6 +402,44 @@ export default function Challenge() {
       ) : (
         ""
       )}
+    </div>
+  );
+}
+
+export function CatchBoundary() {
+  const caught = useCatch();
+
+  switch (caught.status) {
+    case 401:
+      return (
+        <div className="container">
+          <p>
+            You must be <Link to="/login">logged in</Link> to see this data
+          </p>
+        </div>
+      );
+    case 403:
+      return (
+        <div className="container">
+          <p>Sorry, you don't have the rights to see this</p>
+        </div>
+      );
+    default:
+      <div className="container">
+        <h1>
+          {caught.status} {caught.statusText}
+        </h1>
+        <p>{caught.data}</p>
+      </div>;
+  }
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  console.error(error);
+  return (
+    <div className="container">
+      <h1>Something went wrong</h1>
+      <p>{error.message}</p>
     </div>
   );
 }

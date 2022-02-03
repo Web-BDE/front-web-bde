@@ -1,10 +1,12 @@
 import {
   ActionFunction,
   json,
+  Link,
   LinksFunction,
   LoaderFunction,
   redirect,
   useActionData,
+  useCatch,
   useLoaderData,
   useSearchParams,
 } from "remix";
@@ -21,6 +23,7 @@ import {
 import AccomplishmentsAdmin from "~/components/accomplishmentsAdmin";
 
 import contentDisplayStylesheet from "../../styles/contentdisplay.css";
+import { APIError } from "~/utils/axios";
 
 export const links: LinksFunction = () => {
   return [
@@ -81,9 +84,9 @@ export const loader: LoaderFunction = async ({ request }) => {
     accomplishments = await getManyAccomplishment(request);
   } catch (err) {
     //We don't want to throw API errors, we will show the in the component instead
-    if (err instanceof Error) {
+    if (err instanceof APIError) {
       return {
-        accomplishmenError: err.message,
+        accomplishmenError: err.error.message,
       };
     }
     throw err;
@@ -139,9 +142,9 @@ export const action: ActionFunction = async ({ request }) => {
       );
     } catch (err) {
       //We don't want to throw API errors, we will show the in the form instead
-      if (err instanceof Error) {
+      if (err instanceof APIError) {
         return badRequest({
-          validateChallenge: { validationError: err.message },
+          validateChallenge: { validationError: err.error.message },
         });
       }
       throw err;
@@ -178,9 +181,9 @@ export const action: ActionFunction = async ({ request }) => {
       await createChallenge(request, fields);
     } catch (err) {
       //We don't want to throw API errors, we will show the in the form instead
-      if (err instanceof Error) {
+      if (err instanceof APIError) {
         return badRequest({
-          createChallenge: { formError: err.message, fields },
+          createChallenge: { formError: err.error.message, fields },
         });
       }
     }
@@ -205,7 +208,9 @@ export default function ChallengesAdmin() {
           value={searchParams.get("redirectTo") || "/challenges"}
         />
         <div>
-          <div><label htmlFor="name-input">Name</label></div>
+          <div>
+            <label htmlFor="name-input">Name</label>
+          </div>
           <input
             type="text"
             name="name"
@@ -215,7 +220,9 @@ export default function ChallengesAdmin() {
           <p>{actionData?.createChallenge?.fieldsError?.name}</p>
         </div>
         <div>
-          <div><label htmlFor="description-input">Description</label></div>
+          <div>
+            <label htmlFor="description-input">Description</label>
+          </div>
           <input
             type="text"
             name="description"
@@ -225,7 +232,9 @@ export default function ChallengesAdmin() {
           <p>{actionData?.createChallenge?.fieldsError?.description}</p>
         </div>
         <div>
-          <div><label htmlFor="reward-input">Reward</label></div>
+          <div>
+            <label htmlFor="reward-input">Reward</label>
+          </div>
           <input
             type="number"
             name="reward"
@@ -238,6 +247,43 @@ export default function ChallengesAdmin() {
         <button type="submit">Submit</button>
       </form>
       <AccomplishmentsAdmin loaderData={loaderData} actionData={actionData} />
+    </div>
+  );
+}
+
+export function CatchBoundary() {
+  const caught = useCatch();
+  switch (caught.status) {
+    case 401:
+      return (
+        <div className="container">
+          <p>
+            You must be <Link to="/login">logged in</Link> to see this data
+          </p>
+        </div>
+      );
+    case 403:
+      return (
+        <div className="container">
+          <p>Sorry, you don't have the rights to see this</p>
+        </div>
+      );
+    default:
+      <div className="container">
+        <h1>
+          {caught.status} {caught.statusText}
+        </h1>
+        <p>{caught.data}</p>
+      </div>;
+  }
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  console.error(error);
+  return (
+    <div className="container">
+      <h1>Something went wrong</h1>
+      <p>{error.message}</p>
     </div>
   );
 }

@@ -1,9 +1,11 @@
 import {
   ActionFunction,
   json,
+  Link,
   LoaderFunction,
   redirect,
   useActionData,
+  useCatch,
   useLoaderData,
 } from "remix";
 import { Goodies } from "~/models/Goodies";
@@ -17,6 +19,7 @@ import {
   getManyPurchase,
 } from "~/services/purchase";
 import { getSelft } from "~/services/user";
+import { APIError } from "~/utils/axios";
 
 type LoaderData = {
   goodies: Goodies;
@@ -133,8 +136,8 @@ export const action: ActionFunction = async ({ request, params }) => {
           goodiesId: parseInt(params.goodiesId),
         });
       } catch (err) {
-        if (err instanceof Error) {
-          return badRequest({ purchaseGoodies: { formError: err.message } });
+        if (err instanceof APIError) {
+          return badRequest({ purchaseGoodies: { formError: err.error.message } });
         }
       }
 
@@ -174,9 +177,9 @@ export const action: ActionFunction = async ({ request, params }) => {
       try {
         await updateGoodies(request, fields, parseInt(params.goodiesId));
       } catch (err) {
-        if (err instanceof Error) {
+        if (err instanceof APIError) {
           return badRequest({
-            updateGoodies: { formError: err.message, fields },
+            updateGoodies: { formError: err.error.message, fields },
           });
         }
       }
@@ -188,9 +191,9 @@ export const action: ActionFunction = async ({ request, params }) => {
         await deleteGoodies(request, parseInt(params.goodiesId));
       } catch (err) {
         //We don't want to throw API errors, we will show the in the form instead
-        if (err instanceof Error) {
+        if (err instanceof APIError) {
           return badRequest({
-            deleteGoodies: { formError: err.message },
+            deleteGoodies: { formError: err.error.message },
           });
         }
       }
@@ -208,9 +211,9 @@ export const action: ActionFunction = async ({ request, params }) => {
       try {
         await deletePurchase(request, parseInt(purchaseId));
       } catch (err) {
-        if (err instanceof Error) {
+        if (err instanceof APIError) {
           return badRequest({
-            refundGoodies: { formError: err.message },
+            refundGoodies: { formError: err.error.message },
           });
         }
       }
@@ -334,6 +337,44 @@ export default function Goodies() {
           Buy
         </button>
       </form>
+    </div>
+  );
+}
+
+export function CatchBoundary() {
+  const caught = useCatch();
+
+  switch (caught.status) {
+    case 401:
+      return (
+        <div className="container">
+          <p>
+            You must be <Link to="/login">logged in</Link> to see this data
+          </p>
+        </div>
+      );
+    case 403:
+      return (
+        <div className="container">
+          <p>Sorry, you don't have the rights to see this</p>
+        </div>
+      );
+    default:
+      <div className="container">
+        <h1>
+          {caught.status} {caught.statusText}
+        </h1>
+        <p>{caught.data}</p>
+      </div>;
+  }
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  console.error(error);
+  return (
+    <div className="container">
+      <h1>Something went wrong</h1>
+      <p>{error.message}</p>
     </div>
   );
 }

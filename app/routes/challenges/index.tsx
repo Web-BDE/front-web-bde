@@ -1,4 +1,5 @@
 import {
+  json,
   Link,
   LinksFunction,
   LoaderFunction,
@@ -10,6 +11,7 @@ import { Challenge } from "~/models/Challenge";
 
 import { requireUserInfo } from "~/services/authentication";
 import { getManyChallenge } from "~/services/challenges";
+import { APIError } from "~/utils/axios";
 
 import contentDisplayStylesheet from "../../styles/contentdisplay.css";
 
@@ -31,7 +33,15 @@ export const loader: LoaderFunction = async ({ request }) => {
   await requireUserInfo(request, "/challenges");
 
   //Get challenges, if it throw an error we will cath it with Boundaries below
-  const challenges = await getManyChallenge(request);
+  let challenges;
+  try {
+    challenges = await getManyChallenge(request);
+  } catch (err) {
+    if (err instanceof APIError) {
+      throw json(err.error.message, err.code);
+    }
+    throw err;
+  }
 
   return { challenges };
 };
@@ -61,7 +71,7 @@ export function CatchBoundary() {
   switch (caught.status) {
     case 401:
       return (
-        <div>
+        <div className="container">
           <p>
             You must be <Link to="/login">logged in</Link> to see this data
           </p>
@@ -69,12 +79,12 @@ export function CatchBoundary() {
       );
     case 403:
       return (
-        <div>
+        <div className="container">
           <p>Sorry, you don't have the rights to see this</p>
         </div>
       );
     default:
-      <div>
+      <div className="container">
         <h1>
           {caught.status} {caught.statusText}
         </h1>
@@ -86,7 +96,7 @@ export function CatchBoundary() {
 export function ErrorBoundary({ error }: { error: Error }) {
   console.error(error);
   return (
-    <div>
+    <div className="container">
       <h1>Something went wrong</h1>
       <p>{error.message}</p>
     </div>

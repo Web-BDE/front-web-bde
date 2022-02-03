@@ -1,6 +1,7 @@
 import {
   ActionFunction,
   json,
+  Link,
   LinksFunction,
   useActionData,
   useCatch,
@@ -8,6 +9,7 @@ import {
 } from "remix";
 
 import { loginUser } from "~/services/authentication";
+import { APIError } from "~/utils/axios";
 
 type ActionData = {
   formError?: string;
@@ -68,8 +70,8 @@ export const action: ActionFunction = async ({ request }) => {
   try {
     loginRedirection = await loginUser(fields, redirectTo);
   } catch (err) {
-    if (err instanceof Error) {
-      return badRequest({ formError: err.message, fields });
+    if (err instanceof APIError) {
+      return badRequest({ formError: err.error.message, fields });
     }
     throw err;
   }
@@ -115,25 +117,40 @@ export default function Login() {
   );
 }
 
-export function ErrorBoundary({ error }: { error: Error }) {
-  console.error(error);
-  return (
-    <div>
-      <h1>Something went wrong</h1>
-      <p>{error.message}</p>
-    </div>
-  );
-}
-
 export function CatchBoundary() {
   const caught = useCatch();
 
+  switch (caught.status) {
+    case 401:
+      return (
+        <div className="container">
+          <p>
+            You must be <Link to="/login">logged in</Link> to see this data
+          </p>
+        </div>
+      );
+    case 403:
+      return (
+        <div className="container">
+          <p>Sorry, you don't have the rights to see this</p>
+        </div>
+      );
+    default:
+      <div className="container">
+        <h1>
+          {caught.status} {caught.statusText}
+        </h1>
+        <p>{caught.data}</p>
+      </div>;
+  }
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  console.error(error);
   return (
-    <div>
-      <h1>
-        {caught.status} {caught.statusText}
-      </h1>
-      <p>{caught.data}</p>
+    <div className="container">
+      <h1>Something went wrong</h1>
+      <p>{error.message}</p>
     </div>
   );
 }
