@@ -1,16 +1,17 @@
 import {
   ActionFunction,
   json,
-  Link,
-  redirect,
   useActionData,
   useCatch,
   useSearchParams,
 } from "remix";
+import {
+  generateExpectedError,
+  generateUnexpectedError,
+} from "~/controllers/error";
+import { handleCreateGoodies } from "~/controllers/goodies";
 
 import { requireUserInfo } from "~/services/authentication";
-import { createGoodies } from "~/services/goodies";
-import { APIError } from "~/utils/axios";
 
 type ActionData = {
   formError?: string;
@@ -29,68 +30,40 @@ type ActionData = {
   validationError?: string;
 };
 
-function badRequest(data: ActionData) {
-  return json(data, 400);
-}
-
-function validatePrice(price: number) {
-  if (price < 0) {
-    return "Price must be positive";
-  }
-}
-
-function validateBuyLimit(buyLimit: number) {
-  if (buyLimit < 1) {
-    return "Buy limit must be more than 1";
-  }
-}
-
 export const action: ActionFunction = async ({ request }) => {
+  //Initialise fiels
   await requireUserInfo(request, "/shop/admin");
   const form = await request.formData();
   const redirectTo = form.get("redirectTo");
-
-  if (typeof redirectTo !== "string") {
-    return badRequest({ formError: "Invalid form data" });
-  }
+  //Goodies fields
   const name = form.get("name");
   const description = form.get("description");
   const price = form.get("price");
   const buyLimit = form.get("buy-limit");
 
+  //Invalid rediractTo format, should never happen
+  if (typeof redirectTo !== "string") {
+    return json({ formError: "Invalid form data" }, 400);
+  }
+
+  //Check for field types
   if (
     typeof name !== "string" ||
-    typeof description !== "string" ||
+    (typeof description !== "string" && typeof description !== "undefined") ||
     typeof price !== "string" ||
     typeof buyLimit !== "string"
   ) {
-    return badRequest({ formError: "You must fill all the fields" });
+    return json({ formError: "You must fill all the fields" }, 400);
   }
 
-  const fields = {
+  return await handleCreateGoodies(
+    request,
     name,
     description,
-    price: parseInt(price),
-    buyLimit: parseInt(buyLimit),
-  };
-  const fieldsError = {
-    reward: validatePrice(parseInt(price)),
-    buyLimit: validateBuyLimit(parseInt(buyLimit)),
-  };
-
-  if (Object.values(fieldsError).some(Boolean)) {
-    return badRequest({ fields, fieldsError });
-  }
-
-  try {
-    await createGoodies(request, fields);
-  } catch (err) {
-    if (err instanceof APIError) {
-      return badRequest({ formError: err.error.message, fields });
-    }
-  }
-
-  return redirect(redirectTo);
+    parseInt(price),
+    parseInt(buyLimit),
+    redirectTo
+  );
 };
 
 export default function ShopAdmin() {
@@ -100,12 +73,14 @@ export default function ShopAdmin() {
     <div className="container">
       <h2>Shop Admin</h2>
       <form method="post">
-        <p>{actionData?.formError}</p>
+        <span>{actionData?.formError}</span>
+        {/* Redirect hidden input */}
         <input
           type="hidden"
           name="redirectTo"
           value={searchParams.get("redirectTo") || "/shop"}
         />
+        {/* Name field */}
         <div>
           <div>
             <label htmlFor="name-input">Name</label>
@@ -116,8 +91,9 @@ export default function ShopAdmin() {
             id="name-input"
             defaultValue={actionData?.fields?.name}
           />
-          <p>{actionData?.fieldsError?.name}</p>
+          <span>{actionData?.fieldsError?.name}</span>
         </div>
+        {/* Description fiels */}
         <div>
           <div>
             <label htmlFor="description-input">Description</label>
@@ -128,8 +104,9 @@ export default function ShopAdmin() {
             id="description-input"
             defaultValue={actionData?.fields?.description}
           />
-          <p>{actionData?.fieldsError?.description}</p>
+          <span>{actionData?.fieldsError?.description}</span>
         </div>
+        {/* Price field */}
         <div>
           <div>
             <label htmlFor="price-input">Price</label>
@@ -141,8 +118,9 @@ export default function ShopAdmin() {
             min="0"
             defaultValue={actionData?.fields?.price || 0}
           />
-          <p>{actionData?.fieldsError?.price}</p>
+          <span>{actionData?.fieldsError?.price}</span>
         </div>
+        {/* Buy limit field */}
         <div>
           <div>
             <label htmlFor="buy-limit-input">Buy limit</label>
@@ -154,7 +132,7 @@ export default function ShopAdmin() {
             min="0"
             defaultValue={actionData?.fields?.buyLimit || 1}
           />
-          <p>{actionData?.fieldsError?.buyLimit}</p>
+          <span>{actionData?.fieldsError?.buyLimit}</span>
         </div>
         <button type="submit">Submit</button>
       </form>
@@ -164,38 +142,10 @@ export default function ShopAdmin() {
 
 export function CatchBoundary() {
   const caught = useCatch();
-
-  switch (caught.status) {
-    case 401:
-      return (
-        <div className="container">
-          <p>
-            You must be <Link to="/login">logged in</Link> to see this data
-          </p>
-        </div>
-      );
-    case 403:
-      return (
-        <div className="container">
-          <p>Sorry, you don't have the rights to see this</p>
-        </div>
-      );
-    default:
-      <div className="container">
-        <h1>
-          {caught.status} {caught.statusText}
-        </h1>
-        <p>{caught.data}</p>
-      </div>;
-  }
+  return generateExpectedError(caught);
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
   console.error(error);
-  return (
-    <div className="container">
-      <h1>Something went wrong</h1>
-      <p>{error.message}</p>
-    </div>
-  );
+  return generateUnexpectedError(error);
 }
