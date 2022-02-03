@@ -22,13 +22,15 @@ export default function AccomplishmentsAdmin({
   return (
     <div>
       <h2>Accomplishments to validate</h2>
-      <p>{loaderData.accomplishmentError}</p>
-      <p>{actionData?.validateChallenge?.validationError}</p>
+      <span>{loaderData.accomplishmentError}</span>
+      <span>{actionData?.validateChallenge?.validationError}</span>
       <div className="table">
+        {/* Load all accomplishment in pending state */}
         {loaderData.accomplishments
           ?.filter((accomplishment) => {
             return !accomplishment.validation;
           })
+          //Sort by oldest
           .sort((a, b) => {
             return (
               new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
@@ -40,11 +42,19 @@ export default function AccomplishmentsAdmin({
                 <p>{accomplishment.proof}</p>
                 <p>Created : {accomplishment.createdAt}</p>
                 <form method="post">
+                  {/* Method hidden input */}
+                  <input
+                    type="hidden"
+                    name="method"
+                    value="validate-accomplishment"
+                  />
+                  {/* Redirection input */}
                   <input
                     type="hidden"
                     name="redirectTo"
                     value={"/challenges/admin"}
                   />
+                  {/* Hiddent input to pass accomplishment id to form */}
                   <input
                     type="hidden"
                     name="accomplishmentId"

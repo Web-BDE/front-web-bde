@@ -40,22 +40,26 @@ function displayValidation(
       return (
         <div>
           <form method="post">
-            <p>{formData?.formError || formData?.formSuccess}</p>
+            <span>{formData?.formError || formData?.formSuccess}</span>
+            {/* Method hidden input */}
             <input type="hidden" name="method" value="update-accomplishment" />
+            {/* Hiddent method to pass the accomplishment id to the form */}
             <input
               type="hidden"
               name="accomplishmentId"
               value={accomplishmentId}
             />
+            {/* Proof input */}
             <div>
               <div>
                 <label htmlFor="proof-input">Proof</label>
               </div>
               <input type="text" name="proof" id="proof-input" />
-              <p>{formData?.fieldsError?.proof}</p>
+              <span>{formData?.fieldsError?.proof}</span>
             </div>
             <button type="submit">Submit</button>
           </form>
+          {/* Form to delete the accomplishment */}
           <form method="post">
             <input type="hidden" name="method" value="delete-accomplishment" />
             <input
@@ -80,6 +84,7 @@ export default function Accomplishments({
   return (
     <div>
       <h2>Your accomplishments</h2>
+      {/* Display the user's accomplishments */}
       {accomplishments.accomplishments
         ?.filter((accomplishment) => {
           return (
@@ -87,6 +92,7 @@ export default function Accomplishments({
             accomplishment.challengeId === accomplishments.challengeId
           );
         })
+        // sort by most recent
         .sort((a, b) => {
           return (
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
