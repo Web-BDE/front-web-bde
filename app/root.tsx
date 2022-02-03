@@ -20,6 +20,10 @@ import globalStylesUrl from "./styles/global.css";
 import globalMediumStylesUrl from "./styles/global-medium.css";
 import globalLargeStylesUrl from "./styles/global-large.css";
 import navbarstylesheet from "./styles/navbar.css";
+import {
+  generateExpectedError,
+  generateUnexpectedError,
+} from "./controllers/error";
 
 export const meta: MetaFunction = () => {
   return { title: "New Remix App" };
@@ -85,38 +89,10 @@ export default function App() {
 
 export function CatchBoundary() {
   const caught = useCatch();
-
-  switch (caught.status) {
-    case 401:
-      return (
-        <div className="container">
-          <p>
-            You must be <Link to="/login">logged in</Link> to see this data
-          </p>
-        </div>
-      );
-    case 403:
-      return (
-        <div className="container">
-          <p>Sorry, you don't have the rights to see this</p>
-        </div>
-      );
-    default:
-      <div className="container">
-        <h1>
-          {caught.status} {caught.statusText}
-        </h1>
-        <p>{caught.data}</p>
-      </div>;
-  }
+  return generateExpectedError(caught);
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
   console.error(error);
-  return (
-    <div className="container">
-      <h1>Something went wrong</h1>
-      <p>{error.message}</p>
-    </div>
-  );
+  return generateUnexpectedError(error);
 }

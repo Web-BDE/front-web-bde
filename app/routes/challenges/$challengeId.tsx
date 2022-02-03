@@ -1,7 +1,6 @@
 import {
   ActionFunction,
   json,
-  Link,
   LoaderFunction,
   redirect,
   useActionData,
@@ -9,25 +8,28 @@ import {
   useLoaderData,
 } from "remix";
 import Accomplishments from "~/components/accomplishments";
+import {
+  handleAccomplishmentCreation,
+  handleAccomplishmentUpdate,
+  handleDeleteAccomplishment,
+} from "~/controllers/accomplishment";
+import {
+  handleChallengeUpdate,
+  handleDeleteChallenge,
+} from "~/controllers/challenge";
 
 import { Accomplishment } from "~/models/Accomplishment";
 import { Challenge } from "~/models/Challenge";
-import { User } from "~/models/User";
+
+import { getManyAccomplishment } from "~/services/accomplishment";
+import { requireUserInfo } from "~/services/authentication";
+import { getChallenge } from "~/services/challenges";
+import { APIError } from "~/utils/axios";
 
 import {
-  createAccomplishment,
-  deleteAccomplishment,
-  getManyAccomplishment,
-  updateAccomplishment,
-} from "~/services/accomplishment";
-import { requireUserInfo } from "~/services/authentication";
-import {
-  deleteChallenge,
-  getChallenge,
-  updateChallenge,
-} from "~/services/challenges";
-import { getSelft } from "~/services/user";
-import { APIError } from "~/utils/axios";
+  generateUnexpectedError,
+  generateExpectedError,
+} from "../../controllers/error";
 
 type LoaderData = {
   challenge: Challenge;
@@ -85,21 +87,12 @@ type ActionData = {
   };
 };
 
-function badRequest(data: ActionData) {
-  return json(data, 400);
-}
-
-function validateReward(reward: number) {
-  if (reward < 0) {
-    return "Reward must be positive";
-  }
-}
-
 export const loader: LoaderFunction = async ({ request, params }) => {
   if (!params.challengeId) {
     throw json("Invalid challenge query", 400);
   }
 
+  //Need to provide userId to filter in jsx
   const userInfo = await requireUserInfo(
     request,
     `/challenge/${params.challengeId}`
@@ -107,6 +100,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   const challenge = await getChallenge(request, parseInt(params.challengeId));
 
+  //Get Accomplishments, we don't throw API Errors because we will display them
   let accomplishments;
   try {
     accomplishments = await getManyAccomplishment(request);
@@ -142,153 +136,98 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   await requireUserInfo(request, `/challenge/${params.challengeId}`);
 
+  //Decalare all fields
   const form = await request.formData();
-  const proof = form.get("proof");
   const method = form.get("method");
-  const accomplishmendId = form.get("accomplishmentId");
-
-  console.log(method);
+  //Accomplishment creation
+  const proof = form.get("proof");
+  //Accomplishment update
+  const accomplishmentId = form.get("accomplishmentId");
+  //Challenge update
+  const name = form.get("name");
+  const description = form.get("description");
+  const reward = form.get("reward");
 
   switch (method) {
     case "create-accomplishment":
       if (typeof proof !== "string") {
-        return badRequest({
-          creacteAccomplishment: { formError: "You must fill all fields" },
-        });
-      }
-
-      try {
-        await createAccomplishment(
-          request,
+        return json(
           {
-            proof,
+            creacteAccomplishment: { formError: "You must fill all fields" },
           },
-          parseInt(params.challengeId)
+          400
         );
-      } catch (err) {
-        if (err instanceof APIError) {
-          return badRequest({
-            creacteAccomplishment: { formError: err.error.message },
-          });
-        }
-        throw err;
       }
 
-      return json(
-        { createAccomplishment: { formSuccess: "Accomplishment created" } },
-        201
+      return await handleAccomplishmentCreation(
+        request,
+        proof,
+        parseInt(params.challengeId)
       );
     case "update-accomplishment":
-      if (typeof accomplishmendId !== "string") {
-        return badRequest({
-          updateAccomplishment: { formError: "There was an error" },
-        });
+      if (typeof accomplishmentId !== "string") {
+        return json(
+          {
+            updateAccomplishment: {
+              formError: "There was an error, Please try again",
+            },
+          },
+          400
+        );
       }
 
       if (typeof proof !== "string") {
-        return badRequest({
-          updateAccomplishment: { formError: "You must fill all fields" },
-        });
-      }
-
-      try {
-        await updateAccomplishment(
-          request,
+        return json(
           {
-            proof,
+            updateAccomplishment: { formError: "You must fill all fields" },
           },
-          parseInt(accomplishmendId)
+          400
         );
-      } catch (err) {
-        if (err instanceof APIError) {
-          return badRequest({
-            updateAccomplishment: { formError: err.error.message },
-          });
-        }
-        throw err;
       }
 
-      return json(
-        { updateAccomplishment: { formSuccess: "Accomplishment updated" } },
-        201
+      return await handleAccomplishmentUpdate(
+        request,
+        proof,
+        parseInt(accomplishmentId)
       );
     case "update-challenge":
-      const name = form.get("name");
-      const description = form.get("description");
-      const reward = form.get("reward");
-
-      //Check for undefined values
       if (
         typeof name !== "string" ||
         (typeof description !== "string" &&
           typeof description !== "undefined") ||
         typeof reward !== "string"
       ) {
-        return badRequest({
-          updateChallenge: { formError: "You must fill all the fields" },
-        });
+        return json(
+          {
+            updateChallenge: { formError: "You must fill all the fields" },
+          },
+          400
+        );
       }
 
-      //Check fields format errors
-      const fields = { name, description, reward: parseInt(reward) };
-      const fieldsError = {
-        reward: validateReward(parseInt(reward)),
-      };
-
-      if (Object.values(fieldsError).some(Boolean)) {
-        return badRequest({ updateChallenge: { fields, fieldsError } });
-      }
-
-      //Try to update challenge
-      try {
-        await updateChallenge(request, fields, parseInt(params.challengeId));
-      } catch (err) {
-        //We don't want to throw API errors, we will show the in the form instead
-        if (err instanceof APIError) {
-          return badRequest({
-            updateChallenge: { formError: err.error.message, fields },
-          });
-        }
-      }
-
-      return json(
-        { updateChallenge: { formSuccess: "Challenge updated" } },
-        201
+      return await handleChallengeUpdate(
+        request,
+        name,
+        description,
+        parseInt(reward),
+        parseInt(params.challengeId)
       );
     case "delete-accomplishment":
-      if (typeof accomplishmendId !== "string") {
-        return badRequest({
-          updateAccomplishment: { formError: "There was an error" },
-        });
-      }
-      //Try to delete accomplishment
-      try {
-        await deleteAccomplishment(request, parseInt(accomplishmendId));
-      } catch (err) {
-        //We don't want to throw API errors, we will show the in the form instead
-        if (err instanceof APIError) {
-          return badRequest({
-            deleteAccomplishment: { formError: err.error.message },
-          });
-        }
+      if (typeof accomplishmentId !== "string") {
+        return json(
+          {
+            updateAccomplishment: { formError: "There was an error" },
+          },
+          400
+        );
       }
 
-      return json(
-        { updateChallenge: { formSuccess: "Accomplishment deleted" } },
-        201
+      return await handleDeleteAccomplishment(
+        request,
+        parseInt(accomplishmentId)
       );
     case "delete-challenge":
-      //Try to delete accomplishment
-      try {
-        await deleteChallenge(request, parseInt(params.challengeId));
-      } catch (err) {
-        //We don't want to throw API errors, we will show the in the form instead
-        if (err instanceof APIError) {
-          return badRequest({
-            deleteChallenge: { formError: err.error.message },
-          });
-        }
-      }
+      await handleDeleteChallenge(request, parseInt(params.challengeId));
 
       return redirect("/challenges");
     default:
@@ -296,6 +235,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 };
 
+//If challenge creator is self transform normal inputs into a form to update it
 function displayChallenge(
   challenge: Challenge,
   userId: number,
@@ -305,11 +245,13 @@ function displayChallenge(
     return (
       <div>
         <form method="post">
-          <p>
+          <span>
             {actionData?.updateChallenge?.formError ||
               actionData?.updateChallenge?.formSuccess}
-          </p>
+          </span>
+          {/* Hiddent input to handle form method used */}
           <input type="hidden" name="method" value="update-challenge" />
+          {/* Name input */}
           <div>
             <label htmlFor="name-input">Name</label>
             <input
@@ -320,8 +262,9 @@ function displayChallenge(
                 actionData?.updateChallenge?.fields?.name || challenge.name
               }
             />
-            <p>{actionData?.updateChallenge?.fieldsError?.name}</p>
+            <span>{actionData?.updateChallenge?.fieldsError?.name}</span>
           </div>
+          {/* Reward input */}
           <div>
             <label htmlFor="reward-input">Reward</label>
             <input
@@ -332,8 +275,9 @@ function displayChallenge(
                 actionData?.updateChallenge?.fields?.reward || challenge.reward
               }
             />
-            <p>{actionData?.updateChallenge?.fieldsError?.reward}</p>
+            <span>{actionData?.updateChallenge?.fieldsError?.reward}</span>
           </div>
+          {/* Description input */}
           <div>
             <label htmlFor="description-input">Description</label>
             <input
@@ -345,7 +289,7 @@ function displayChallenge(
                 challenge.description
               }
             />
-            <p>{actionData?.updateChallenge?.fieldsError?.description}</p>
+            <span>{actionData?.updateChallenge?.fieldsError?.description}</span>
           </div>
           <p>Created : {challenge.createdAt}</p>
           <button type="submit">Update</button>
@@ -380,20 +324,23 @@ export default function Challenge() {
       {displayChallenge(loaderData.challenge, loaderData.userId, actionData)}
       <h2>Submit accomplishment</h2>
       <form method="post">
-        <p>
+        <span>
           {actionData?.creacteAccomplishment?.formError ||
             actionData?.creacteAccomplishment?.formSuccess}
-        </p>
+        </span>
+        {/* Hiddend input for method */}
         <input type="hidden" name="method" value="create-accomplishment" />
+        {/* Proof input */}
         <div>
           <div>
             <label htmlFor="proof-input">Proof</label>
           </div>
           <input type="text" name="proof" id="proof-input" />
-          <p>{actionData?.creacteAccomplishment?.fieldsError?.proof}</p>
+          <span>{actionData?.creacteAccomplishment?.fieldsError?.proof}</span>
         </div>
         <button type="submit">Submit</button>
       </form>
+      {/* Display all user's accomplishment for this challenge */}
       {loaderData.accomplishments ? (
         <Accomplishments
           accomplishments={loaderData.accomplishments}
@@ -408,38 +355,10 @@ export default function Challenge() {
 
 export function CatchBoundary() {
   const caught = useCatch();
-
-  switch (caught.status) {
-    case 401:
-      return (
-        <div className="container">
-          <p>
-            You must be <Link to="/login">logged in</Link> to see this data
-          </p>
-        </div>
-      );
-    case 403:
-      return (
-        <div className="container">
-          <p>Sorry, you don't have the rights to see this</p>
-        </div>
-      );
-    default:
-      <div className="container">
-        <h1>
-          {caught.status} {caught.statusText}
-        </h1>
-        <p>{caught.data}</p>
-      </div>;
-  }
+  return generateExpectedError(caught);
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
   console.error(error);
-  return (
-    <div className="container">
-      <h1>Something went wrong</h1>
-      <p>{error.message}</p>
-    </div>
-  );
+  return generateUnexpectedError(error);
 }

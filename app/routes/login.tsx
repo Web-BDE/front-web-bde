@@ -2,11 +2,14 @@ import {
   ActionFunction,
   json,
   Link,
-  LinksFunction,
   useActionData,
   useCatch,
   useSearchParams,
 } from "remix";
+import {
+  generateExpectedError,
+  generateUnexpectedError,
+} from "~/controllers/error";
 
 import { loginUser } from "~/services/authentication";
 import { APIError } from "~/utils/axios";
@@ -21,10 +24,6 @@ type ActionData = {
     email: string;
   };
 };
-
-function badRequest(data: ActionData) {
-  return json(data, 400);
-}
 
 function validateEmail(email: string) {
   if (
@@ -53,7 +52,7 @@ export const action: ActionFunction = async ({ request }) => {
     typeof password !== "string" ||
     typeof redirectTo !== "string"
   ) {
-    return badRequest({ formError: "You must fill all the form" });
+    return json({ formError: "You must fill all the form" }, 400);
   }
 
   const fields = { email, password };
@@ -63,7 +62,7 @@ export const action: ActionFunction = async ({ request }) => {
   };
 
   if (Object.values(fieldsError).some(Boolean)) {
-    return badRequest({ fields, fieldsError });
+    return json({ fields, fieldsError }, 400);
   }
 
   let loginRedirection;
@@ -71,7 +70,7 @@ export const action: ActionFunction = async ({ request }) => {
     loginRedirection = await loginUser(fields, redirectTo);
   } catch (err) {
     if (err instanceof APIError) {
-      return badRequest({ formError: err.error.message, fields });
+      return json({ formError: err.error.message, fields }, err.code);
     }
     throw err;
   }
@@ -86,7 +85,7 @@ export default function Login() {
     <div className="container">
       <h2>Login</h2>
       <form method="post" className="login-form">
-        <p>{actionData?.formError}</p>
+        <span>{actionData?.formError}</span>
         <input
           type="hidden"
           name="redirectTo"
@@ -102,14 +101,14 @@ export default function Login() {
             id="email-input"
             defaultValue={actionData?.fields?.email}
           />
-          <p>{actionData?.fieldsError?.email}</p>
+          <span>{actionData?.fieldsError?.email}</span>
         </div>
         <div>
           <div>
             <label htmlFor="password-input">Password</label>
           </div>
           <input type="password" name="password" id="password-input" />
-          <p>{actionData?.fieldsError?.password}</p>
+          <span>{actionData?.fieldsError?.password}</span>
         </div>
         <button type="submit">Submit</button>
       </form>
@@ -119,38 +118,10 @@ export default function Login() {
 
 export function CatchBoundary() {
   const caught = useCatch();
-
-  switch (caught.status) {
-    case 401:
-      return (
-        <div className="container">
-          <p>
-            You must be <Link to="/login">logged in</Link> to see this data
-          </p>
-        </div>
-      );
-    case 403:
-      return (
-        <div className="container">
-          <p>Sorry, you don't have the rights to see this</p>
-        </div>
-      );
-    default:
-      <div className="container">
-        <h1>
-          {caught.status} {caught.statusText}
-        </h1>
-        <p>{caught.data}</p>
-      </div>;
-  }
+  return generateExpectedError(caught);
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
   console.error(error);
-  return (
-    <div className="container">
-      <h1>Something went wrong</h1>
-      <p>{error.message}</p>
-    </div>
-  );
+  return generateUnexpectedError(error);
 }
