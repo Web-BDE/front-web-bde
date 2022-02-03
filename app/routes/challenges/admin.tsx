@@ -205,7 +205,7 @@ export default function ChallengesAdmin() {
           value={searchParams.get("redirectTo") || "/challenges"}
         />
         <div>
-          <label htmlFor="name-input">Name</label>
+          <div><label htmlFor="name-input">Name</label></div>
           <input
             type="text"
             name="name"
@@ -215,7 +215,7 @@ export default function ChallengesAdmin() {
           <p>{actionData?.createChallenge?.fieldsError?.name}</p>
         </div>
         <div>
-          <label htmlFor="description-input">Description</label>
+          <div><label htmlFor="description-input">Description</label></div>
           <input
             type="text"
             name="description"
@@ -225,7 +225,7 @@ export default function ChallengesAdmin() {
           <p>{actionData?.createChallenge?.fieldsError?.description}</p>
         </div>
         <div>
-          <label htmlFor="reward-input">Reward</label>
+          <div><label htmlFor="reward-input">Reward</label></div>
           <input
             type="number"
             name="reward"

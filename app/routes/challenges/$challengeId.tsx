@@ -373,7 +373,7 @@ export default function Challenge() {
 
   return (
     <div>
-      <h1>Challenge</h1>
+      <h2>Challenge</h2>
       {displayChallenge(loaderData.challenge, loaderData.userId, actionData)}
       <h1>Submit accomplishment</h1>
       <form method="post">

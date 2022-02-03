@@ -314,7 +314,7 @@ export default function Goodies() {
 
   return (
     <div>
-      <h1>Goodies</h1>
+      <h2>Goodies</h2>
       {displayGoodies(loaderData.goodies, loaderData.userId, actionData)}
       <form method="post">
         <p>
