@@ -1,4 +1,4 @@
-import { Link, LinksFunction, LoaderFunction } from "remix";
+import { Link, LoaderFunction } from "remix";
 import { User } from "~/models/User";
 
 export const loader: LoaderFunction = () => {

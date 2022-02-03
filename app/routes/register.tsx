@@ -7,6 +7,10 @@ import {
   useCatch,
   useSearchParams,
 } from "remix";
+import {
+  generateExpectedError,
+  generateUnexpectedError,
+} from "~/controllers/error";
 
 import { loginUser } from "~/services/authentication";
 import { registerUser } from "~/services/user";
@@ -124,7 +128,7 @@ export default function Register() {
     <div className="container">
       <h2>Register</h2>
       <form method="post">
-        <p>{actionData?.formError}</p>
+        <span>{actionData?.formError}</span>
         <input
           type="hidden"
           name="redirectTo"
@@ -140,14 +144,14 @@ export default function Register() {
             id="email-input"
             defaultValue={actionData?.fields?.email}
           />
-          <p>{actionData?.fieldsError?.email}</p>
+          <span>{actionData?.fieldsError?.email}</span>
         </div>
         <div>
           <div>
             <label htmlFor="password-input">Password</label>
           </div>
           <input type="password" name="password" id="password-input" />
-          <p>{actionData?.fieldsError?.password}</p>
+          <span>{actionData?.fieldsError?.password}</span>
         </div>
         <div>
           <div>
@@ -158,7 +162,7 @@ export default function Register() {
             name="confirm-password"
             id="confirm-password-input"
           />
-          <p>{actionData?.fieldsError?.password}</p>
+          <span>{actionData?.fieldsError?.password}</span>
         </div>
         <div>
           <div>
@@ -170,7 +174,7 @@ export default function Register() {
             id="pseudo-input"
             defaultValue={actionData?.fields?.pseudo}
           />
-          <p>{actionData?.fieldsError?.pseudo}</p>
+          <span>{actionData?.fieldsError?.pseudo}</span>
         </div>
         <div>
           <div>
@@ -205,38 +209,10 @@ export default function Register() {
 
 export function CatchBoundary() {
   const caught = useCatch();
-
-  switch (caught.status) {
-    case 401:
-      return (
-        <div className="container">
-          <p>
-            You must be <Link to="/login">logged in</Link> to see this data
-          </p>
-        </div>
-      );
-    case 403:
-      return (
-        <div className="container">
-          <p>Sorry, you don't have the rights to see this</p>
-        </div>
-      );
-    default:
-      <div className="container">
-        <h1>
-          {caught.status} {caught.statusText}
-        </h1>
-        <p>{caught.data}</p>
-      </div>;
-  }
+  generateExpectedError(caught);
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
   console.error(error);
-  return (
-    <div className="container">
-      <h1>Something went wrong</h1>
-      <p>{error.message}</p>
-    </div>
-  );
+  generateUnexpectedError(error);
 }
