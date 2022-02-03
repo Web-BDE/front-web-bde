@@ -1,9 +1,26 @@
-import { Link, LoaderFunction, useCatch, useLoaderData } from "remix";
+import {
+  Link,
+  LinksFunction,
+  LoaderFunction,
+  useCatch,
+  useLoaderData,
+} from "remix";
 
 import { Goodies } from "~/models/Goodies";
 
 import { requireUserInfo } from "~/services/authentication";
 import { getManyGoodies } from "~/services/goodies";
+
+import contentDisplayStylesheet from "../../styles/contentdisplay.css";
+
+export const links: LinksFunction = () => {
+  return [
+    {
+      rel: "stylesheet",
+      href: contentDisplayStylesheet,
+    },
+  ];
+};
 
 type LoaderData = {
   goodies?: Goodies[];
@@ -20,16 +37,18 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function Shop() {
   const data = useLoaderData<LoaderData>();
   return (
-    <div>
-      <h1>Shop</h1>
-      {data.goodies?.map((goodie) => {
-        return (
-          <Link to={`/shop/${goodie.id}`} key={goodie.id}>
-            <h2>{goodie.name}</h2>
-            <p>Price : {goodie.price}</p>
-          </Link>
-        );
-      })}
+    <div className="container">
+      <h2>Shop</h2>
+      <div className="table">
+        {data.goodies?.map((goodie) => {
+          return (
+            <Link to={`/shop/${goodie.id}`} key={goodie.id}>
+              <h3>{goodie.name}</h3>
+              <p>Price : {goodie.price}</p>
+            </Link>
+          );
+        })}
+      </div>
     </div>
   );
 }

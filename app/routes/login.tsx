@@ -1,6 +1,7 @@
 import {
   ActionFunction,
   json,
+  LinksFunction,
   useActionData,
   useCatch,
   useSearchParams,
@@ -80,9 +81,9 @@ export default function Login() {
   const actionData = useActionData<ActionData>();
   const [searchparams] = useSearchParams();
   return (
-    <div>
-      <h1>Login</h1>
-      <form method="post">
+    <div className="container">
+      <h2>Login</h2>
+      <form method="post" className="login-form">
         <p>{actionData?.formError}</p>
         <input
           type="hidden"
@@ -90,7 +91,9 @@ export default function Login() {
           value={searchparams.get("redirectTo") || "/"}
         />
         <div>
-          <label htmlFor="email-input">Email</label>
+          <div>
+            <label htmlFor="email-input">Email</label>
+          </div>
           <input
             type="text"
             name="email"
@@ -100,11 +103,13 @@ export default function Login() {
           <p>{actionData?.fieldsError?.email}</p>
         </div>
         <div>
-          <label htmlFor="password-input">Password</label>
+          <div>
+            <label htmlFor="password-input">Password</label>
+          </div>
           <input type="password" name="password" id="password-input" />
           <p>{actionData?.fieldsError?.password}</p>
         </div>
-        <button type="submit">Submiut</button>
+        <button type="submit">Submit</button>
       </form>
     </div>
   );

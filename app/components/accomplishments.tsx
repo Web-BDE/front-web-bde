@@ -77,7 +77,7 @@ export default function Accomplishments({
 }) {
   return (
     <div>
-      <h1>Your accomplishments</h1>
+      <h2>Your accomplishments</h2>
       {accomplishments.accomplishments
         ?.filter((accomplishment) => {
           return (

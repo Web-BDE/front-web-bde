@@ -1,5 +1,6 @@
 import {
   Links,
+  LinksFunction,
   LiveReload,
   LoaderFunction,
   Meta,
@@ -14,8 +15,36 @@ import NavBar from "./components/navbar";
 import { User } from "./models/User";
 import { getSelft } from "./services/user";
 
+import globalStylesUrl from "./styles/global.css";
+import globalMediumStylesUrl from "./styles/global-medium.css";
+import globalLargeStylesUrl from "./styles/global-large.css";
+import navbarstylesheet from "./styles/navbar.css";
+
 export const meta: MetaFunction = () => {
   return { title: "New Remix App" };
+};
+
+export const links: LinksFunction = () => {
+  return [
+    {
+      rel: "stylesheet",
+      href: globalStylesUrl,
+    },
+    {
+      rel: "stylesheet",
+      href: globalMediumStylesUrl,
+      media: "print, (min-width: 640px)",
+    },
+    {
+      rel: "stylesheet",
+      href: globalLargeStylesUrl,
+      media: "screen and (min-width: 1024px)",
+    },
+    {
+      rel: "stylesheet",
+      href: navbarstylesheet,
+    },
+  ];
 };
 
 type LoaderData = {
