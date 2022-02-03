@@ -34,7 +34,6 @@ export async function updateAccomplishment(
   accomplishmentInfo: AccomplishmentInfo,
   accomplishmentId: number
 ) {
-  console.log(accomplishmentInfo);
   try {
     await axios.patch(
       `/accomplishment/${accomplishmentId}`,

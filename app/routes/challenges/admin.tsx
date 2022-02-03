@@ -75,7 +75,7 @@ export const action: ActionFunction = async ({ request }) => {
   //Declare all fields
   const form = await request.formData();
   const redirectTo = form.get("redirectTo");
-  const method = form.get("methor");
+  const method = form.get("method");
   //Validation fields
   const validation = form.get("validation");
   const accomplishmentId = form.get("accomplishmentId");
@@ -138,6 +138,8 @@ export const action: ActionFunction = async ({ request }) => {
         parseInt(reward),
         redirectTo
       );
+    default:
+      throw new Error("There was an error during form handling");
   }
 };
 
@@ -145,8 +147,6 @@ export default function ChallengesAdmin() {
   const actionData = useActionData<ActionData>();
   const [searchParams] = useSearchParams();
   const loaderData = useLoaderData<LoaderData>();
-
-  console.log(loaderData);
 
   return (
     <div className="container">
