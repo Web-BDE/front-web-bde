@@ -206,7 +206,18 @@ export default function Register() {
             label="Password"
             type="password"
             id="password"
-            autoComplete="current-password"
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            error={Boolean(actionData?.fieldsError?.password)}
+            helperText={actionData?.fieldsError?.password}
+            name="confirm-password"
+            label="Confirm password"
+            type="password"
+            id="confirm-password"
           />
           <TextField
             variant="outlined"

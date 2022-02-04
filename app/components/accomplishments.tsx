@@ -1,3 +1,13 @@
+import {
+  Alert,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  Grid,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { Accomplishment } from "~/models/Accomplishment";
 
 type FormData = {
@@ -21,55 +31,123 @@ type AccomplishmentData = {
 function displayValidation(
   state: number | null,
   formData?: FormData,
-  accomplishmentId?: number
+  accomplishment?: Accomplishment,
+  date?: string
 ) {
   switch (state) {
     case 1:
       return (
-        <p>
-          <b>Accepted</b>
-        </p>
+        <Card>
+          <CardContent>
+            <Typography
+              sx={{ fontSize: 14 }}
+              color="text.secondary"
+              gutterBottom
+            >
+              {date}
+            </Typography>
+            <Typography variant="h5" component="div">
+              Accepted
+            </Typography>
+            <Typography sx={{ mb: 1.5 }} color="text.secondary">
+              {accomplishment?.proof}
+            </Typography>
+          </CardContent>
+        </Card>
       );
     case -1:
       return (
-        <p>
-          <b>Refused</b>
-        </p>
+        <Card>
+          <CardContent>
+            <Typography
+              sx={{ fontSize: 14 }}
+              color="text.secondary"
+              gutterBottom
+            >
+              {date}
+            </Typography>
+            <Typography variant="h5" component="div">
+              Refused
+            </Typography>
+            <Typography sx={{ mb: 1.5 }} color="text.secondary">
+              {accomplishment?.proof}
+            </Typography>
+          </CardContent>
+        </Card>
       );
     default:
       return (
-        <div>
-          <form method="post">
-            <span>{formData?.formError || formData?.formSuccess}</span>
-            {/* Method hidden input */}
-            <input type="hidden" name="method" value="update-accomplishment" />
-            {/* Hiddent method to pass the accomplishment id to the form */}
-            <input
-              type="hidden"
-              name="accomplishmentId"
-              value={accomplishmentId}
-            />
-            {/* Proof input */}
-            <div>
-              <div>
-                <label htmlFor="proof-input">Proof</label>
-              </div>
-              <input type="text" name="proof" id="proof-input" />
-              <span>{formData?.fieldsError?.proof}</span>
-            </div>
-            <button type="submit">Update</button>
-          </form>
-          {/* Form to delete the accomplishment */}
-          <form method="post">
-            <input type="hidden" name="method" value="delete-accomplishment" />
-            <input
-              type="hidden"
-              name="accomplishmentId"
-              value={accomplishmentId}
-            />
-            <button type="submit">Delete</button>
-          </form>
-        </div>
+        <Container>
+          <Card>
+            <CardContent>
+              <Typography
+                sx={{ fontSize: 14 }}
+                color="text.secondary"
+                gutterBottom
+              >
+                {date}
+              </Typography>
+              <form method="post">
+                <input
+                  type="hidden"
+                  name="method"
+                  value="update-accomplishment"
+                />
+                <input
+                  type="hidden"
+                  name="accomplishmentId"
+                  value={accomplishment?.id}
+                />
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="proof"
+                  error={Boolean(formData?.fieldsError?.proof)}
+                  helperText={formData?.fieldsError?.proof}
+                  label="Proof"
+                  name="proof"
+                  autoComplete="proof"
+                  defaultValue={
+                    formData?.fields?.proof || accomplishment?.proof
+                  }
+                  autoFocus
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                >
+                  Update
+                </Button>
+              </form>
+              {/* Form to delete the accomplishment */}
+              <form method="post">
+                <input
+                  type="hidden"
+                  name="method"
+                  value="delete-accomplishment"
+                />
+                <input
+                  type="hidden"
+                  name="accomplishmentId"
+                  value={accomplishment?.id}
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  style={{ marginTop: "10px" }}
+                >
+                  Delete
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </Container>
       );
   }
 }
@@ -82,35 +160,52 @@ export default function Accomplishments({
   formData?: FormData;
 }) {
   return (
-    <div>
-      <h2>Your accomplishments</h2>
-      {/* Display the user's accomplishments */}
-      {accomplishments.accomplishments
-        ?.filter((accomplishment) => {
-          return (
-            accomplishment.userId === accomplishments.userId &&
-            accomplishment.challengeId === accomplishments.challengeId
-          );
-        })
-        // sort by most recent
-        .sort((a, b) => {
-          return (
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
-        })
-        .map((accomplishment) => {
-          return (
-            <div key={accomplishment.id}>
-              <p>{accomplishment.proof}</p>
-              <p>Created : {accomplishment.createdAt}</p>
-              {displayValidation(
-                accomplishment.validation,
-                formData,
-                accomplishment.id
-              )}
-            </div>
-          );
-        })}
-    </div>
+    <Container style={{ marginTop: "50px" }}>
+      <Typography variant="h4">Your accomplishments</Typography>
+      {formData?.formSuccess ? (
+        <Alert severity="info">{formData?.formSuccess}</Alert>
+      ) : (
+        ""
+      )}
+      {formData?.formError ? (
+        <Alert severity="error">{formData?.formError}</Alert>
+      ) : (
+        ""
+      )}
+      <Grid
+        textAlign="center"
+        container
+        style={{ marginTop: "10px" }}
+        spacing={{ xs: 2, md: 3 }}
+        columns={{ xs: 1, sm: 8, md: 12 }}
+      >
+        {/* Display the user's accomplishments */}
+        {accomplishments.accomplishments
+          ?.filter((accomplishment) => {
+            return (
+              accomplishment.userId === accomplishments.userId &&
+              accomplishment.challengeId === accomplishments.challengeId
+            );
+          })
+          // sort by most recent
+          .sort((a, b) => {
+            return (
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            );
+          })
+          .map((accomplishment) => {
+            return (
+              <Grid item key={accomplishment.id}>
+                {displayValidation(
+                  accomplishment.validation,
+                  formData,
+                  accomplishment,
+                  accomplishment.createdAt
+                )}
+              </Grid>
+            );
+          })}
+      </Grid>
+    </Container>
   );
 }

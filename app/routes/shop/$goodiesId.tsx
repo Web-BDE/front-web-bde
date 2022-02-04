@@ -33,6 +33,20 @@ import {
 import { getSelft } from "~/services/user";
 import { APIError } from "~/utils/axios";
 
+import {
+  Grid,
+  Paper,
+  Avatar,
+  TextField,
+  Button,
+  Typography,
+  FormControlLabel,
+  Checkbox,
+  Container,
+  CssBaseline,
+  Alert,
+} from "@mui/material";
+
 type LoaderData = {
   goodies: Goodies;
   userId: number;
@@ -190,96 +204,124 @@ function displayGoodies(
 ) {
   if (goodies.creatorId === userId) {
     return (
-      <div>
-        <form method="post">
-          <span>
-            {actionData?.updateGoodies?.formError ||
-              actionData?.updateGoodies?.formSuccess}
-          </span>
-          {/* Method input */}
-          <input type="hidden" name="method" value="update-goodies" />
-          {/* Name field */}
-          <div>
-            <div>
-              <label htmlFor="name-input">Name</label>
-            </div>
-            <input
-              type="text"
+      <Container>
+        <CssBaseline />
+        <div>
+          <Typography variant="h4">Goodies</Typography>
+          {actionData?.updateGoodies?.formError ? (
+            <Alert severity="error">
+              {actionData?.updateGoodies.formError}
+            </Alert>
+          ) : (
+            ""
+          )}
+          {actionData?.updateGoodies?.formSuccess ? (
+            <Alert severity="info">
+              {actionData?.updateGoodies.formSuccess}
+            </Alert>
+          ) : (
+            ""
+          )}
+          <form method="post">
+            <input type="hidden" name="method" value="update-goodies" />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="name"
+              error={Boolean(actionData?.updateGoodies?.fieldsError?.name)}
+              helperText={actionData?.updateGoodies?.fieldsError?.name}
+              label="Name"
               name="name"
-              id="name-input"
+              autoComplete="name"
               defaultValue={
                 actionData?.updateGoodies?.fields?.name || goodies.name
               }
+              autoFocus
             />
-            <span>{actionData?.updateGoodies?.fieldsError?.name}</span>
-          </div>
-          {/* Description field */}
-          <div>
-            <div>
-              <label htmlFor="description-input">Description</label>
-            </div>
-            <input
-              type="text"
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              error={Boolean(
+                actionData?.updateGoodies?.fieldsError?.description
+              )}
+              helperText={actionData?.updateGoodies?.fieldsError?.description}
               name="description"
-              id="description-input"
               defaultValue={
                 actionData?.updateGoodies?.fields?.description ||
                 goodies.description
               }
+              label="description"
+              id="description"
             />
-            <span>{actionData?.updateGoodies?.fieldsError?.description}</span>
-          </div>
-          {/* Price field */}
-          <div>
-            <div>
-              <label htmlFor="price-input">Price</label>
-            </div>
-            <input
-              type="number"
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              error={Boolean(actionData?.updateGoodies?.fieldsError?.price)}
+              helperText={actionData?.updateGoodies?.fieldsError?.price}
               name="price"
-              id="price-input"
-              min="0"
               defaultValue={
                 actionData?.updateGoodies?.fields?.price || goodies.price
               }
-            />
-            <span>{actionData?.updateGoodies?.fieldsError?.price}</span>
-          </div>
-          {/* Buy limit field */}
-          <div>
-            <div>
-              <label htmlFor="buy-limit-input">Buy limit</label>
-            </div>
-            <input
+              label="price"
               type="number"
+              id="price"
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              error={Boolean(actionData?.updateGoodies?.fieldsError?.buyLimit)}
+              helperText={actionData?.updateGoodies?.fieldsError?.buyLimit}
               name="buy-limit"
-              id="buy-limit-input"
-              min="0"
               defaultValue={
                 actionData?.updateGoodies?.fields?.buyLimit || goodies.buyLimit
               }
+              label="buy-limit"
+              type="number"
+              id="buy-limit"
             />
-            <span>{actionData?.updateGoodies?.fieldsError?.buyLimit}</span>
-          </div>
-          <button type="submit">Update</button>
-        </form>
-        {/* Form to delete goodies, only for creator */}
-        <form method="post">
-          <input type="hidden" name="method" value="delete-goodies" />
-          <button type="submit">Delete</button>
-        </form>
-      </div>
+            <Typography variant="h6" style={{ marginTop: "10px" }}>
+              Created : {goodies.createdAt}
+            </Typography>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              style={{ marginTop: "10px" }}
+            >
+              Update Goodies
+            </Button>
+          </form>
+        </div>
+      </Container>
     );
   } else {
     return (
-      <div>
-        <h2>{goodies?.name}</h2>
-        <p>
-          <b>Price : {goodies?.price}</b>
-        </p>
-        <p>{goodies?.description}</p>
-        <p>Created : {goodies?.createdAt}</p>
-      </div>
+      <Container>
+        <Typography variant="h3" style={{ marginTop: "10px" }}>
+          {goodies.name}
+        </Typography>
+        <Typography variant="h5" style={{ marginTop: "10px" }}>
+          <b>Price : {goodies.price}</b>
+        </Typography>
+        <Typography variant="h5" style={{ marginTop: "10px" }}>
+          <b>Buy limit : {goodies.buyLimit}</b>
+        </Typography>
+        <Typography variant="body1" style={{ marginTop: "10px" }}>
+          {goodies.description}
+        </Typography>
+        <Typography variant="body1" style={{ marginTop: "10px" }}>
+          Created : {goodies.createdAt}
+        </Typography>
+      </Container>
     );
   }
 }
@@ -289,21 +331,40 @@ export default function Goodies() {
   const actionData = useActionData<ActionData>();
 
   return (
-    <div className="container">
-      <h2>Goodies</h2>
+    <Container style={{ marginTop: "50px" }} component="main" maxWidth="xs">
       {displayGoodies(loaderData.goodies, loaderData.userId, actionData)}
       {/* Form to buy goodies */}
-      <form method="post">
-        <span>
-          {actionData?.purchaseGoodies?.formError ||
-            actionData?.purchaseGoodies?.formSuccess}
-        </span>
-        <input type="hidden" name="method" value="purchase-goodies" />
-        <button type="submit" name="purchase" value="purchase">
-          Buy
-        </button>
-      </form>
-    </div>
+      <Container style={{ marginTop: "10px" }}>
+        <form method="post">
+          {actionData?.purchaseGoodies?.formError ? (
+            <Alert severity="error">
+              {actionData?.purchaseGoodies.formError}
+            </Alert>
+          ) : (
+            ""
+          )}
+          {actionData?.purchaseGoodies?.formSuccess ? (
+            <Alert severity="info">
+              {actionData?.purchaseGoodies.formSuccess}
+            </Alert>
+          ) : (
+            ""
+          )}
+          <input type="hidden" name="method" value="purchase-goodies" />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            name="purchase"
+            value="purchase"
+            style={{ marginTop: "10px" }}
+          >
+            Purchase
+          </Button>
+        </form>
+      </Container>
+    </Container>
   );
 }
 
