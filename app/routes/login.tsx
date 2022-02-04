@@ -25,6 +25,20 @@ type ActionData = {
   };
 };
 
+import {
+  Grid,
+  Paper,
+  Avatar,
+  TextField,
+  Button,
+  Typography,
+  FormControlLabel,
+  Checkbox,
+  Container,
+  CssBaseline,
+} from "@mui/material";
+import { LockOutlined } from "@mui/icons-material";
+
 function validateEmail(email: string) {
   if (
     !new RegExp(
@@ -81,38 +95,58 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Login() {
   const actionData = useActionData<ActionData>();
   const [searchparams] = useSearchParams();
+
   return (
-    <div className="container">
-      <h2>Login</h2>
-      <form method="post" className="login-form">
-        <span>{actionData?.formError}</span>
-        <input
-          type="hidden"
-          name="redirectTo"
-          value={searchparams.get("redirectTo") || "/"}
-        />
-        <div>
-          <div>
-            <label htmlFor="email-input">Email</label>
-          </div>
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div style={{ marginTop: "50px" }}>
+        <Typography component="h1" variant="h5">
+          Log in
+        </Typography>
+        <form method="post">
           <input
-            type="text"
-            name="email"
-            id="email-input"
-            defaultValue={actionData?.fields?.email}
+            type="hidden"
+            name="redirectTo"
+            value={searchparams.get("redirectTo") || "/"}
           />
-          <span>{actionData?.fieldsError?.email}</span>
-        </div>
-        <div>
-          <div>
-            <label htmlFor="password-input">Password</label>
-          </div>
-          <input type="password" name="password" id="password-input" />
-          <span>{actionData?.fieldsError?.password}</span>
-        </div>
-        <button type="submit">Submit</button>
-      </form>
-    </div>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            error={Boolean(actionData?.fieldsError?.email)}
+            helperText={actionData?.fieldsError?.email}
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            defaultValue={actionData?.fields?.email}
+            autoFocus
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            error={Boolean(actionData?.fieldsError?.password)}
+            helperText={actionData?.fieldsError?.password}
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+          />
+          <Button type="submit" fullWidth variant="contained" color="primary">
+            Sign In
+          </Button>
+          <Grid container>
+            <Grid item>
+              <Link to="/register">{"Don't have an account? Sign Up"}</Link>
+            </Grid>
+          </Grid>
+        </form>
+      </div>
+    </Container>
   );
 }
 

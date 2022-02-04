@@ -31,6 +31,20 @@ type ActionData = {
   };
 };
 
+import {
+  Grid,
+  Paper,
+  Avatar,
+  TextField,
+  Button,
+  Typography,
+  FormControlLabel,
+  Checkbox,
+  Container,
+  CssBaseline,
+  Box,
+} from "@mui/material";
+
 function badRequest(data: ActionData) {
   return json(data, 400);
 }
@@ -125,85 +139,93 @@ export default function Register() {
   const actionData = useActionData<ActionData>();
   const [searchparams] = useSearchParams();
   return (
-    <div className="container">
-      <h2>Register</h2>
-      <form method="post">
-        <span>{actionData?.formError}</span>
-        <input
-          type="hidden"
-          name="redirectTo"
-          value={searchparams.get("redirectTo") || "/"}
-        />
-        <div>
-          <div>
-            <label htmlFor="email-input">Email</label>
-          </div>
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div style={{ marginTop: "50px" }}>
+        <Typography component="h1" variant="h5">
+          Register
+        </Typography>
+        <form method="post">
           <input
-            type="text"
+            type="hidden"
+            name="redirectTo"
+            value={searchparams.get("redirectTo") || "/"}
+          />
+          <div style={{ display: "flex" }}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="name"
+              label="name"
+              defaultValue={actionData?.fields?.name}
+              type="name"
+              id="name"
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="surname"
+              defaultValue={actionData?.fields?.surname}
+              label="surname"
+              type="surname"
+              id="surname"
+            />
+          </div>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            error={Boolean(actionData?.fieldsError?.email)}
+            helperText={actionData?.fieldsError?.email}
+            label="Email Address"
             name="email"
-            id="email-input"
+            autoComplete="email"
             defaultValue={actionData?.fields?.email}
+            autoFocus
           />
-          <span>{actionData?.fieldsError?.email}</span>
-        </div>
-        <div>
-          <div>
-            <label htmlFor="password-input">Password</label>
-          </div>
-          <input type="password" name="password" id="password-input" />
-          <span>{actionData?.fieldsError?.password}</span>
-        </div>
-        <div>
-          <div>
-            <label htmlFor="confirm-password-input">Confirm Password</label>
-          </div>
-          <input
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            error={Boolean(actionData?.fieldsError?.password)}
+            helperText={actionData?.fieldsError?.password}
+            name="password"
+            label="Password"
             type="password"
-            name="confirm-password"
-            id="confirm-password-input"
+            id="password"
+            autoComplete="current-password"
           />
-          <span>{actionData?.fieldsError?.password}</span>
-        </div>
-        <div>
-          <div>
-            <label htmlFor="pseudo-input">pseudo</label>
-          </div>
-          <input
-            type="pseudo"
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            error={Boolean(actionData?.fieldsError?.pseudo)}
+            helperText={actionData?.fieldsError?.pseudo}
             name="pseudo"
-            id="pseudo-input"
             defaultValue={actionData?.fields?.pseudo}
+            label="pseudo"
+            type="pseudo"
+            id="pseudo"
           />
-          <span>{actionData?.fieldsError?.pseudo}</span>
-        </div>
-        <div>
-          <div>
-            <label htmlFor="name-input">name*</label>
-          </div>
-          <input
-            type="name"
-            name="name"
-            id="name-input"
-            defaultValue={actionData?.fields?.name}
-          />
-          <p></p>
-        </div>
-        <div>
-          <div>
-            <label htmlFor="surname-input">surname*</label>
-          </div>
-          <input
-            type="surname"
-            name="surname"
-            id="surname-input"
-            defaultValue={actionData?.fields?.surname}
-          />
-          <p></p>
-        </div>
-        <p>* Optional</p>
-        <button type="submit">Submit</button>
-      </form>
-    </div>
+          <Button type="submit" fullWidth variant="contained" color="primary">
+            Sign In
+          </Button>
+          <Grid container>
+            <Grid item>
+              <Link to="/register">{"Don't have an account? Sign Up"}</Link>
+            </Grid>
+          </Grid>
+        </form>
+      </div>
+    </Container>
   );
 }
 

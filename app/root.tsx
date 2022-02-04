@@ -19,7 +19,6 @@ import { getSelft } from "./services/user";
 import globalStylesUrl from "./styles/global.css";
 import globalMediumStylesUrl from "./styles/global-medium.css";
 import globalLargeStylesUrl from "./styles/global-large.css";
-import navbarstylesheet from "./styles/navbar.css";
 import {
   generateExpectedError,
   generateUnexpectedError,
@@ -45,9 +44,14 @@ export const links: LinksFunction = () => {
       href: globalLargeStylesUrl,
       media: "screen and (min-width: 1024px)",
     },
+    //MUI stylesheets
     {
       rel: "stylesheet",
-      href: navbarstylesheet,
+      href: "https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap",
+    },
+    {
+      rel: "stylesheet",
+      href: "https://fonts.googleapis.com/icon?family=Material+Icons",
     },
   ];
 };
