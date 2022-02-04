@@ -43,6 +43,7 @@ import {
   Container,
   CssBaseline,
   Box,
+  Alert,
 } from "@mui/material";
 
 function badRequest(data: ActionData) {
@@ -145,6 +146,11 @@ export default function Register() {
         <Typography component="h1" variant="h5">
           Register
         </Typography>
+        {actionData?.formError ? (
+          <Alert severity="error">{actionData?.formError}</Alert>
+        ) : (
+          ""
+        )}
         <form method="post">
           <input
             type="hidden"

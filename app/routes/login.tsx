@@ -36,6 +36,7 @@ import {
   Checkbox,
   Container,
   CssBaseline,
+  Alert,
 } from "@mui/material";
 import { LockOutlined } from "@mui/icons-material";
 
@@ -103,6 +104,11 @@ export default function Login() {
         <Typography component="h1" variant="h5">
           Log in
         </Typography>
+        {actionData?.formError ? (
+          <Alert severity="error">{actionData?.formError}</Alert>
+        ) : (
+          ""
+        )}
         <form method="post">
           <input
             type="hidden"
