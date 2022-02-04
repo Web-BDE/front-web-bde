@@ -1,4 +1,13 @@
 import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Container,
+  Grid,
+  Typography,
+} from "@mui/material";
+import {
   Link,
   LinksFunction,
   LoaderFunction,
@@ -41,20 +50,41 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function Challenges() {
   const data = useLoaderData<LoaderData>();
   return (
-    <div className="container">
-      <h2>Challenges</h2>
-      <div className="table">
-        {/* For each challenge display the name and the reward */}
-        {data.challenges?.map((challenge) => {
-          return (
-            <Link to={`/challenges/${challenge.id}`} key={challenge.id}>
-              <h3>{challenge.name}</h3>
-              <p>Reward : {challenge.reward}</p>
-            </Link>
-          );
-        })}
-      </div>
-    </div>
+    <Container component="main">
+      <Typography
+        style={{ textAlign: "center", marginTop: "50px" }}
+        variant="h2"
+      >
+        Challenges
+      </Typography>
+      <Grid
+        textAlign="center"
+        style={{ marginTop: "50px" }}
+        container
+        spacing={{ xs: 2, md: 3 }}
+        columns={{ xs: 1, sm: 8, md: 12 }}
+      >
+        {data.challenges?.map((challenge) => (
+          <Grid item xs={2} sm={4} md={4} key={challenge.id}>
+            <Card sx={{ minWidth: 275 }}>
+              <CardContent>
+                <Typography variant="h5" component="div">
+                  {challenge.name}
+                </Typography>
+                <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                  Reward : {challenge.reward}
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Link to={`/challenges/${challenge.id}`}>
+                  <Button size="small">Details</Button>
+                </Link>
+              </CardActions>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Container>
   );
 }
 

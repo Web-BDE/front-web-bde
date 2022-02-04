@@ -1,4 +1,13 @@
 import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Container,
+  Grid,
+  Typography,
+} from "@mui/material";
+import {
   Link,
   LinksFunction,
   LoaderFunction,
@@ -39,19 +48,40 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function Shop() {
   const data = useLoaderData<LoaderData>();
   return (
-    <div className="container">
-      <h2>Shop</h2>
-      <div className="table">
-        {data.goodies?.map((goodie) => {
-          return (
-            <Link to={`/shop/${goodie.id}`} key={goodie.id}>
-              <h3>{goodie.name}</h3>
-              <p>Price : {goodie.price}</p>
-            </Link>
-          );
-        })}
-      </div>
-    </div>
+    <Container component="main">
+      <Typography
+        style={{ textAlign: "center", marginTop: "50px" }}
+        variant="h2"
+      >
+        Shop
+      </Typography>
+      <Grid
+        style={{ marginTop: "50px" }}
+        container
+        spacing={{ xs: 2, md: 3 }}
+        columns={{ xs: 1, sm: 8, md: 12 }}
+      >
+        {data.goodies?.map((goodie) => (
+          <Grid item xs={2} sm={4} md={4} key={goodie.id}>
+            <Card sx={{ minWidth: 275 }}>
+              <CardContent>
+                <Typography variant="h5" component="div">
+                  {goodie.name}
+                </Typography>
+                <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                  Price : {goodie.price}
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Link to={`/shop/${goodie.id}`}>
+                  <Button size="small">Details</Button>
+                </Link>
+              </CardActions>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Container>
   );
 }
 
