@@ -1,53 +1,73 @@
-# Welcome to Remix!
+# front-Web-BDE
 
-- [Remix Docs](https://remix.run/docs)
+Front-end application for student council (BDE in french).
 
-## Development
+### Features
 
-From your terminal:
+- Secure authentication & administration system with student email
+- Handling of challenge creation & accomplishment for integration purpuse
+- Online market to buy goodies with fake money earned by doing challenges
 
-```sh
-npm run dev
-```
+This project was bootstrapped with [Remix](https://www.npmjs.com/package/remix).
 
-This starts your app in development mode, rebuilding assets on file changes.
+## Requirements
 
-## Deployment
+- node
+- docker & docker-compose
 
-First, build your app for production:
+## Install
 
-```sh
-npm run build
-```
+### Install dependancies
 
-Then run the app in production mode:
+`npm install`
 
-```sh
-npm start
-```
+### Available Scripts
 
-Now you'll need to pick a host to deploy it to.
+In the project directory, you can run:
 
-### DIY
+#### `npm run dev`
 
-If you're familiar with deploying node applications, the built-in Remix app server is production-ready.
+To start the app in dev mode.\
+Open [http://localhost:3000](http://localhost:3000) to access **application**.
 
-Make sure to deploy the output of `remix build`
+#### `npm run build`
 
-- `build/`
-- `public/build/`
+To build for production
+#### `npm start`
 
-### Using a Template
+For production mode
 
-When you ran `npx create-remix@latest` there were a few choices for hosting. You can run that again to create a new project, then copy over your `app/` folder to the new project that's pre-configured for your target server.
 
-```sh
-cd ..
-# create a new project, and pick a pre-configured host
-npx create-remix@latest
-cd my-new-remix-app
-# remove the new project's app (not the old one!)
-rm -rf app
-# copy your app over
-cp -R ../my-old-remix-app/app app
-```
+### Environment
+
+You need to setup few environment variables to setup your project :
+
+- **EMAIL_REGEX** : Regex that matches your particular student email, for example : "^[\w\-\.]+@([\w\-]+.)*umontpellier\.fr$" matches emails with umontpellier.fr domain, if none provided regex will match a classic email
+- **API-URL** : URL used by axios ro make calls to the API, default : localhost:4000
+
+### Styles
+
+This project uses **Material UI**, for more information check the [Material UI Documentation](https://mui.com/getting-started/installation/)
+
+## Usage
+
+### Structure of routes
+
+There are 5 main routes in this application :
+
+- **/** : Home route, display a simple message
+- **/login** : Used to login
+- **/register** : Used to register
+- **/challenges** : Display the list of all challenges
+- **/shop** : Display the list of all goodies in the shop
+
+The routes **/shop** and **/challenges** have some sub-routes :
+
+- **/shop/:id** : Display info on a single goodies + a button to buy it
+- **/shop/admin** : Admin panel to create goodies
+- **/challenges/:id** : Display info on a single challenge + a form to submit an accomplishment for this challenge
+- **/challenge/admin** : Admin panel to create challenges and validate accomplishments
+
+## Learn More
+
+To learn Remix, check out the [Remix documentation](https://remix.run/docs).
