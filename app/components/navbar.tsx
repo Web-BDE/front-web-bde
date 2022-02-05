@@ -29,7 +29,6 @@ function displayAuthMenu(userInfo?: User) {
       <div>
         <Link
           style={{ textDecoration: "none", color: "white" }}
-          className="link"
           to="/login"
         >
           <Button color="inherit" variant="text">
@@ -38,7 +37,6 @@ function displayAuthMenu(userInfo?: User) {
         </Link>
         <Link
           style={{ textDecoration: "none", color: "white" }}
-          className="link"
           to="/register"
         >
           <Button color="inherit" variant="text">
@@ -127,80 +125,77 @@ export default function NavBar({ userInfo }: { userInfo?: User }) {
   };
 
   return (
-    <div className="navbar">
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-          <Toolbar>
-            <Box
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { md: "flex", lg: "none" },
+            }}
+          >
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleOpenNavMenu}
+              color="inherit"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
               sx={{
-                flexGrow: 1,
                 display: { md: "flex", lg: "none" },
               }}
             >
-              <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleOpenNavMenu}
-                color="inherit"
-              >
-                <MenuIcon />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorElNav}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "left",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "left",
-                }}
-                open={Boolean(anchorElNav)}
-                onClose={handleCloseNavMenu}
-                sx={{
-                  display: { md: "flex", lg: "none" },
-                }}
-              >
-                {leftLinks.map((link, index) => (
-                  <Link
-                    style={{ textDecoration: "none", color: "black" }}
-                    to={link.link}
-                  >
-                    <MenuItem key={index} onClick={handleCloseNavMenu}>
-                      <Typography textAlign="center">{link.name}</Typography>
-                    </MenuItem>
-                  </Link>
-                ))}
-              </Menu>
-            </Box>
-            <Typography
-              sx={{
-                flexGrow: 1,
-                display: { xs: "none", md: "none", lg: "block" },
-              }}
-            >
-              {leftLinks.map((link) => {
-                return (
-                  <Link
-                    style={{ textDecoration: "none", color: "white" }}
-                    className="link"
-                    to={link.link}
-                  >
-                    <Button color="inherit" variant="text">
-                      {link.name}
-                    </Button>
-                  </Link>
-                );
-              })}
-            </Typography>
-            {displayAuthMenu(userInfo)}
-          </Toolbar>
-        </AppBar>
-      </Box>
-    </div>
+              {leftLinks.map((link, index) => (
+                <Link
+                  style={{ textDecoration: "none", color: "black" }}
+                  to={link.link}
+                >
+                  <MenuItem key={index} onClick={handleCloseNavMenu}>
+                    <Typography textAlign="center">{link.name}</Typography>
+                  </MenuItem>
+                </Link>
+              ))}
+            </Menu>
+          </Box>
+          <Typography
+            sx={{
+              flexGrow: 1,
+              display: { xs: "none", md: "none", lg: "block" },
+            }}
+          >
+            {leftLinks.map((link) => {
+              return (
+                <Link
+                  style={{ textDecoration: "none", color: "white" }}
+                  to={link.link}
+                >
+                  <Button color="inherit" variant="text">
+                    {link.name}
+                  </Button>
+                </Link>
+              );
+            })}
+          </Typography>
+          {displayAuthMenu(userInfo)}
+        </Toolbar>
+      </AppBar>
+    </Box>
   );
 }

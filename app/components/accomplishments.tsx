@@ -88,11 +88,13 @@ function displayValidation(
                 {date}
               </Typography>
               <form method="post">
+                {/* Method handled by the form */}
                 <input
                   type="hidden"
                   name="method"
                   value="update-accomplishment"
                 />
+                {/* Id of the accomplishment to handle */}
                 <input
                   type="hidden"
                   name="accomplishmentId"

@@ -1,5 +1,4 @@
 import {
-  Link,
   Links,
   LinksFunction,
   LiveReload,
@@ -16,34 +15,17 @@ import NavBar from "./components/navbar";
 import { User } from "./models/User";
 import { getSelft } from "./services/user";
 
-import globalStylesUrl from "./styles/global.css";
-import globalMediumStylesUrl from "./styles/global-medium.css";
-import globalLargeStylesUrl from "./styles/global-large.css";
 import {
   generateExpectedError,
   generateUnexpectedError,
 } from "./controllers/error";
 
 export const meta: MetaFunction = () => {
-  return { title: "New Remix App" };
+  return { title: "Web BDE" };
 };
 
 export const links: LinksFunction = () => {
   return [
-    {
-      rel: "stylesheet",
-      href: globalStylesUrl,
-    },
-    {
-      rel: "stylesheet",
-      href: globalMediumStylesUrl,
-      media: "print, (min-width: 640px)",
-    },
-    {
-      rel: "stylesheet",
-      href: globalLargeStylesUrl,
-      media: "screen and (min-width: 1024px)",
-    },
     //MUI stylesheets
     {
       rel: "stylesheet",

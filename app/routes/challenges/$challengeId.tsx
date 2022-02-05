@@ -7,7 +7,9 @@ import {
   useCatch,
   useLoaderData,
 } from "remix";
+
 import Accomplishments from "~/components/accomplishments";
+
 import {
   handleAccomplishmentCreation,
   handleAccomplishmentUpdate,
@@ -32,16 +34,10 @@ import {
 } from "../../controllers/error";
 
 import {
-  Grid,
-  Paper,
-  Avatar,
   TextField,
   Button,
   Typography,
-  FormControlLabel,
-  Checkbox,
   Container,
-  CssBaseline,
   Alert,
 } from "@mui/material";
 
@@ -258,87 +254,85 @@ function displayChallenge(
   if (userId === challenge.creatorId) {
     return (
       <Container maxWidth="xs">
-        <CssBaseline />
-        <div>
-          <Typography variant="h4">Challenge</Typography>
-          {actionData?.updateChallenge?.formError ? (
-            <Alert severity="error">
-              {actionData?.updateChallenge.formError}
-            </Alert>
-          ) : (
-            ""
-          )}
-          {actionData?.updateChallenge?.formSuccess ? (
-            <Alert severity="info">
-              {actionData?.updateChallenge.formSuccess}
-            </Alert>
-          ) : (
-            ""
-          )}
-          <form method="post">
-            <input type="hidden" name="method" value="update-challenge" />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="name"
-              error={Boolean(actionData?.updateChallenge?.fieldsError?.name)}
-              helperText={actionData?.updateChallenge?.fieldsError?.name}
-              label="Name"
-              name="name"
-              autoComplete="name"
-              defaultValue={
-                actionData?.updateChallenge?.fields?.name || challenge.name
-              }
-              autoFocus
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              error={Boolean(
-                actionData?.updateChallenge?.fieldsError?.description
-              )}
-              helperText={actionData?.updateChallenge?.fieldsError?.description}
-              name="description"
-              defaultValue={
-                actionData?.updateChallenge?.fields?.description ||
-                challenge.description
-              }
-              label="description"
-              id="description"
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              error={Boolean(actionData?.updateChallenge?.fieldsError?.reward)}
-              helperText={actionData?.updateChallenge?.fieldsError?.reward}
-              name="reward"
-              defaultValue={
-                actionData?.updateChallenge?.fields?.reward || challenge.reward
-              }
-              label="reward"
-              type="number"
-              id="reward"
-            />
-            <Typography variant="h6" style={{ marginTop: "10px" }}>
-              Created : {challenge.createdAt}
-            </Typography>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              style={{ marginTop: "10px" }}
-            >
-              Update Challenge
-            </Button>
-          </form>
-        </div>
+        <Typography variant="h4">Challenge</Typography>
+        {actionData?.updateChallenge?.formError ? (
+          <Alert severity="error">
+            {actionData?.updateChallenge.formError}
+          </Alert>
+        ) : (
+          ""
+        )}
+        {actionData?.updateChallenge?.formSuccess ? (
+          <Alert severity="info">
+            {actionData?.updateChallenge.formSuccess}
+          </Alert>
+        ) : (
+          ""
+        )}
+        <form method="post">
+          {/* Method that the form will have to handle */}
+          <input type="hidden" name="method" value="update-challenge" />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="name"
+            error={Boolean(actionData?.updateChallenge?.fieldsError?.name)}
+            helperText={actionData?.updateChallenge?.fieldsError?.name}
+            label="Name"
+            name="name"
+            autoComplete="name"
+            defaultValue={
+              actionData?.updateChallenge?.fields?.name || challenge.name
+            }
+            autoFocus
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            error={Boolean(
+              actionData?.updateChallenge?.fieldsError?.description
+            )}
+            helperText={actionData?.updateChallenge?.fieldsError?.description}
+            name="description"
+            defaultValue={
+              actionData?.updateChallenge?.fields?.description ||
+              challenge.description
+            }
+            label="description"
+            id="description"
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            error={Boolean(actionData?.updateChallenge?.fieldsError?.reward)}
+            helperText={actionData?.updateChallenge?.fieldsError?.reward}
+            name="reward"
+            defaultValue={
+              actionData?.updateChallenge?.fields?.reward || challenge.reward
+            }
+            label="reward"
+            type="number"
+            id="reward"
+          />
+          <Typography variant="h6" style={{ marginTop: "10px" }}>
+            Created : {challenge.createdAt}
+          </Typography>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            style={{ marginTop: "10px" }}
+          >
+            Update Challenge
+          </Button>
+        </form>
       </Container>
     );
   } else {
@@ -367,10 +361,9 @@ export default function Challenge() {
   const actionData = useActionData<ActionData>();
 
   return (
-    <div className="container" style={{ marginTop: "50px" }}>
+    <Container style={{ marginTop: "50px" }}>
       {displayChallenge(loaderData.challenge, loaderData.userId, actionData)}
       <Container maxWidth="xs" style={{ marginTop: "50px" }}>
-        <CssBaseline />
         <div>
           <Typography variant="h4">Submit Proof</Typography>
           {actionData?.updateAccomplishment?.formError ? (
@@ -420,7 +413,7 @@ export default function Challenge() {
       ) : (
         ""
       )}
-    </div>
+    </Container>
   );
 }
 

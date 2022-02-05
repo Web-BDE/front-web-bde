@@ -1,13 +1,12 @@
 import {
   ActionFunction,
   json,
-  Link,
   LoaderFunction,
-  redirect,
   useActionData,
   useCatch,
   useLoaderData,
 } from "remix";
+
 import {
   generateExpectedError,
   generateUnexpectedError,
@@ -20,30 +19,20 @@ import {
   handleCreatePurchase,
   handleDeletePurchase,
 } from "~/controllers/purchase";
+
 import { Goodies } from "~/models/Goodies";
 import { Purchase } from "~/models/Purchase";
 
 import { requireUserInfo } from "~/services/authentication";
-import { deleteGoodies, getGoodies, updateGoodies } from "~/services/goodies";
-import {
-  createPurchase,
-  deletePurchase,
-  getManyPurchase,
-} from "~/services/purchase";
+import { getGoodies } from "~/services/goodies";
+import { getManyPurchase } from "~/services/purchase";
 import { getSelft } from "~/services/user";
-import { APIError } from "~/utils/axios";
 
 import {
-  Grid,
-  Paper,
-  Avatar,
   TextField,
   Button,
   Typography,
-  FormControlLabel,
-  Checkbox,
   Container,
-  CssBaseline,
   Alert,
 } from "@mui/material";
 
@@ -102,7 +91,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   const goodies = await getGoodies(request, parseInt(params.goodiesId));
 
-  //Load purchase, we don't want to throwAPI errors
+  //Load purchases, we don't want to throwAPI errors
   let purchases;
   try {
     purchases = await getManyPurchase(request);
@@ -205,102 +194,94 @@ function displayGoodies(
   if (goodies.creatorId === userId) {
     return (
       <Container>
-        <CssBaseline />
-        <div>
-          <Typography variant="h4">Goodies</Typography>
-          {actionData?.updateGoodies?.formError ? (
-            <Alert severity="error">
-              {actionData?.updateGoodies.formError}
-            </Alert>
-          ) : (
-            ""
-          )}
-          {actionData?.updateGoodies?.formSuccess ? (
-            <Alert severity="info">
-              {actionData?.updateGoodies.formSuccess}
-            </Alert>
-          ) : (
-            ""
-          )}
-          <form method="post">
-            <input type="hidden" name="method" value="update-goodies" />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="name"
-              error={Boolean(actionData?.updateGoodies?.fieldsError?.name)}
-              helperText={actionData?.updateGoodies?.fieldsError?.name}
-              label="Name"
-              name="name"
-              autoComplete="name"
-              defaultValue={
-                actionData?.updateGoodies?.fields?.name || goodies.name
-              }
-              autoFocus
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              error={Boolean(
-                actionData?.updateGoodies?.fieldsError?.description
-              )}
-              helperText={actionData?.updateGoodies?.fieldsError?.description}
-              name="description"
-              defaultValue={
-                actionData?.updateGoodies?.fields?.description ||
-                goodies.description
-              }
-              label="description"
-              id="description"
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              error={Boolean(actionData?.updateGoodies?.fieldsError?.price)}
-              helperText={actionData?.updateGoodies?.fieldsError?.price}
-              name="price"
-              defaultValue={
-                actionData?.updateGoodies?.fields?.price || goodies.price
-              }
-              label="price"
-              type="number"
-              id="price"
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              error={Boolean(actionData?.updateGoodies?.fieldsError?.buyLimit)}
-              helperText={actionData?.updateGoodies?.fieldsError?.buyLimit}
-              name="buy-limit"
-              defaultValue={
-                actionData?.updateGoodies?.fields?.buyLimit || goodies.buyLimit
-              }
-              label="buy-limit"
-              type="number"
-              id="buy-limit"
-            />
-            <Typography variant="h6" style={{ marginTop: "10px" }}>
-              Created : {goodies.createdAt}
-            </Typography>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              style={{ marginTop: "10px" }}
-            >
-              Update Goodies
-            </Button>
-          </form>
-        </div>
+        <Typography variant="h4">Goodies</Typography>
+        {actionData?.updateGoodies?.formError ? (
+          <Alert severity="error">{actionData?.updateGoodies.formError}</Alert>
+        ) : (
+          ""
+        )}
+        {actionData?.updateGoodies?.formSuccess ? (
+          <Alert severity="info">{actionData?.updateGoodies.formSuccess}</Alert>
+        ) : (
+          ""
+        )}
+        <form method="post">
+          {/* Hiddent input with the method that the Action function will have to handle */}
+          <input type="hidden" name="method" value="update-goodies" />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="name"
+            error={Boolean(actionData?.updateGoodies?.fieldsError?.name)}
+            helperText={actionData?.updateGoodies?.fieldsError?.name}
+            label="Name"
+            name="name"
+            autoComplete="name"
+            defaultValue={
+              actionData?.updateGoodies?.fields?.name || goodies.name
+            }
+            autoFocus
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            error={Boolean(actionData?.updateGoodies?.fieldsError?.description)}
+            helperText={actionData?.updateGoodies?.fieldsError?.description}
+            name="description"
+            defaultValue={
+              actionData?.updateGoodies?.fields?.description ||
+              goodies.description
+            }
+            label="description"
+            id="description"
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            error={Boolean(actionData?.updateGoodies?.fieldsError?.price)}
+            helperText={actionData?.updateGoodies?.fieldsError?.price}
+            name="price"
+            defaultValue={
+              actionData?.updateGoodies?.fields?.price || goodies.price
+            }
+            label="price"
+            type="number"
+            id="price"
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            error={Boolean(actionData?.updateGoodies?.fieldsError?.buyLimit)}
+            helperText={actionData?.updateGoodies?.fieldsError?.buyLimit}
+            name="buy-limit"
+            defaultValue={
+              actionData?.updateGoodies?.fields?.buyLimit || goodies.buyLimit
+            }
+            label="buy-limit"
+            type="number"
+            id="buy-limit"
+          />
+          <Typography variant="h6" style={{ marginTop: "10px" }}>
+            Created : {goodies.createdAt}
+          </Typography>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            style={{ marginTop: "10px" }}
+          >
+            Update Goodies
+          </Button>
+        </form>
       </Container>
     );
   } else {

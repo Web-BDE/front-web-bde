@@ -7,13 +7,9 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import {
-  Link,
-  LinksFunction,
-  LoaderFunction,
-  useCatch,
-  useLoaderData,
-} from "remix";
+
+import { Link, LoaderFunction, useCatch, useLoaderData } from "remix";
+
 import {
   generateExpectedError,
   generateUnexpectedError,
@@ -24,21 +20,12 @@ import { Goodies } from "~/models/Goodies";
 
 import { requireUserInfo } from "~/services/authentication";
 
-import contentDisplayStylesheet from "../../styles/contentdisplay.css";
-
-export const links: LinksFunction = () => {
-  return [
-    {
-      rel: "stylesheet",
-      href: contentDisplayStylesheet,
-    },
-  ];
-};
-
+//Data structure handled on GET resuests
 type LoaderData = {
   goodies?: Goodies[];
 };
 
+//Function that handle GET resuests
 export const loader: LoaderFunction = async ({ request }) => {
   await requireUserInfo(request, "/shop");
 
@@ -48,11 +35,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function Shop() {
   const data = useLoaderData<LoaderData>();
   return (
-    <Container component="main">
-      <Typography
-        style={{ textAlign: "center", marginTop: "50px" }}
-        variant="h2"
-      >
+    <Container component="main" style={{ marginTop: "50px" }}>
+      <Typography style={{ textAlign: "center" }} variant="h2">
         Shop
       </Typography>
       <Grid

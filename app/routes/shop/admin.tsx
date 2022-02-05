@@ -1,10 +1,12 @@
 import {
   ActionFunction,
   json,
+  LoaderFunction,
   useActionData,
   useCatch,
   useSearchParams,
 } from "remix";
+
 import {
   generateExpectedError,
   generateUnexpectedError,
@@ -30,18 +32,16 @@ type ActionData = {
 };
 
 import {
-  Grid,
-  Paper,
-  Avatar,
   TextField,
   Button,
   Typography,
-  FormControlLabel,
-  Checkbox,
   Container,
-  CssBaseline,
   Alert,
 } from "@mui/material";
+
+export const loader: LoaderFunction = async ({ request }) => {
+  return await requireUserInfo(request, "/shop/admin");
+};
 
 export const action: ActionFunction = async ({ request }) => {
   //Initialise fiels
@@ -83,78 +83,75 @@ export default function ShopAdmin() {
   const actionData = useActionData<ActionData>();
   const [searchParams] = useSearchParams();
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div style={{ marginTop: "50px" }}>
-        <Typography variant="h4">Create Goodies</Typography>
-        {actionData?.formError ? (
-          <Alert severity="error">{actionData?.formError}</Alert>
-        ) : (
-          ""
-        )}
-        <form method="post">
-          <input
-            type="hidden"
-            name="redirectTo"
-            value={searchParams.get("redirectTo") || "/shop"}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="name"
-            error={Boolean(actionData?.fieldsError?.name)}
-            helperText={actionData?.fieldsError?.name}
-            label="Name"
-            name="name"
-            autoComplete="name"
-            defaultValue={actionData?.fields?.name}
-            autoFocus
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            error={Boolean(actionData?.fieldsError?.description)}
-            helperText={actionData?.fieldsError?.description}
-            name="description"
-            defaultValue={actionData?.fields?.description}
-            label="description"
-            id="description"
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            error={Boolean(actionData?.fieldsError?.price)}
-            helperText={actionData?.fieldsError?.price}
-            name="price"
-            defaultValue={actionData?.fields?.price || 0}
-            label="price"
-            type="number"
-            id="price"
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            error={Boolean(actionData?.fieldsError?.buyLimit)}
-            helperText={actionData?.fieldsError?.buyLimit}
-            name="buyLimit"
-            defaultValue={actionData?.fields?.buyLimit || 1}
-            label="buyLimit"
-            type="number"
-            id="buyLimit"
-          />
-          <Button type="submit" fullWidth variant="contained" color="primary">
-            Create Goodies
-          </Button>
-        </form>
-      </div>
+    <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
+      <Typography variant="h4">Create Goodies</Typography>
+      {actionData?.formError ? (
+        <Alert severity="error">{actionData?.formError}</Alert>
+      ) : (
+        ""
+      )}
+      <form method="post">
+        {/* Hidden input with the redirection URL in it */}
+        <input
+          type="hidden"
+          name="redirectTo"
+          value={searchParams.get("redirectTo") || "/shop"}
+        />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          id="name"
+          error={Boolean(actionData?.fieldsError?.name)}
+          helperText={actionData?.fieldsError?.name}
+          label="Name"
+          name="name"
+          autoComplete="name"
+          defaultValue={actionData?.fields?.name}
+          autoFocus
+        />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          fullWidth
+          error={Boolean(actionData?.fieldsError?.description)}
+          helperText={actionData?.fieldsError?.description}
+          name="description"
+          defaultValue={actionData?.fields?.description}
+          label="description"
+          id="description"
+        />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          error={Boolean(actionData?.fieldsError?.price)}
+          helperText={actionData?.fieldsError?.price}
+          name="price"
+          defaultValue={actionData?.fields?.price || 0}
+          label="price"
+          type="number"
+          id="price"
+        />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          error={Boolean(actionData?.fieldsError?.buyLimit)}
+          helperText={actionData?.fieldsError?.buyLimit}
+          name="buyLimit"
+          defaultValue={actionData?.fields?.buyLimit || 1}
+          label="buyLimit"
+          type="number"
+          id="buyLimit"
+        />
+        <Button type="submit" fullWidth variant="contained" color="primary">
+          Create Goodies
+        </Button>
+      </form>
     </Container>
   );
 }
