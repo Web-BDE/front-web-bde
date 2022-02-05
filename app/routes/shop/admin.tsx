@@ -27,8 +27,21 @@ type ActionData = {
     price: number;
     buyLimit: number;
   };
-  validationError?: string;
 };
+
+import {
+  Grid,
+  Paper,
+  Avatar,
+  TextField,
+  Button,
+  Typography,
+  FormControlLabel,
+  Checkbox,
+  Container,
+  CssBaseline,
+  Alert,
+} from "@mui/material";
 
 export const action: ActionFunction = async ({ request }) => {
   //Initialise fiels
@@ -70,73 +83,79 @@ export default function ShopAdmin() {
   const actionData = useActionData<ActionData>();
   const [searchParams] = useSearchParams();
   return (
-    <div className="container">
-      <h2>Shop Admin</h2>
-      <form method="post">
-        <span>{actionData?.formError}</span>
-        {/* Redirect hidden input */}
-        <input
-          type="hidden"
-          name="redirectTo"
-          value={searchParams.get("redirectTo") || "/shop"}
-        />
-        {/* Name field */}
-        <div>
-          <div>
-            <label htmlFor="name-input">Name</label>
-          </div>
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div style={{ marginTop: "50px" }}>
+        <Typography variant="h4">Create Goodies</Typography>
+        {actionData?.formError ? (
+          <Alert severity="error">{actionData?.formError}</Alert>
+        ) : (
+          ""
+        )}
+        <form method="post">
           <input
-            type="text"
+            type="hidden"
+            name="redirectTo"
+            value={searchParams.get("redirectTo") || "/shop"}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="name"
+            error={Boolean(actionData?.fieldsError?.name)}
+            helperText={actionData?.fieldsError?.name}
+            label="Name"
             name="name"
-            id="name-input"
+            autoComplete="name"
             defaultValue={actionData?.fields?.name}
+            autoFocus
           />
-          <span>{actionData?.fieldsError?.name}</span>
-        </div>
-        {/* Description fiels */}
-        <div>
-          <div>
-            <label htmlFor="description-input">Description</label>
-          </div>
-          <input
-            type="text"
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            error={Boolean(actionData?.fieldsError?.description)}
+            helperText={actionData?.fieldsError?.description}
             name="description"
-            id="description-input"
             defaultValue={actionData?.fields?.description}
+            label="description"
+            id="description"
           />
-          <span>{actionData?.fieldsError?.description}</span>
-        </div>
-        {/* Price field */}
-        <div>
-          <div>
-            <label htmlFor="price-input">Price</label>
-          </div>
-          <input
-            type="number"
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            error={Boolean(actionData?.fieldsError?.price)}
+            helperText={actionData?.fieldsError?.price}
             name="price"
-            id="price-input"
-            min="0"
             defaultValue={actionData?.fields?.price || 0}
-          />
-          <span>{actionData?.fieldsError?.price}</span>
-        </div>
-        {/* Buy limit field */}
-        <div>
-          <div>
-            <label htmlFor="buy-limit-input">Buy limit</label>
-          </div>
-          <input
+            label="price"
             type="number"
-            name="buy-limit"
-            id="buy-limit-input"
-            min="0"
-            defaultValue={actionData?.fields?.buyLimit || 1}
+            id="price"
           />
-          <span>{actionData?.fieldsError?.buyLimit}</span>
-        </div>
-        <button type="submit">Submit</button>
-      </form>
-    </div>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            error={Boolean(actionData?.fieldsError?.buyLimit)}
+            helperText={actionData?.fieldsError?.buyLimit}
+            name="buyLimit"
+            defaultValue={actionData?.fields?.buyLimit || 1}
+            label="buyLimit"
+            type="number"
+            id="buyLimit"
+          />
+          <Button type="submit" fullWidth variant="contained" color="primary">
+            Create Goodies
+          </Button>
+        </form>
+      </div>
+    </Container>
   );
 }
 

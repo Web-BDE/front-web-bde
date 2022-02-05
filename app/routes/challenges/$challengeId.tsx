@@ -31,6 +31,20 @@ import {
   generateExpectedError,
 } from "../../controllers/error";
 
+import {
+  Grid,
+  Paper,
+  Avatar,
+  TextField,
+  Button,
+  Typography,
+  FormControlLabel,
+  Checkbox,
+  Container,
+  CssBaseline,
+  Alert,
+} from "@mui/material";
+
 type LoaderData = {
   challenge: Challenge;
   userId: number;
@@ -243,73 +257,107 @@ function displayChallenge(
 ) {
   if (userId === challenge.creatorId) {
     return (
-      <div>
-        <form method="post">
-          <span>
-            {actionData?.updateChallenge?.formError ||
-              actionData?.updateChallenge?.formSuccess}
-          </span>
-          {/* Hiddent input to handle form method used */}
-          <input type="hidden" name="method" value="update-challenge" />
-          {/* Name input */}
-          <div>
-            <label htmlFor="name-input">Name</label>
-            <input
-              type="text"
+      <Container maxWidth="xs">
+        <CssBaseline />
+        <div>
+          <Typography variant="h4">Challenge</Typography>
+          {actionData?.updateChallenge?.formError ? (
+            <Alert severity="error">
+              {actionData?.updateChallenge.formError}
+            </Alert>
+          ) : (
+            ""
+          )}
+          {actionData?.updateChallenge?.formSuccess ? (
+            <Alert severity="info">
+              {actionData?.updateChallenge.formSuccess}
+            </Alert>
+          ) : (
+            ""
+          )}
+          <form method="post">
+            <input type="hidden" name="method" value="update-challenge" />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="name"
+              error={Boolean(actionData?.updateChallenge?.fieldsError?.name)}
+              helperText={actionData?.updateChallenge?.fieldsError?.name}
+              label="Name"
               name="name"
-              id="name-input"
+              autoComplete="name"
               defaultValue={
                 actionData?.updateChallenge?.fields?.name || challenge.name
               }
+              autoFocus
             />
-            <span>{actionData?.updateChallenge?.fieldsError?.name}</span>
-          </div>
-          {/* Reward input */}
-          <div>
-            <label htmlFor="reward-input">Reward</label>
-            <input
-              type="text"
-              name="reward"
-              id="reward-input"
-              defaultValue={
-                actionData?.updateChallenge?.fields?.reward || challenge.reward
-              }
-            />
-            <span>{actionData?.updateChallenge?.fieldsError?.reward}</span>
-          </div>
-          {/* Description input */}
-          <div>
-            <label htmlFor="description-input">Description</label>
-            <input
-              type="text"
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              error={Boolean(
+                actionData?.updateChallenge?.fieldsError?.description
+              )}
+              helperText={actionData?.updateChallenge?.fieldsError?.description}
               name="description"
-              id="description-input"
               defaultValue={
                 actionData?.updateChallenge?.fields?.description ||
                 challenge.description
               }
+              label="description"
+              id="description"
             />
-            <span>{actionData?.updateChallenge?.fieldsError?.description}</span>
-          </div>
-          <p>Created : {challenge.createdAt}</p>
-          <button type="submit">Update</button>
-        </form>
-        <form method="post">
-          <input type="hidden" name="method" value="delete-challenge" />
-          <button type="submit">Delete</button>
-        </form>
-      </div>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              error={Boolean(actionData?.updateChallenge?.fieldsError?.reward)}
+              helperText={actionData?.updateChallenge?.fieldsError?.reward}
+              name="reward"
+              defaultValue={
+                actionData?.updateChallenge?.fields?.reward || challenge.reward
+              }
+              label="reward"
+              type="number"
+              id="reward"
+            />
+            <Typography variant="h6" style={{ marginTop: "10px" }}>
+              Created : {challenge.createdAt}
+            </Typography>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              style={{ marginTop: "10px" }}
+            >
+              Update Challenge
+            </Button>
+          </form>
+        </div>
+      </Container>
     );
   } else {
     return (
-      <div>
-        <h2>{challenge.name}</h2>
-        <p>
+      <Container maxWidth="xs">
+        <Typography variant="h4">Challenge</Typography>
+        <Typography variant="h3" style={{ marginTop: "10px" }}>
+          {challenge.name}
+        </Typography>
+        <Typography variant="h5" style={{ marginTop: "10px" }}>
           <b>Reward : {challenge.reward}</b>
-        </p>
-        <p>{challenge.description}</p>
-        <p>Created : {challenge.createdAt}</p>
-      </div>
+        </Typography>
+        <Typography variant="body1" style={{ marginTop: "10px" }}>
+          {challenge.description}
+        </Typography>
+        <Typography variant="body1" style={{ marginTop: "10px" }}>
+          Created : {challenge.createdAt}
+        </Typography>
+      </Container>
     );
   }
 }
@@ -319,27 +367,50 @@ export default function Challenge() {
   const actionData = useActionData<ActionData>();
 
   return (
-    <div className="container">
-      <h2>Challenge</h2>
+    <div className="container" style={{ marginTop: "50px" }}>
       {displayChallenge(loaderData.challenge, loaderData.userId, actionData)}
-      <h2>Submit accomplishment</h2>
-      <form method="post">
-        <span>
-          {actionData?.creacteAccomplishment?.formError ||
-            actionData?.creacteAccomplishment?.formSuccess}
-        </span>
-        {/* Hiddend input for method */}
-        <input type="hidden" name="method" value="create-accomplishment" />
-        {/* Proof input */}
+      <Container maxWidth="xs" style={{ marginTop: "50px" }}>
+        <CssBaseline />
         <div>
-          <div>
-            <label htmlFor="proof-input">Proof</label>
-          </div>
-          <input type="text" name="proof" id="proof-input" />
-          <span>{actionData?.creacteAccomplishment?.fieldsError?.proof}</span>
+          <Typography variant="h4">Submit Proof</Typography>
+          {actionData?.updateAccomplishment?.formError ? (
+            <Alert severity="error">
+              {actionData?.updateAccomplishment?.formError}
+            </Alert>
+          ) : (
+            ""
+          )}
+          {actionData?.updateChallenge?.formSuccess ? (
+            <Alert severity="info">
+              {actionData?.updateAccomplishment?.formSuccess}
+            </Alert>
+          ) : (
+            ""
+          )}
+          <form method="post">
+            <input type="hidden" name="method" value="create-accomplishment" />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="proof"
+              error={Boolean(
+                actionData?.updateAccomplishment?.fieldsError?.proof
+              )}
+              helperText={actionData?.updateAccomplishment?.fieldsError?.proof}
+              label="Proof"
+              name="proof"
+              autoComplete="proof"
+              defaultValue={actionData?.updateAccomplishment?.fields?.proof}
+              autoFocus
+            />
+            <Button type="submit" fullWidth variant="contained" color="primary">
+              Submit Proof
+            </Button>
+          </form>
         </div>
-        <button type="submit">Submit</button>
-      </form>
+      </Container>
       {/* Display all user's accomplishment for this challenge */}
       {loaderData.accomplishments ? (
         <Accomplishments

@@ -1,6 +1,17 @@
 import { LinksFunction } from "remix";
 import { Accomplishment } from "~/models/Accomplishment";
 
+import {
+  Alert,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Container,
+  Grid,
+  Typography,
+} from "@mui/material";
+
 type ActionData = {
   validateChallenge?: {
     validationError?: string;
@@ -20,12 +31,33 @@ export default function AccomplishmentsAdmin({
   actionData?: ActionData;
 }) {
   return (
-    <div>
-      <h2>Accomplishments to validate</h2>
-      <span>{loaderData.accomplishmentError}</span>
-      <span>{actionData?.validateChallenge?.validationError}</span>
-      <div className="table">
-        {/* Load all accomplishment in pending state */}
+    <Container component="main" style={{ marginBottom: "50px" }}>
+      <Typography
+        style={{ textAlign: "center", marginTop: "50px" }}
+        variant="h4"
+      >
+        Pending Accomplishments
+      </Typography>
+      {loaderData.accomplishmentError ? (
+        <Alert severity="error">{loaderData.accomplishmentError}</Alert>
+      ) : (
+        ""
+      )}
+      {actionData?.validateChallenge?.validationError ? (
+        <Alert severity="error">
+          {actionData?.validateChallenge?.validationError}
+        </Alert>
+      ) : (
+        ""
+      )}
+
+      <Grid
+        textAlign="center"
+        style={{ marginTop: "50px" }}
+        container
+        spacing={{ xs: 2, md: 3 }}
+        columns={{ xs: 1, sm: 8, md: 12 }}
+      >
         {loaderData.accomplishments
           ?.filter((accomplishment) => {
             return !accomplishment.validation;
@@ -38,39 +70,50 @@ export default function AccomplishmentsAdmin({
           })
           .map((accomplishment) => {
             return (
-              <div key={accomplishment.id}>
-                <p>{accomplishment.proof}</p>
-                <p>Created : {accomplishment.createdAt}</p>
-                <form method="post">
-                  {/* Method hidden input */}
-                  <input
-                    type="hidden"
-                    name="method"
-                    value="validate-accomplishment"
-                  />
-                  {/* Redirection input */}
-                  <input
-                    type="hidden"
-                    name="redirectTo"
-                    value={"/challenges/admin"}
-                  />
-                  {/* Hiddent input to pass accomplishment id to form */}
-                  <input
-                    type="hidden"
-                    name="accomplishmentId"
-                    value={accomplishment.id}
-                  />
-                  <button type="submit" name="validation" value="1">
-                    Validate
-                  </button>
-                  <button type="submit" name="validation" value="-1">
-                    Refuse
-                  </button>
-                </form>
-              </div>
+              <Grid item xs={2} sm={4} md={4} key={accomplishment.id}>
+                <Card sx={{ minWidth: 275 }}>
+                  <CardContent>
+                    <Typography variant="h5" component="div">
+                      {accomplishment.proof}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <form method="post">
+                      <input
+                        type="hidden"
+                        name="accomplishmentId"
+                        value={accomplishment.id}
+                      />
+                      <input
+                        type="hidden"
+                        name="method"
+                        value="validate-accomplishment"
+                      />
+                      <Button
+                        size="small"
+                        type="submit"
+                        name="validation"
+                        id="validation"
+                        value="1"
+                      >
+                        Validate
+                      </Button>
+                      <Button
+                        size="small"
+                        type="submit"
+                        name="validation"
+                        value="-1"
+                        id="validation"
+                      >
+                        Refuse
+                      </Button>
+                    </form>
+                  </CardActions>
+                </Card>
+              </Grid>
             );
           })}
-      </div>
-    </div>
+      </Grid>
+    </Container>
   );
 }

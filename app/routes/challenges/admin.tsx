@@ -37,6 +37,20 @@ export const links: LinksFunction = () => {
   ];
 };
 
+import {
+  Grid,
+  Paper,
+  Avatar,
+  TextField,
+  Button,
+  Typography,
+  FormControlLabel,
+  Checkbox,
+  Container,
+  CssBaseline,
+  Alert,
+} from "@mui/material";
+
 type ActionData = {
   createChallenge?: {
     formError?: string;
@@ -84,16 +98,6 @@ export const action: ActionFunction = async ({ request }) => {
   const description = form.get("description");
   const reward = form.get("reward");
 
-  //Redirection undefined, should never happend
-  if (typeof redirectTo !== "string") {
-    return json(
-      {
-        createChallenge: { formError: "There was an error, please try again" },
-      },
-      400
-    );
-  }
-
   //Validation request
   switch (method) {
     case "validate-accomplishment":
@@ -119,6 +123,18 @@ export const action: ActionFunction = async ({ request }) => {
       );
 
     case "create-challenge":
+      //Redirection undefined, should never happend
+      if (typeof redirectTo !== "string") {
+        return json(
+          {
+            createChallenge: {
+              formError: "There was an error, please try again",
+            },
+          },
+          400
+        );
+      }
+
       //Check for undefined values
       if (
         typeof name !== "string" ||
@@ -149,62 +165,75 @@ export default function ChallengesAdmin() {
   const loaderData = useLoaderData<LoaderData>();
 
   return (
-    <div className="container">
-      <h2>Challenges Admin</h2>
-      <form method="post">
-        <span>{actionData?.createChallenge?.formError}</span>
-        {/* Hidden input used to redirect user to the page where he was before */}
-        <input
-          type="hidden"
-          name="redirectTo"
-          value={searchParams.get("redirectTo") || "/challenges"}
-        />
-        <input type="hidden" name="method" value="create-challenge" />
-        {/* Name input */}
+    <Container component="main">
+      <CssBaseline />
+      <Container style={{ marginTop: "50px" }} maxWidth="xs">
         <div>
-          <div>
-            <label htmlFor="name-input">Name</label>
-          </div>
-          <input
-            type="text"
-            name="name"
-            id="name-input"
-            defaultValue={actionData?.createChallenge?.fields?.name}
-          />
-          <span>{actionData?.createChallenge?.fieldsError?.name}</span>
+          <Typography variant="h4">Create Challenge</Typography>
+          {actionData?.createChallenge?.formError ? (
+            <Alert severity="error">
+              {actionData?.createChallenge.formError}
+            </Alert>
+          ) : (
+            ""
+          )}
+          <form method="post">
+            <input
+              type="hidden"
+              name="redirectTo"
+              value={searchParams.get("redirectTo") || "/challenges"}
+            />
+            <input type="hidden" name="method" value="create-challenge" />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="name"
+              error={Boolean(actionData?.createChallenge?.fieldsError?.name)}
+              helperText={actionData?.createChallenge?.fieldsError?.name}
+              label="Name"
+              name="name"
+              autoComplete="name"
+              defaultValue={actionData?.createChallenge?.fields?.name}
+              autoFocus
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              error={Boolean(
+                actionData?.createChallenge?.fieldsError?.description
+              )}
+              helperText={actionData?.createChallenge?.fieldsError?.description}
+              name="description"
+              defaultValue={actionData?.createChallenge?.fields?.description}
+              label="description"
+              id="description"
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              error={Boolean(actionData?.createChallenge?.fieldsError?.reward)}
+              helperText={actionData?.createChallenge?.fieldsError?.reward}
+              name="reward"
+              defaultValue={actionData?.createChallenge?.fields?.reward || 0}
+              label="reward"
+              type="number"
+              id="reward"
+            />
+            <Button type="submit" fullWidth variant="contained" color="primary">
+              Create Challenge
+            </Button>
+          </form>
         </div>
-        {/* Description input */}
-        <div>
-          <div>
-            <label htmlFor="description-input">Description</label>
-          </div>
-          <input
-            type="text"
-            name="description"
-            id="description-input"
-            defaultValue={actionData?.createChallenge?.fields?.description}
-          />
-          <span>{actionData?.createChallenge?.fieldsError?.description}</span>
-        </div>
-        {/* Reward input */}
-        <div>
-          <div>
-            <label htmlFor="reward-input">Reward</label>
-          </div>
-          <input
-            type="number"
-            name="reward"
-            id="reward-input"
-            min="0"
-            defaultValue={actionData?.createChallenge?.fields?.reward || 0}
-          />
-          <span>{actionData?.createChallenge?.fieldsError?.reward}</span>
-        </div>
-        <button type="submit">Submit</button>
-      </form>
+      </Container>
       {/* Display a list of accomplishments that need to be validated */}
       <AccomplishmentsAdmin loaderData={loaderData} actionData={actionData} />
-    </div>
+    </Container>
   );
 }
 
