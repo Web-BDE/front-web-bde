@@ -160,7 +160,7 @@ export default function Accomplishments({
   formData?: FormData;
 }) {
   return (
-    <Container style={{ marginTop: "50px" }}>
+    <Container style={{ marginTop: "50px", marginBottom: "50px" }}>
       <Typography variant="h4">Your accomplishments</Typography>
       {formData?.formSuccess ? (
         <Alert severity="info">{formData?.formSuccess}</Alert>

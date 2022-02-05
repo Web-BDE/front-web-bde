@@ -31,7 +31,7 @@ export default function AccomplishmentsAdmin({
   actionData?: ActionData;
 }) {
   return (
-    <Container component="main">
+    <Container component="main" style={{ marginBottom: "50px" }}>
       <Typography
         style={{ textAlign: "center", marginTop: "50px" }}
         variant="h4"

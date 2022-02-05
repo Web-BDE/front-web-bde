@@ -13,6 +13,8 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
+import { Grid } from "@mui/material";
+import React from "react";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -46,16 +48,35 @@ function displayAuthMenu(userInfo?: User) {
       </div>
     );
   } else {
+    console.log(userInfo);
     return (
       <div>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          {userInfo.name}
-        </Typography>
-        <form method="post" action="/logout">
-          <Button type="submit" color="inherit" variant="text">
-            Logout
-          </Button>
-        </form>
+        <Grid container>
+          <Typography
+            variant="h5"
+            component="div"
+            sx={{
+              flexGrow: 1,
+              display: { xs: "none", md: "none", lg: "block" },
+            }}
+            style={{ marginRight: "10px" }}
+          >
+            {userInfo.pseudo},
+          </Typography>
+          <Typography
+            variant="h5"
+            component="div"
+            sx={{ flexGrow: 1 }}
+            style={{ marginRight: "50px" }}
+          >
+            Wallet : <b>{userInfo.wallet}</b>
+          </Typography>
+          <form method="post" action="/logout">
+            <Button type="submit" color="inherit" variant="text">
+              Logout
+            </Button>
+          </form>
+        </Grid>
       </div>
     );
   }
@@ -93,12 +114,75 @@ export default function NavBar({ userInfo }: { userInfo?: User }) {
     });
   }
 
+  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
+    null
+  );
+
+  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElNav(event.currentTarget);
+  };
+
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+
   return (
     <div className="navbar">
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static">
           <Toolbar>
-            <Typography sx={{ flexGrow: 1 }}>
+            <Box
+              sx={{
+                flexGrow: 1,
+                display: { md: "flex", lg: "none" },
+              }}
+            >
+              <IconButton
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleOpenNavMenu}
+                color="inherit"
+              >
+                <MenuIcon />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorElNav}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                open={Boolean(anchorElNav)}
+                onClose={handleCloseNavMenu}
+                sx={{
+                  display: { md: "flex", lg: "none" },
+                }}
+              >
+                {leftLinks.map((link, index) => (
+                  <Link
+                    style={{ textDecoration: "none", color: "black" }}
+                    to={link.link}
+                  >
+                    <MenuItem key={index} onClick={handleCloseNavMenu}>
+                      <Typography textAlign="center">{link.name}</Typography>
+                    </MenuItem>
+                  </Link>
+                ))}
+              </Menu>
+            </Box>
+            <Typography
+              sx={{
+                flexGrow: 1,
+                display: { xs: "none", md: "none", lg: "block" },
+              }}
+            >
               {leftLinks.map((link) => {
                 return (
                   <Link
