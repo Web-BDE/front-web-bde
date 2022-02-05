@@ -6,14 +6,26 @@ import {
   useCatch,
   useSearchParams,
 } from "remix";
+
+//Controllers
 import {
   generateExpectedError,
   generateUnexpectedError,
 } from "~/controllers/error";
 
-import { loginUser } from "~/services/authentication";
-import { APIError } from "~/utils/axios";
+//MUI Components
+import {
+  Grid,
+  TextField,
+  Button,
+  Typography,
+  Container,
+  CssBaseline,
+  Alert,
+} from "@mui/material";
+import { handleLogin } from "~/controllers/authentication";
 
+//Data structure handled on POST requests
 type ActionData = {
   formError?: string;
   fieldsError?: {
@@ -25,37 +37,7 @@ type ActionData = {
   };
 };
 
-import {
-  Grid,
-  Paper,
-  Avatar,
-  TextField,
-  Button,
-  Typography,
-  FormControlLabel,
-  Checkbox,
-  Container,
-  CssBaseline,
-  Alert,
-} from "@mui/material";
-import { LockOutlined } from "@mui/icons-material";
-
-function validateEmail(email: string) {
-  if (
-    !new RegExp(
-      process.env["EMAIL_REGEX"] || /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
-    ).test(email)
-  ) {
-    return "User email must match your student email domain";
-  }
-}
-
-function validatePassword(password: string) {
-  if (password.length < 8) {
-    return "Password is too small";
-  }
-}
-
+//Function that handle POST requests
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
   const email = form.get("email");
@@ -70,27 +52,7 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ formError: "You must fill all the form" }, 400);
   }
 
-  const fields = { email, password };
-  const fieldsError = {
-    email: validateEmail(email),
-    password: validatePassword(password),
-  };
-
-  if (Object.values(fieldsError).some(Boolean)) {
-    return json({ fields, fieldsError }, 400);
-  }
-
-  let loginRedirection;
-  try {
-    loginRedirection = await loginUser(fields, redirectTo);
-  } catch (err) {
-    if (err instanceof APIError) {
-      return json({ formError: err.error.message, fields }, err.code);
-    }
-    throw err;
-  }
-
-  return loginRedirection;
+  return await handleLogin(email, password, redirectTo);
 };
 
 export default function Login() {
@@ -98,60 +60,57 @@ export default function Login() {
   const [searchparams] = useSearchParams();
 
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div style={{ marginTop: "50px" }}>
-        <Typography component="h1" variant="h5">
-          Log in
-        </Typography>
-        {actionData?.formError ? (
-          <Alert severity="error">{actionData?.formError}</Alert>
-        ) : (
-          ""
-        )}
-        <form method="post">
-          <input
-            type="hidden"
-            name="redirectTo"
-            value={searchparams.get("redirectTo") || "/"}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            error={Boolean(actionData?.fieldsError?.email)}
-            helperText={actionData?.fieldsError?.email}
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            defaultValue={actionData?.fields?.email}
-            autoFocus
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            error={Boolean(actionData?.fieldsError?.password)}
-            helperText={actionData?.fieldsError?.password}
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
-          <Button type="submit" fullWidth variant="contained" color="primary">
-            Sign In
-          </Button>
-          <Grid container>
-            <Grid item>
-              <Link to="/register">{"Don't have an account? Sign Up"}</Link>
-            </Grid>
+    <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
+      <Typography component="h1" variant="h5">
+        Log in
+      </Typography>
+      {actionData?.formError ? (
+        <Alert severity="error">{actionData?.formError}</Alert>
+      ) : (
+        ""
+      )}
+      <form method="post">
+        <input
+          type="hidden"
+          name="redirectTo"
+          value={searchparams.get("redirectTo") || "/"}
+        />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          id="email"
+          error={Boolean(actionData?.fieldsError?.email)}
+          helperText={actionData?.fieldsError?.email}
+          label="Email Address"
+          name="email"
+          autoComplete="email"
+          defaultValue={actionData?.fields?.email}
+          autoFocus
+        />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          error={Boolean(actionData?.fieldsError?.password)}
+          helperText={actionData?.fieldsError?.password}
+          name="password"
+          label="Password"
+          type="password"
+          id="password"
+          autoComplete="current-password"
+        />
+        <Button type="submit" fullWidth variant="contained" color="primary">
+          Sign In
+        </Button>
+        <Grid container>
+          <Grid item>
+            <Link to="/register">{"Don't have an account? Sign Up"}</Link>
           </Grid>
-        </form>
-      </div>
+        </Grid>
+      </form>
     </Container>
   );
 }
