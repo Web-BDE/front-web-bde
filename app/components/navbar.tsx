@@ -19,10 +19,6 @@ import React from "react";
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
-export const loader: LoaderFunction = () => {
-  console.log("test");
-};
-
 function displayAuthMenu(userInfo?: User) {
   if (!userInfo) {
     return (
@@ -46,7 +42,6 @@ function displayAuthMenu(userInfo?: User) {
       </div>
     );
   } else {
-    console.log(userInfo);
     return (
       <div>
         <Grid container>

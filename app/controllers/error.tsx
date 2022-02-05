@@ -2,7 +2,6 @@ import { Container, Grid, Typography } from "@mui/material";
 import { Link, ThrownResponse } from "remix";
 
 export function generateExpectedError(caught: ThrownResponse) {
-  console.log(caught);
   switch (caught.status) {
     case 401:
       return (
