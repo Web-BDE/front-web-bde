@@ -1,3 +1,4 @@
+import { Container, Grid, Typography } from "@mui/material";
 import { Link, ThrownResponse } from "remix";
 
 export function generateExpectedError(caught: ThrownResponse) {
@@ -5,41 +6,57 @@ export function generateExpectedError(caught: ThrownResponse) {
   switch (caught.status) {
     case 401:
       return (
-        <div className="container">
-          <h3>
-            You must be <Link to="/login">logged in</Link> to see this data
-          </h3>
-        </div>
+        <Container component="main">
+          <Grid style={{ marginTop: "50px" }} textAlign="center">
+            {" "}
+            <Typography variant="h2">
+              You must be <Link to="/login">logged in</Link> to see this data
+            </Typography>
+          </Grid>
+        </Container>
       );
     case 403:
       return (
-        <div className="container">
-          <h3>Sorry, you don't have the rights to see this</h3>
-        </div>
+        <Container component="main">
+          <Grid style={{ marginTop: "50px" }} textAlign="center">
+            {" "}
+            <Typography variant="h2">
+              Sorry, you don't have the rights to see this
+            </Typography>
+          </Grid>
+        </Container>
       );
     case 404:
       return (
-        <div className="container">
-          <h3>There is nothing to see here</h3>
-        </div>
+        <Container component="main">
+          <Grid style={{ marginTop: "50px" }} textAlign="center">
+            {" "}
+            <Typography variant="h2">There is nothing to see here</Typography>
+          </Grid>
+        </Container>
       );
     default:
       return (
-        <div className="container">
-          <h1>
-            {caught.status} {caught.statusText}
-          </h1>
-          <p>{caught.data}</p>
-        </div>
+        <Container component="main">
+          <Grid style={{ marginTop: "50px" }} textAlign="center">
+            {" "}
+            <Typography variant="h2">
+              {caught.status} {caught.statusText}
+            </Typography>
+            <Typography variant="body1">{caught.data}</Typography>
+          </Grid>
+        </Container>
       );
   }
 }
 
 export function generateUnexpectedError(error: Error) {
   return (
-    <div className="container">
-      <h1>Something went wrong</h1>
-      <p>{error.message}</p>
-    </div>
+    <Container component="main">
+      <Grid style={{ marginTop: "50px" }} textAlign="center">
+        <Typography variant="h2">Something went wrong</Typography>
+        <Typography variant="body1">{error.message}</Typography>
+      </Grid>
+    </Container>
   );
 }

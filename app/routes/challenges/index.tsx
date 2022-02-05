@@ -25,17 +25,6 @@ import { Challenge } from "~/models/Challenge";
 
 import { requireUserInfo } from "~/services/authentication";
 
-import contentDisplayStylesheet from "../../styles/contentdisplay.css";
-
-export const links: LinksFunction = () => {
-  return [
-    {
-      rel: "stylesheet",
-      href: contentDisplayStylesheet,
-    },
-  ];
-};
-
 type LoaderData = {
   challenges?: Challenge[];
 };

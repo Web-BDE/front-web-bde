@@ -24,17 +24,6 @@ import { Goodies } from "~/models/Goodies";
 
 import { requireUserInfo } from "~/services/authentication";
 
-import contentDisplayStylesheet from "../../styles/contentdisplay.css";
-
-export const links: LinksFunction = () => {
-  return [
-    {
-      rel: "stylesheet",
-      href: contentDisplayStylesheet,
-    },
-  ];
-};
-
 type LoaderData = {
   goodies?: Goodies[];
 };

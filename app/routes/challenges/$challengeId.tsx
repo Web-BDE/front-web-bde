@@ -367,7 +367,7 @@ export default function Challenge() {
   const actionData = useActionData<ActionData>();
 
   return (
-    <div className="container" style={{ marginTop: "50px" }}>
+    <Container style={{ marginTop: "50px" }}>
       {displayChallenge(loaderData.challenge, loaderData.userId, actionData)}
       <Container maxWidth="xs" style={{ marginTop: "50px" }}>
         <CssBaseline />
@@ -420,7 +420,7 @@ export default function Challenge() {
       ) : (
         ""
       )}
-    </div>
+    </Container>
   );
 }
 

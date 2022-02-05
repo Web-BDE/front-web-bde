@@ -16,8 +16,6 @@ import { requireUserInfo } from "~/services/authentication";
 
 import AccomplishmentsAdmin from "~/components/accomplishmentsAdmin";
 
-import contentDisplayStylesheet from "../../styles/contentdisplay.css";
-
 import {
   generateExpectedError,
   generateUnexpectedError,
@@ -27,15 +25,6 @@ import {
   loadAccomplishments,
 } from "~/controllers/accomplishment";
 import { handleChallengeCreation } from "~/controllers/challenge";
-
-export const links: LinksFunction = () => {
-  return [
-    {
-      rel: "stylesheet",
-      href: contentDisplayStylesheet,
-    },
-  ];
-};
 
 import {
   Grid,
