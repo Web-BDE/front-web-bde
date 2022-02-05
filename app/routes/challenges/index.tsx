@@ -7,13 +7,8 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import {
-  Link,
-  LinksFunction,
-  LoaderFunction,
-  useCatch,
-  useLoaderData,
-} from "remix";
+
+import { Link, LoaderFunction, useCatch, useLoaderData } from "remix";
 
 import { loadChallenges } from "~/controllers/challenge";
 import {
@@ -39,11 +34,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function Challenges() {
   const data = useLoaderData<LoaderData>();
   return (
-    <Container component="main">
-      <Typography
-        style={{ textAlign: "center", marginTop: "50px" }}
-        variant="h2"
-      >
+    <Container component="main" style={{ marginTop: "50px" }}>
+      <Typography style={{ textAlign: "center" }} variant="h2">
         Challenges
       </Typography>
       <Grid

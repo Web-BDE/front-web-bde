@@ -1,9 +1,7 @@
 import {
   ActionFunction,
   json,
-  LinksFunction,
   LoaderFunction,
-  redirect,
   useActionData,
   useCatch,
   useLoaderData,
@@ -27,16 +25,10 @@ import {
 import { handleChallengeCreation } from "~/controllers/challenge";
 
 import {
-  Grid,
-  Paper,
-  Avatar,
   TextField,
   Button,
   Typography,
-  FormControlLabel,
-  Checkbox,
   Container,
-  CssBaseline,
   Alert,
 } from "@mui/material";
 
@@ -154,71 +146,69 @@ export default function ChallengesAdmin() {
   const loaderData = useLoaderData<LoaderData>();
 
   return (
-    <Container component="main">
-      <CssBaseline />
-      <Container style={{ marginTop: "50px" }} maxWidth="xs">
-        <div>
-          <Typography variant="h4">Create Challenge</Typography>
-          {actionData?.createChallenge?.formError ? (
-            <Alert severity="error">
-              {actionData?.createChallenge.formError}
-            </Alert>
-          ) : (
-            ""
-          )}
-          <form method="post">
-            <input
-              type="hidden"
-              name="redirectTo"
-              value={searchParams.get("redirectTo") || "/challenges"}
-            />
-            <input type="hidden" name="method" value="create-challenge" />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="name"
-              error={Boolean(actionData?.createChallenge?.fieldsError?.name)}
-              helperText={actionData?.createChallenge?.fieldsError?.name}
-              label="Name"
-              name="name"
-              autoComplete="name"
-              defaultValue={actionData?.createChallenge?.fields?.name}
-              autoFocus
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              error={Boolean(
-                actionData?.createChallenge?.fieldsError?.description
-              )}
-              helperText={actionData?.createChallenge?.fieldsError?.description}
-              name="description"
-              defaultValue={actionData?.createChallenge?.fields?.description}
-              label="description"
-              id="description"
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              error={Boolean(actionData?.createChallenge?.fieldsError?.reward)}
-              helperText={actionData?.createChallenge?.fieldsError?.reward}
-              name="reward"
-              defaultValue={actionData?.createChallenge?.fields?.reward || 0}
-              label="reward"
-              type="number"
-              id="reward"
-            />
-            <Button type="submit" fullWidth variant="contained" color="primary">
-              Create Challenge
-            </Button>
-          </form>
-        </div>
+    <Container component="main" style={{ marginTop: "50px" }}>
+      <Container maxWidth="xs">
+        <Typography variant="h4">Create Challenge</Typography>
+        {actionData?.createChallenge?.formError ? (
+          <Alert severity="error">
+            {actionData?.createChallenge.formError}
+          </Alert>
+        ) : (
+          ""
+        )}
+        <form method="post">
+          {/* Hidden input with redirection URL in it */}
+          <input
+            type="hidden"
+            name="redirectTo"
+            value={searchParams.get("redirectTo") || "/challenges"}
+          />
+          {/* Method that the Action function will have to handle */}
+          <input type="hidden" name="method" value="create-challenge" />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="name"
+            error={Boolean(actionData?.createChallenge?.fieldsError?.name)}
+            helperText={actionData?.createChallenge?.fieldsError?.name}
+            label="Name"
+            name="name"
+            autoComplete="name"
+            defaultValue={actionData?.createChallenge?.fields?.name}
+            autoFocus
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            error={Boolean(
+              actionData?.createChallenge?.fieldsError?.description
+            )}
+            helperText={actionData?.createChallenge?.fieldsError?.description}
+            name="description"
+            defaultValue={actionData?.createChallenge?.fields?.description}
+            label="description"
+            id="description"
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            error={Boolean(actionData?.createChallenge?.fieldsError?.reward)}
+            helperText={actionData?.createChallenge?.fieldsError?.reward}
+            name="reward"
+            defaultValue={actionData?.createChallenge?.fields?.reward || 0}
+            label="reward"
+            type="number"
+            id="reward"
+          />
+          <Button type="submit" fullWidth variant="contained" color="primary">
+            Create Challenge
+          </Button>
+        </form>
       </Container>
       {/* Display a list of accomplishments that need to be validated */}
       <AccomplishmentsAdmin loaderData={loaderData} actionData={actionData} />

@@ -1,4 +1,3 @@
-import { LinksFunction } from "remix";
 import { Accomplishment } from "~/models/Accomplishment";
 
 import {
@@ -78,6 +77,7 @@ export default function AccomplishmentsAdmin({
                     </Typography>
                   </CardContent>
                   <CardActions>
+                    {/* Form to validate an accomplishment */}
                     <form method="post">
                       <input
                         type="hidden"

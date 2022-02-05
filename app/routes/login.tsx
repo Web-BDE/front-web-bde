@@ -20,7 +20,6 @@ import {
   Button,
   Typography,
   Container,
-  CssBaseline,
   Alert,
 } from "@mui/material";
 import { handleLogin } from "~/controllers/authentication";
