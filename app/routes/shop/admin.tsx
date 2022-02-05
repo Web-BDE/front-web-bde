@@ -1,6 +1,7 @@
 import {
   ActionFunction,
   json,
+  LoaderFunction,
   useActionData,
   useCatch,
   useSearchParams,
@@ -42,6 +43,10 @@ import {
   CssBaseline,
   Alert,
 } from "@mui/material";
+
+export const loader: LoaderFunction = async ({ request }) => {
+  await requireUserInfo(request, "/shop/admin");
+};
 
 export const action: ActionFunction = async ({ request }) => {
   //Initialise fiels
