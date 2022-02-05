@@ -19,26 +19,16 @@ import React from "react";
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
-export const loader: LoaderFunction = () => {
-  console.log("test");
-};
-
 function displayAuthMenu(userInfo?: User) {
   if (!userInfo) {
     return (
       <div>
-        <Link
-          style={{ textDecoration: "none", color: "white" }}
-          to="/login"
-        >
+        <Link style={{ textDecoration: "none", color: "white" }} to="/login">
           <Button color="inherit" variant="text">
             Login
           </Button>
         </Link>
-        <Link
-          style={{ textDecoration: "none", color: "white" }}
-          to="/register"
-        >
+        <Link style={{ textDecoration: "none", color: "white" }} to="/register">
           <Button color="inherit" variant="text">
             Register
           </Button>
@@ -46,7 +36,6 @@ function displayAuthMenu(userInfo?: User) {
       </div>
     );
   } else {
-    console.log(userInfo);
     return (
       <div>
         <Grid container>
