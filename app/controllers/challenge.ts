@@ -31,9 +31,9 @@ export async function loadChallenges(request: Request) {
 export async function handleChallengeCreation(
   request: Request,
   name: string,
-  description: string,
   reward: number,
-  redirectTo: string
+  redirectTo: string,
+  description?: string,
 ) {
   //Check fields format errors
   const fields = { name, description, reward: reward };

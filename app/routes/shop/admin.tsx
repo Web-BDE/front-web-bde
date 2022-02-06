@@ -31,13 +31,7 @@ type ActionData = {
   };
 };
 
-import {
-  TextField,
-  Button,
-  Typography,
-  Container,
-  Alert,
-} from "@mui/material";
+import { TextField, Button, Typography, Container, Alert } from "@mui/material";
 
 export const loader: LoaderFunction = async ({ request }) => {
   return await requireUserInfo(request, "/shop/admin");
@@ -62,7 +56,7 @@ export const action: ActionFunction = async ({ request }) => {
   //Check for field types
   if (
     typeof name !== "string" ||
-    (typeof description !== "string" && typeof description !== "undefined") ||
+    (typeof description !== "string" && description !== null) ||
     typeof price !== "string" ||
     typeof buyLimit !== "string"
   ) {
@@ -72,10 +66,10 @@ export const action: ActionFunction = async ({ request }) => {
   return await handleCreateGoodies(
     request,
     name,
-    description,
     parseInt(price),
     parseInt(buyLimit),
-    redirectTo
+    redirectTo,
+    description ? description : undefined
   );
 };
 
@@ -142,11 +136,11 @@ export default function ShopAdmin() {
           fullWidth
           error={Boolean(actionData?.fieldsError?.buyLimit)}
           helperText={actionData?.fieldsError?.buyLimit}
-          name="buyLimit"
+          name="buy-limit"
           defaultValue={actionData?.fields?.buyLimit || 1}
-          label="buyLimit"
+          label="Buy Limit"
           type="number"
-          id="buyLimit"
+          id="buy-limit"
         />
         <Button type="submit" fullWidth variant="contained" color="primary">
           Create Goodies

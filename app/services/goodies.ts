@@ -4,7 +4,7 @@ import { buildAxiosHeaders, handleAPIError } from "~/utils/axios";
 
 type GoodiesInfo = {
   name: string;
-  description: string;
+  description?: string;
   price: number;
   buyLimit: number;
 };

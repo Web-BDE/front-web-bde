@@ -24,13 +24,7 @@ import {
 } from "~/controllers/accomplishment";
 import { handleChallengeCreation } from "~/controllers/challenge";
 
-import {
-  TextField,
-  Button,
-  Typography,
-  Container,
-  Alert,
-} from "@mui/material";
+import { TextField, Button, Typography, Container, Alert } from "@mui/material";
 
 type ActionData = {
   createChallenge?: {
@@ -119,8 +113,7 @@ export const action: ActionFunction = async ({ request }) => {
       //Check for undefined values
       if (
         typeof name !== "string" ||
-        (typeof description !== "string" &&
-          typeof description !== "undefined") ||
+        (typeof description !== "string" && description !== null) ||
         typeof reward !== "string"
       ) {
         return json({
@@ -131,9 +124,9 @@ export const action: ActionFunction = async ({ request }) => {
       return await handleChallengeCreation(
         request,
         name,
-        description,
         parseInt(reward),
-        redirectTo
+        redirectTo,
+        description ? description : undefined
       );
     default:
       throw new Error("There was an error during form handling");

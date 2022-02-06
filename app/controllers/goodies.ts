@@ -38,16 +38,16 @@ export async function loadGoodies(request: Request) {
 export async function handleCreateGoodies(
   request: Request,
   name: string,
-  description: string,
   price: number,
   buyLimit: number,
-  redirectTo: string
+  redirectTo: string,
+  description?: string
 ) {
   const fields = {
     name,
     description,
-    price: price,
-    buyLimit: buyLimit,
+    price,
+    buyLimit,
   };
   const fieldsError = {
     reward: validatePrice(price),
