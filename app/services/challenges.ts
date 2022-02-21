@@ -1,96 +1,102 @@
 import axios from "axios";
 import { Challenge } from "~/models/Challenge";
-import { buildAxiosHeaders, handleAPIError } from "~/utils/axios";
+import {
+  buildAxiosHeaders,
+  buildSearchParams,
+  handleAPIError,
+} from "~/utils/axios";
 
 type ChallengeInfo = {
   name: string;
   description?: string;
-  reward: number;
+  reward?: number;
 };
 
-export async function getManyChallenge(request: Request) {
-  let challenges;
+export async function getManyChallenge(
+  token: string,
+  limit?: number,
+  offset?: number
+) {
+  const searchParams = buildSearchParams(limit?.toString(), offset?.toString());
   try {
-    challenges = (
-      await axios.get<{ message: string; challenges: Challenge[] }>(
-        "/challenge",
-        {
-          headers: await buildAxiosHeaders(request),
-        }
-      )
-    ).data.challenges;
+    const reply = await axios.get<{ message: string; challenges: Challenge[] }>(
+      `/challenge/${searchParams}`,
+      {
+        headers: buildAxiosHeaders(token),
+      }
+    );
+
+    return reply.data;
   } catch (err) {
     handleAPIError(err);
   }
-
-  if (!challenges) {
-    throw new Error("Unable to find any challenge");
-  }
-
-  return challenges;
 }
 
-export async function getChallenge(request: Request, challengeId: number) {
-  let challenge;
+export async function getChallenge(token: string, challengeId: number) {
   try {
-    challenge = (
-      await axios.get<{ message: string; challenge: Challenge }>(
-        `/challenge/${challengeId}`,
-        {
-          headers: await buildAxiosHeaders(request),
-        }
-      )
-    ).data.challenge;
+    const reply = await axios.get<{ message: string; challenge: Challenge }>(
+      `/challenge/${challengeId}`,
+      {
+        headers: buildAxiosHeaders(token),
+      }
+    );
+
+    return reply.data;
   } catch (err) {
     handleAPIError(err);
   }
-
-  if (!challenge) {
-    throw new Error("Unable to find challenge");
-  }
-
-  return challenge;
 }
 
 export async function createChallenge(
-  request: Request,
+  token: string,
   challengeInfo: ChallengeInfo
 ) {
   try {
-    await axios.put("/challenge", challengeInfo, {
-      headers: await buildAxiosHeaders(request),
-    });
+    const reply = await axios.put<{ message: string }>(
+      "/challenge",
+      challengeInfo,
+      {
+        headers: buildAxiosHeaders(token),
+      }
+    );
+
+    return reply.data;
   } catch (err) {
     handleAPIError(err);
   }
-
-  return "Challenge created";
 }
 
 export async function updateChallenge(
-  request: Request,
+  token: string,
   challengeInfo: ChallengeInfo,
   challengeId: number
 ) {
   try {
-    await axios.patch(`/challenge/${challengeId}`, challengeInfo, {
-      headers: await buildAxiosHeaders(request),
-    });
+    const reply = await axios.patch<{ message: string }>(
+      `/challenge/${challengeId}`,
+      challengeInfo,
+      {
+        headers: buildAxiosHeaders(token),
+      }
+    );
+
+    return reply.data;
   } catch (err) {
     handleAPIError(err);
   }
-
-  return "Challenge updated";
 }
 
-export async function deleteChallenge(request: Request, challengeId: number) {
+export async function deleteChallenge(token: string, challengeId: number) {
   try {
-    await axios.delete(`/challenge/${challengeId}`, {
-      headers: await buildAxiosHeaders(request),
-    });
+    const reply = await axios.delete<{ message: string }>(
+      `/challenge/${challengeId}`,
+      {
+        headers: buildAxiosHeaders(token),
+      }
+    );
+
+    return reply.data;
   } catch (err) {
     handleAPIError(err);
   }
-
-  return "Challenge deleted";
 }
