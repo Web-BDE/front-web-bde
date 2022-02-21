@@ -10,7 +10,7 @@ import {
 import {
   generateExpectedError,
   generateUnexpectedError,
-} from "~/controllers/error";
+} from "~/utils/error";
 import { handleCreateGoodies } from "~/controllers/goodies";
 
 import { requireAuth } from "~/services/authentication";

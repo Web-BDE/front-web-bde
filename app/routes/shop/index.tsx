@@ -13,7 +13,7 @@ import { Link, LoaderFunction, useCatch, useLoaderData } from "remix";
 import {
   generateExpectedError,
   generateUnexpectedError,
-} from "~/controllers/error";
+} from "~/utils/error";
 import { loadGoodies } from "~/controllers/goodies";
 
 import { Goodies } from "~/models/Goodies";

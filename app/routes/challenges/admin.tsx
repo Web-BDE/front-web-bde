@@ -12,12 +12,9 @@ import { Accomplishment, Validation } from "~/models/Accomplishment";
 
 import { requireAuth } from "~/services/authentication";
 
-import AccomplishmentsAdmin from "~/components/accomplishmentsAdmin";
+import AccomplishmentsAdmin from "~/components/challenge/accomplishmentsAdmin";
 
-import {
-  generateExpectedError,
-  generateUnexpectedError,
-} from "~/controllers/error";
+import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
 import {
   handleValidateAccomplishment,
   loadAccomplishments,

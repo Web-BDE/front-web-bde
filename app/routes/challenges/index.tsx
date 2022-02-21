@@ -14,7 +14,7 @@ import { loadChallenges } from "~/controllers/challenge";
 import {
   generateExpectedError,
   generateUnexpectedError,
-} from "~/controllers/error";
+} from "~/utils/error";
 
 import { Challenge } from "~/models/Challenge";
 

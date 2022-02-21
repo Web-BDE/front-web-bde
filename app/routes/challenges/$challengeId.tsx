@@ -8,7 +8,7 @@ import {
   useLoaderData,
 } from "remix";
 
-import Accomplishments from "~/components/accomplishments";
+import Accomplishments from "~/components/challenge/accomplishments";
 
 import {
   handleAccomplishmentCreation,
@@ -31,7 +31,7 @@ import { APIError } from "~/utils/axios";
 import {
   generateUnexpectedError,
   generateExpectedError,
-} from "../../controllers/error";
+} from "../../utils/error";
 
 import {
   TextField,

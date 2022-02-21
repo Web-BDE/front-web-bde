@@ -10,7 +10,7 @@ import {
 import {
   generateExpectedError,
   generateUnexpectedError,
-} from "~/controllers/error";
+} from "~/utils/error";
 import {
   handleDeleteGoodies,
   handleUpdateGoodies,

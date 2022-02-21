@@ -19,7 +19,7 @@ import { getSelft } from "./services/user";
 import {
   generateExpectedError,
   generateUnexpectedError,
-} from "./controllers/error";
+} from "./utils/error";
 import { tryGetToken } from "./services/authentication";
 
 export const meta: MetaFunction = () => {
