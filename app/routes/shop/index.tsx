@@ -1,25 +1,16 @@
 import { Container } from "@mui/material";
 
-import { json, LoaderFunction, useCatch, useLoaderData } from "remix";
+import { LoaderFunction, useCatch, useLoaderData } from "remix";
 
 import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
 
 import { requireAuth } from "~/services/authentication";
 import { getManyGoodies } from "~/services/goodies";
-import { APIError } from "~/utils/axios";
 import GoodiesGrid from "~/components/shop/goodiesGrid";
 import { Goodies } from "~/models/Goodies";
 
 async function loadGoodies(token: string) {
-  let goodies;
-  try {
-    goodies = await getManyGoodies(token);
-  } catch (err) {
-    if (err instanceof APIError) {
-      throw json(err.error.message, err.code);
-    }
-    throw err;
-  }
+  const goodies = await getManyGoodies(token);
 
   return goodies;
 }
