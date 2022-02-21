@@ -10,7 +10,7 @@ import {
 
 import { Accomplishment } from "~/models/Accomplishment";
 
-import { requireUserInfo } from "~/services/authentication";
+import { requireAuth } from "~/services/authentication";
 
 import AccomplishmentsAdmin from "~/components/accomplishmentsAdmin";
 
@@ -52,14 +52,14 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async ({ request }) => {
   //User need to be logged in
-  await requireUserInfo(request, `/challenges/admin`);
+  await requireAuth(request, `/challenges/admin`);
 
   return await loadAccomplishments(request);
 };
 
 export const action: ActionFunction = async ({ request }) => {
   //User need to be logged in
-  await requireUserInfo(request, `/challenges/admin`);
+  await requireAuth(request, `/challenges/admin`);
 
   //Declare all fields
   const form = await request.formData();

@@ -24,7 +24,7 @@ import { Accomplishment } from "~/models/Accomplishment";
 import { Challenge } from "~/models/Challenge";
 
 import { getManyAccomplishment } from "~/services/accomplishment";
-import { requireUserInfo } from "~/services/authentication";
+import { requireAuth } from "~/services/authentication";
 import { getChallenge } from "~/services/challenges";
 import { APIError } from "~/utils/axios";
 
@@ -103,7 +103,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   }
 
   //Need to provide userId to filter in jsx
-  const userInfo = await requireUserInfo(
+  const userInfo = await requireAuth(
     request,
     `/challenge/${params.challengeId}`
   );
@@ -144,7 +144,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     throw json("Invalid challenge query", 404);
   }
 
-  await requireUserInfo(request, `/challenge/${params.challengeId}`);
+  await requireAuth(request, `/challenge/${params.challengeId}`);
 
   //Decalare all fields
   const form = await request.formData();

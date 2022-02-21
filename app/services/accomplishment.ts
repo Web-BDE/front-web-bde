@@ -2,119 +2,116 @@ import axios from "axios";
 
 import { Accomplishment } from "~/models/Accomplishment";
 
-import { buildAxiosHeaders, handleAPIError } from "~/utils/axios";
+import {
+  buildAxiosHeaders,
+  buildSearchParams,
+  handleAPIError,
+} from "~/utils/axios";
 
 type AccomplishmentInfo = {
   proof?: string;
 };
 
 export async function createAccomplishment(
-  request: Request,
+  token: string,
   accomplishmentInfo: AccomplishmentInfo,
   challengeId: number
 ) {
   try {
-    await axios.put(
+    const reply = await axios.put<{ message: string }>(
       "/accomplishment",
+      { info: accomplishmentInfo, challengeId },
       {
-        info: accomplishmentInfo,
-        challengeId,
-      },
-      { headers: await buildAxiosHeaders(request) }
+        headers: buildAxiosHeaders(token),
+      }
     );
+
+    return reply.data;
   } catch (err) {
     handleAPIError(err);
   }
-
-  return "Accomplishment created";
 }
 
 export async function updateAccomplishment(
-  request: Request,
-  accomplishmentInfo: AccomplishmentInfo,
-  accomplishmentId: number
+  token: string,
+  accomplishmentId: number,
+  accomplishmentInfo?: AccomplishmentInfo,
+  validation?: -1 | null | 1
 ) {
   try {
-    await axios.patch(
+    const reply = await axios.put<{ message: string }>(
       `/accomplishment/${accomplishmentId}`,
+      { info: accomplishmentInfo, status: validation },
       {
-        proof: accomplishmentInfo.proof,
-      },
-      { headers: await buildAxiosHeaders(request) }
+        headers: buildAxiosHeaders(token),
+      }
     );
+
+    return reply.data;
   } catch (err) {
     handleAPIError(err);
   }
-
-  return "Accomplishment updated";
 }
 
 export async function deleteAccomplishment(
-  request: Request,
+  token: string,
   accomplishmentId: number
 ) {
   try {
-    await axios.delete(`/accomplishment/${accomplishmentId}`, {
-      headers: await buildAxiosHeaders(request),
-    });
+    const reply = await axios.delete<{ message: string }>(
+      `/accomplishment/${accomplishmentId}`,
+      {
+        headers: buildAxiosHeaders(token),
+      }
+    );
+
+    return reply.data;
   } catch (err) {
     handleAPIError(err);
   }
-
-  return "Accomplishment deleted";
 }
 
 export async function getAccomplishment(
-  request: Request,
-  accomplishmentId: number
-) {
-  let accomplishment;
-  try {
-    accomplishment = (
-      await axios.get<{ message: string; accomplishments: Accomplishment[] }>(
-        `/accomplishment/${accomplishmentId}`,
-        {
-          headers: await buildAxiosHeaders(request),
-        }
-      )
-    ).data.accomplishments;
-  } catch (err) {
-    handleAPIError(err);
-  }
-  return accomplishment;
-}
-
-export async function getManyAccomplishment(request: Request) {
-  let accomplishments;
-  try {
-    accomplishments = (
-      await axios.get<{ message: string; accomplishments: Accomplishment[] }>(
-        "/accomplishment",
-        {
-          headers: await buildAxiosHeaders(request),
-        }
-      )
-    ).data.accomplishments;
-  } catch (err) {
-    handleAPIError(err);
-  }
-  return accomplishments;
-}
-
-export async function validateAccomplishment(
-  request: Request,
-  validation: 1 | -1,
+  token: string,
   accomplishmentId: number
 ) {
   try {
-    await axios.patch(
-      `/accomplishment/validate/${accomplishmentId}`,
-      { state: validation },
-      { headers: await buildAxiosHeaders(request) }
-    );
+    const reply = await axios.get<{
+      message: string;
+      accomplishment: Accomplishment;
+    }>(`/accomplishment/${accomplishmentId}`, {
+      headers: buildAxiosHeaders(token),
+    });
+
+    return reply.data;
   } catch (err) {
     handleAPIError(err);
   }
+}
 
-  return "Accomplishment validation changed";
+export async function getManyAccomplishment(
+  token: string,
+  limit: number,
+  offset: number,
+  challengeId: number,
+  userId: number
+) {
+  const searchParams = buildSearchParams(
+    { key: "limit", val: limit?.toString() },
+    { key: "offset", val: offset?.toString() },
+    { key: "challengeId", val: challengeId?.toString() },
+    { key: "userId", val: userId?.toString() }
+  );
+  try {
+    const reply = await axios.get<{
+      message: string;
+      accomplishments: Accomplishment[];
+    }>(`/accomplishment/${searchParams.entries.length ? "?" + searchParams : ""}`, {
+      headers: buildAxiosHeaders(token),
+    });
+
+    return reply.data;
+  } catch (err) {
+    handleAPIError(err);
+  }
 }

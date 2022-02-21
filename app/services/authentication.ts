@@ -25,51 +25,41 @@ const storage = createCookieSessionStorage({
 });
 
 export async function loginUser(loginForm: LoginInfo, redirectTo: string) {
-  let session;
   try {
-    session = (
-      await axios.put<{
-        message: string;
-        token: string;
-        userId: number;
-      }>("/session", loginForm)
-      ).data;
-    } catch (err) {
-      handleAPIError(err);
-    }
-    
-    if (!session) {
-      throw new Error("Unable to find user");
-    }
-    
-    return createUserSession(session.token, session.userId, redirectTo);
+    const reply = await axios.put<{
+      message: string;
+      token: string;
+    }>("/session", loginForm);
+
+    return createUserSession(reply.data.token, redirectTo);
+  } catch (err) {
+    handleAPIError(err);
   }
-  
-  export async function logout(request: Request) {
-    const session = await storage.getSession(request.headers.get("Cookie"));
-  
-    try {
-      await axios.delete(`/session`, {
-        headers: await buildAxiosHeaders(request),
-      });
-    } catch {}
-  
+}
+
+export async function logout(request: Request) {
+  const session = await storage.getSession(request.headers.get("Cookie"));
+  const token = session.get("token");
+
+  try {
+    await axios.delete<{ message: string }>(`/session`, {
+      headers: buildAxiosHeaders(token),
+    });
+
     return redirect("/", {
       headers: {
         "Set-Cookie": await storage.destroySession(session),
       },
     });
+  } catch (err) {
+    handleAPIError(err);
   }
-  
-  async function createUserSession(
-    token: string,
-    userId: number,
-    redirectTo: string
-    ) {
-      const session = await storage.getSession();
-      
+}
+
+async function createUserSession(token: string, redirectTo: string) {
+  const session = await storage.getSession();
+
   session.set("token", token);
-  session.set("userId", userId);
 
   return redirect(redirectTo, {
     headers: {
@@ -82,23 +72,17 @@ function getUserSession(request: Request) {
   return storage.getSession(request.headers.get("Cookie"));
 }
 
-export async function requireUserInfo(
+export async function requireAuth(
   request: Request,
   redirectTo: string = new URL(request.url).pathname
 ) {
   const session = await getUserSession(request);
-  const userId: number = session.get("userId");
   const token: string = session.get("token");
 
-  if (
-    !userId ||
-    typeof userId !== "number" ||
-    !token ||
-    typeof token !== "string"
-  ) {
+  if (!token || typeof token !== "string") {
     const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
     throw redirect(`/login?${searchParams}`);
   }
 
-  return { userId, token };
+  return { token };
 }

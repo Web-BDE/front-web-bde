@@ -1,6 +1,6 @@
 import axios from "axios";
 import { json } from "remix";
-import { requireUserInfo } from "~/services/authentication";
+import { requireAuth } from "~/services/authentication";
 
 export function initAxiosConfig() {
   axios.defaults.baseURL = process.env["API_URL"] || "http://localhost:4000";
@@ -27,11 +27,17 @@ export function handleAPIError(err: unknown) {
   throw err;
 }
 
-export async function buildAxiosHeaders(request: Request) {
-  let token;
-  try {
-    token = (await requireUserInfo(request)).token;
-  } catch {}
-
+export function buildAxiosHeaders(token: string) {
   return { Authorization: `Bearer ${token}` };
+}
+
+export function buildSearchParams(
+  ...params: Array<{ key: string; val: string | undefined }>
+) {
+  let result = new URLSearchParams();
+  //Filter undefined keys
+  params.forEach((entry) => {
+    if (typeof entry.val !== "undefined") result.append(entry.key, entry.val);
+  });
+  return result;
 }
