@@ -18,10 +18,13 @@ export async function getManyGoodies(
   limit: string,
   offset: string
 ) {
-  const searchParams = buildSearchParams(limit.toString(), offset.toString());
+  const searchParams = buildSearchParams(
+    { key: "limit", val: limit?.toString() },
+    { key: "offset", val: offset?.toString() }
+  );
   try {
     const reply = await axios.get<{ message: string; goodies: Goodies[] }>(
-      `/goodies/${searchParams}`,
+      `/goodies/${searchParams.entries.length ? "?" + searchParams : ""}`,
       {
         headers: buildAxiosHeaders(token),
       }

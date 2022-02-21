@@ -31,13 +31,13 @@ export function buildAxiosHeaders(token: string) {
   return { Authorization: `Bearer ${token}` };
 }
 
-export function buildSearchParams(...args: Array<string | undefined>) {
-  if (args.length) {
-    let result = "?";
-    args.forEach((val) => {
-      result += val ? val : "";
-    });
-    console.log(result);
-    return result.slice(-1);
-  } else return "";
+export function buildSearchParams(
+  ...params: Array<{ key: string; val: string | undefined }>
+) {
+  let result = new URLSearchParams();
+  //Filter undefined keys
+  params.forEach((entry) => {
+    if (typeof entry.val !== "undefined") result.append(entry.key, entry.val);
+  });
+  return result;
 }

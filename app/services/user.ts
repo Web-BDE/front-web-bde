@@ -105,10 +105,13 @@ export async function getManyUser(
   limit?: number,
   offset?: number
 ) {
-  const searchParams = buildSearchParams(limit?.toString(), offset?.toString());
+  const searchParams = buildSearchParams(
+    { key: "limit", val: limit?.toString() },
+    { key: "offset", val: offset?.toString() },
+  );
   try {
     const reply = await axios.get<{ message: string; users: User[] }>(
-      `/user/${searchParams}`,
+      `/user/${searchParams.entries.length ? "?" + searchParams : ""}`,
       {
         headers: buildAxiosHeaders(token),
       }

@@ -97,16 +97,16 @@ export async function getManyAccomplishment(
   userId: number
 ) {
   const searchParams = buildSearchParams(
-    limit.toString(),
-    offset.toString(),
-    challengeId.toString(),
-    userId.toString()
+    { key: "limit", val: limit?.toString() },
+    { key: "offset", val: offset?.toString() },
+    { key: "challengeId", val: challengeId?.toString() },
+    { key: "userId", val: userId?.toString() }
   );
   try {
     const reply = await axios.get<{
       message: string;
       accomplishments: Accomplishment[];
-    }>(`/accomplishment/${searchParams}`, {
+    }>(`/accomplishment/${searchParams.entries.length ? "?" + searchParams : ""}`, {
       headers: buildAxiosHeaders(token),
     });
 

@@ -48,20 +48,20 @@ export async function deletePurchase(token: string, purchaseId: number) {
 
 export async function getManyPurchase(
   token: string,
-  limit: number,
-  offset: number,
-  goodiesId: number,
-  userId: number
+  limit?: number,
+  offset?: number,
+  goodiesId?: number,
+  userId?: number
 ) {
   const searchParams = buildSearchParams(
-    limit.toString(),
-    offset.toString(),
-    goodiesId.toString(),
-    userId.toString()
+    { key: "limit", val: limit?.toString() },
+    { key: "offset", val: offset?.toString() },
+    { key: "goodiesId", val: goodiesId?.toString() },
+    { key: "userId", val: userId?.toString() }
   );
   try {
     const reply = await axios.get<{ message: string; purchases: Purchase[] }>(
-      `/purchase/${searchParams}`,
+      `/purchase/${searchParams.entries.length ? "?" + searchParams : ""}`,
       {
         headers: buildAxiosHeaders(token),
       }
