@@ -1,4 +1,4 @@
-import { Link, LoaderFunction } from "remix";
+import { Link } from "remix";
 import { User } from "~/models/User";
 
 import AppBar from "@mui/material/AppBar";
@@ -8,17 +8,13 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { Grid } from "@mui/material";
-import React, { useContext } from "react";
-import { UserContext } from "./userContext";
 
-const pages = ["Products", "Pricing", "Blog"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+import React, { useContext } from "react";
+
+import { UserContext } from "./userContext";
 
 function displayAuthMenu(userInfo?: User) {
   if (!userInfo) {
