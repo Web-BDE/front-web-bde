@@ -1,6 +1,10 @@
 import axios from "axios";
 import { Goodies } from "~/models/Goodies";
-import { buildAxiosHeaders, handleAPIError } from "~/utils/axios";
+import {
+  buildAxiosHeaders,
+  buildSearchParams,
+  handleAPIError,
+} from "~/utils/axios";
 
 type GoodiesInfo = {
   name: string;
@@ -9,86 +13,88 @@ type GoodiesInfo = {
   buyLimit: number;
 };
 
-export async function getManyGoodies(request: Request) {
-  let goodies;
-  try {
-    goodies = (
-      await axios.get<{ message: string; goodies: Goodies[] }>("/goodies", {
-        headers: await buildAxiosHeaders(request),
-      })
-    ).data.goodies;
-  } catch (err) {
-    handleAPIError(err);
-  }
-
-  if (!goodies) {
-    throw new Error("Unable to find any goodies");
-  }
-
-  return goodies;
-}
-
-export async function getGoodies(request: Request, goodiesId: number) {
-  let goodies;
-  try {
-    goodies = (
-      await axios.get<{ message: string; goodies: Goodies }>(
-        `/goodies/${goodiesId}`,
-        {
-          headers: await buildAxiosHeaders(request),
-        }
-      )
-    ).data.goodies;
-  } catch (err) {
-    handleAPIError(err);
-  }
-
-  if (!goodies) {
-    throw new Error("Unable to find goodies");
-  }
-
-  return goodies;
-}
-
-export async function createGoodies(
-  request: Request,
-  goodiesForm: GoodiesInfo
+export async function getManyGoodies(
+  token: string,
+  limit: string,
+  offset: string
 ) {
+  const searchParams = buildSearchParams(limit.toString(), offset.toString());
   try {
-    await axios.put("/goodies", goodiesForm, {
-      headers: await buildAxiosHeaders(request),
-    });
+    const reply = await axios.get<{ message: string; goodies: Goodies[] }>(
+      `/goodies/${searchParams}`,
+      {
+        headers: buildAxiosHeaders(token),
+      }
+    );
+
+    return reply.data;
   } catch (err) {
     handleAPIError(err);
   }
+}
 
-  return "Goodies created";
+export async function getGoodies(token: string, goodiesId: number) {
+  try {
+    const reply = await axios.get<{ message: string; goodies: Goodies }>(
+      `/goodies/${goodiesId}`,
+      {
+        headers: buildAxiosHeaders(token),
+      }
+    );
+
+    return reply.data;
+  } catch (err) {
+    handleAPIError(err);
+  }
+}
+
+export async function createGoodies(token: string, goodiesInfo: GoodiesInfo) {
+  try {
+    const reply = await axios.put<{ message: string }>(
+      "/goodies",
+      goodiesInfo,
+      {
+        headers: buildAxiosHeaders(token),
+      }
+    );
+
+    return reply.data;
+  } catch (err) {
+    handleAPIError(err);
+  }
 }
 
 export async function updateGoodies(
-  request: Request,
+  token: string,
   goodiesInfo: GoodiesInfo,
   goodiesId: number
 ) {
   try {
-    await axios.patch(`/goodies/${goodiesId}`, goodiesInfo, {
-      headers: await buildAxiosHeaders(request),
-    });
+    const reply = await axios.patch<{ message: string }>(
+      `/goodies/${goodiesId}`,
+      goodiesInfo,
+      {
+        headers: buildAxiosHeaders(token),
+      }
+    );
+
+    return reply.data;
   } catch (err) {
     handleAPIError(err);
   }
-
-  return "Goodies updated";
 }
 
-export async function deleteGoodies(request: Request, goodiesId: number) {
+export async function deleteGoodies(token: string, goodiesId: number) {
   try {
-    await axios.delete(`/goodies/${goodiesId}`, {
-      headers: await buildAxiosHeaders(request),
-    });
+    const reply = await axios.delete<{ message: string }>(
+      `/goodies/${goodiesId}`,
+      {
+        headers: buildAxiosHeaders(token),
+      }
+    );
+
+    return reply.data;
   } catch (err) {
     handleAPIError(err);
   }
-
-  return "Goodies deleted";
 }
