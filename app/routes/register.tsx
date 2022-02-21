@@ -1,12 +1,13 @@
 import {
   ActionFunction,
   json,
+  redirect,
   useActionData,
   useCatch,
   useSearchParams,
 } from "remix";
 
-import RegisterForm from "~/components/registerForm";
+import RegisterForm, { RegisterFormData } from "~/components/registerForm";
 
 import { Container } from "@mui/material";
 
@@ -15,22 +16,6 @@ import { loginUser } from "~/services/authentication";
 
 import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
 import { APIError } from "~/utils/axios";
-
-//Data caught by POST requests
-type ActionData = {
-  formError?: string;
-  fieldsError?: {
-    email?: string;
-    password?: string;
-    pseudo?: string;
-  };
-  fields?: {
-    email: string;
-    pseudo: string;
-    name?: string;
-    surname?: string;
-  };
-};
 
 //Validator for email field
 function validateEmail(email: string) {
@@ -42,6 +27,7 @@ function validateEmail(email: string) {
     return "User email must match your student email domain";
   }
 }
+
 //Validator for password field
 function validatePasswordAndConfirm(password: string, confirm: string) {
   if (password !== confirm) {
@@ -51,6 +37,7 @@ function validatePasswordAndConfirm(password: string, confirm: string) {
     return "Password is too small";
   }
 }
+
 //Validator for pseudo field
 function validatePseudo(pseudo: string) {
   if (pseudo.length < 3) {
@@ -77,6 +64,7 @@ async function handleRegister(
   const fieldsError = {
     email: validateEmail(email),
     password: validatePasswordAndConfirm(password, confirm),
+    confirm: validatePasswordAndConfirm(password, confirm),
     pseudo: validatePseudo(pseudo),
   };
 
@@ -93,13 +81,23 @@ async function handleRegister(
     throw err;
   }
 
-  return await loginUser(
-    {
-      email: fields.email,
-      password: fields.password,
-    },
-    redirectTo
-  );
+  try {
+    return await loginUser(
+      { email: fields.email, password: fields.password },
+      redirectTo
+    );
+  } catch (err) {
+    if (err instanceof APIError) {
+      return redirect(
+        "/login",
+        json(
+          { formError: err.error.message, fields: { email: fields.email } },
+          err.code
+        )
+      );
+    }
+    throw err;
+  }
 }
 
 //Function that handle POST requests
@@ -117,7 +115,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   //Check if redirection is here, should always be
   if (typeof redirectTo !== "string") {
-    return json({ formError: "There was an error, please try again" });
+    return json({ formError: "There was an error, please try again" }, 500);
   }
 
   //Check for fields type
@@ -150,7 +148,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Register() {
-  const actionData = useActionData<ActionData>();
+  const actionData = useActionData<RegisterFormData>();
   const [searchparams] = useSearchParams();
   return (
     <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
