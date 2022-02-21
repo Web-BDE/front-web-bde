@@ -1,4 +1,5 @@
 import { json } from "remix";
+import { Validation } from "~/models/Accomplishment";
 import {
   createAccomplishment,
   deleteAccomplishment,
@@ -26,7 +27,7 @@ export async function loadAccomplishments(token: string) {
 
 export async function handleValidateAccomplishment(
   token: string,
-  validation: 1 | -1 | null,
+  validation: Validation,
   accomplishmentId: number
 ) {
   //Validator for validation input

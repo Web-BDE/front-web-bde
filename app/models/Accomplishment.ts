@@ -4,5 +4,11 @@ export type Accomplishment = {
   challengeId: number;
   createdAt: string; //But should be converted as Date
   proof: string;
-  validation: 1 | -1 | null;
+  validation: Validation;
 };
+
+export enum Validation {
+  ACCEPTED,
+  PENDING,
+  REFUSED,
+}
