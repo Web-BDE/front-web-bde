@@ -39,7 +39,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export const action: ActionFunction = async ({ request }) => {
   //Initialise fiels
-  await requireAuth(request, "/shop/admin");
+  const token = await requireAuth(request, "/shop/admin");
   const form = await request.formData();
   const redirectTo = form.get("redirectTo");
   //Goodies fields
@@ -64,7 +64,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   return await handleCreateGoodies(
-    request,
+    token,
     name,
     parseInt(price),
     parseInt(buyLimit),

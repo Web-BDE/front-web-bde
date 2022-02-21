@@ -40,6 +40,8 @@ import {
   Container,
   Alert,
 } from "@mui/material";
+import { useContext } from "react";
+import { UserContext } from "~/components/userContext";
 
 type LoaderData = {
   challenge: Challenge;
@@ -103,25 +105,27 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   }
 
   //Need to provide userId to filter in jsx
-  const userInfo = await requireAuth(
+  const token = await requireAuth(
     request,
     `/challenge/${params.challengeId}`
   );
 
-  const challenge = await getChallenge(request, parseInt(params.challengeId));
+  const userInfo = useContext(UserContext);
+
+  const challenge = (await getChallenge(token, parseInt(params.challengeId)))?.challenge;
 
   //Get Accomplishments, we don't throw API Errors because we will display them
   let accomplishments;
   try {
-    accomplishments = await getManyAccomplishment(request);
+    accomplishments = await getManyAccomplishment(token);
   } catch (error) {
     if (error instanceof APIError) {
       return {
         challenge,
         accomplishments: {
           error: error.error.message,
-          userId: userInfo.userId,
-          challengeId: challenge.id,
+          userId: userInfo!.id,
+          challengeId: challenge!.id,
         },
       };
     }
@@ -130,11 +134,11 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   return {
     challenge,
-    userId: userInfo.userId,
+    userId: userInfo!.id,
     accomplishments: {
       accomplishments,
-      userId: userInfo.userId,
-      challengeId: challenge.id,
+      userId: userInfo!.id,
+      challengeId: challenge!.id,
     },
   };
 };
@@ -144,7 +148,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     throw json("Invalid challenge query", 404);
   }
 
-  await requireAuth(request, `/challenge/${params.challengeId}`);
+  const token = await requireAuth(request, `/challenge/${params.challengeId}`);
 
   //Decalare all fields
   const form = await request.formData();
@@ -170,7 +174,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       }
 
       return await handleAccomplishmentCreation(
-        request,
+        token,
         proof,
         parseInt(params.challengeId)
       );
@@ -196,7 +200,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       }
 
       return await handleAccomplishmentUpdate(
-        request,
+        token,
         proof,
         parseInt(accomplishmentId)
       );
@@ -216,7 +220,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       }
 
       return await handleChallengeUpdate(
-        request,
+        token,
         name,
         description,
         parseInt(reward),
@@ -233,11 +237,11 @@ export const action: ActionFunction = async ({ request, params }) => {
       }
 
       return await handleDeleteAccomplishment(
-        request,
+        token,
         parseInt(accomplishmentId)
       );
     case "delete-challenge":
-      await handleDeleteChallenge(request, parseInt(params.challengeId));
+      await handleDeleteChallenge(token, parseInt(params.challengeId));
 
       return redirect("/challenges");
     default:

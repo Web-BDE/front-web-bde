@@ -66,7 +66,7 @@ export default function App() {
       </head>
       <body>
         <UserContext.Provider value={data.userInfo}>
-          <NavBar userInfo={data.userInfo} />
+          <NavBar />
           <Outlet />
           <ScrollRestoration />
           <Scripts />

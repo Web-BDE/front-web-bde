@@ -3,8 +3,6 @@ import { useContext } from "react";
 import { UserContext } from "~/components/userContext";
 
 export default function Index() {
-  const test = useContext(UserContext);
-  console.log(test);
   return (
     <Container component="main">
       <Grid style={{ marginTop: "50px" }} textAlign="center">

@@ -52,14 +52,14 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async ({ request }) => {
   //User need to be logged in
-  await requireAuth(request, `/challenges/admin`);
+  const token = await requireAuth(request, `/challenges/admin`);
 
-  return await loadAccomplishments(request);
+  return await loadAccomplishments(token);
 };
 
 export const action: ActionFunction = async ({ request }) => {
   //User need to be logged in
-  await requireAuth(request, `/challenges/admin`);
+  const token = await requireAuth(request, `/challenges/admin`);
 
   //Declare all fields
   const form = await request.formData();
@@ -92,8 +92,8 @@ export const action: ActionFunction = async ({ request }) => {
       }
 
       return await handleValidateAccomplishment(
-        request,
-        validation,
+        token,
+        null,
         parseInt(accomplishmentId)
       );
 
@@ -122,7 +122,7 @@ export const action: ActionFunction = async ({ request }) => {
       }
 
       return await handleChallengeCreation(
-        request,
+        token,
         name,
         parseInt(reward),
         redirectTo,
