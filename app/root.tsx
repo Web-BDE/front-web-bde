@@ -55,7 +55,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function App() {
-  const data = useLoaderData<LoaderData>();
+  const loaderData = useLoaderData<LoaderData>();
   return (
     <html lang="en">
       <head>
@@ -65,7 +65,7 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <UserContext.Provider value={data.userInfo}>
+        <UserContext.Provider value={loaderData.userInfo}>
           <NavBar />
           <Outlet />
           <ScrollRestoration />

@@ -2,40 +2,76 @@ import {
   ActionFunction,
   json,
   LoaderFunction,
+  redirect,
   useActionData,
   useCatch,
   useSearchParams,
 } from "remix";
 
-import {
-  generateExpectedError,
-  generateUnexpectedError,
-} from "~/utils/error";
-import { handleCreateGoodies } from "~/controllers/goodies";
+import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
+import { APIError } from "~/utils/axios";
 
 import { requireAuth } from "~/services/authentication";
 
-type ActionData = {
-  formError?: string;
-  fieldsError?: {
-    name?: string;
-    description?: string;
-    price?: string;
-    buyLimit?: string;
-  };
-  fields?: {
-    name: string;
-    description: string;
-    price: number;
-    buyLimit: number;
-  };
-};
+import { Container } from "@mui/material";
 
-import { TextField, Button, Typography, Container, Alert } from "@mui/material";
+import CreateGoodiesForm, {
+  CreateGoodiesFormData,
+} from "~/components/shop/createGoodiesForm";
+
+import { createGoodies } from "~/services/goodies";
 
 export const loader: LoaderFunction = async ({ request }) => {
   return await requireAuth(request, "/shop/admin");
 };
+
+//Validator for price fiels
+function validatePrice(price: number) {
+  if (price < 0) {
+    return "Price must be positive";
+  }
+}
+
+//Validator for buy limit field
+function validateBuyLimit(buyLimit: number) {
+  if (buyLimit < 1) {
+    return "Buy limit must be more than 1";
+  }
+}
+
+async function handleCreateGoodies(
+  token: string,
+  name: string,
+  price: number,
+  buyLimit: number,
+  redirectTo: string,
+  description?: string
+) {
+  const fields = {
+    name,
+    description,
+    price,
+    buyLimit,
+  };
+  const fieldsError = {
+    reward: validatePrice(price),
+    buyLimit: validateBuyLimit(buyLimit),
+  };
+
+  if (Object.values(fieldsError).some(Boolean)) {
+    return json({ fields, fieldsError }, 400);
+  }
+
+  try {
+    await createGoodies(token, fields);
+  } catch (err) {
+    if (err instanceof APIError) {
+      return json({ formError: err.error.message, fields }, err.code);
+    }
+  }
+
+  return redirect(redirectTo);
+}
 
 export const action: ActionFunction = async ({ request }) => {
   //Initialise fiels
@@ -50,7 +86,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   //Invalid rediractTo format, should never happen
   if (typeof redirectTo !== "string") {
-    return json({ formError: "Invalid form data" }, 400);
+    return json({ formError: "There was an error, please try again" }, 500);
   }
 
   //Check for field types
@@ -60,7 +96,13 @@ export const action: ActionFunction = async ({ request }) => {
     typeof price !== "string" ||
     typeof buyLimit !== "string"
   ) {
-    return json({ formError: "You must fill all the fields" }, 400);
+    return json(
+      {
+        formError:
+          "Invalid data provided, please check if you have fill all the requierd fields",
+      },
+      400
+    );
   }
 
   return await handleCreateGoodies(
@@ -74,78 +116,14 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function ShopAdmin() {
-  const actionData = useActionData<ActionData>();
+  const actionData = useActionData<CreateGoodiesFormData>();
   const [searchParams] = useSearchParams();
   return (
     <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
-      <Typography variant="h4">Create Goodies</Typography>
-      {actionData?.formError ? (
-        <Alert severity="error">{actionData?.formError}</Alert>
-      ) : (
-        ""
-      )}
-      <form method="post">
-        {/* Hidden input with the redirection URL in it */}
-        <input
-          type="hidden"
-          name="redirectTo"
-          value={searchParams.get("redirectTo") || "/shop"}
-        />
-        <TextField
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          id="name"
-          error={Boolean(actionData?.fieldsError?.name)}
-          helperText={actionData?.fieldsError?.name}
-          label="Name"
-          name="name"
-          autoComplete="name"
-          defaultValue={actionData?.fields?.name}
-          autoFocus
-        />
-        <TextField
-          variant="outlined"
-          margin="normal"
-          fullWidth
-          error={Boolean(actionData?.fieldsError?.description)}
-          helperText={actionData?.fieldsError?.description}
-          name="description"
-          defaultValue={actionData?.fields?.description}
-          label="description"
-          id="description"
-        />
-        <TextField
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          error={Boolean(actionData?.fieldsError?.price)}
-          helperText={actionData?.fieldsError?.price}
-          name="price"
-          defaultValue={actionData?.fields?.price || 0}
-          label="price"
-          type="number"
-          id="price"
-        />
-        <TextField
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          error={Boolean(actionData?.fieldsError?.buyLimit)}
-          helperText={actionData?.fieldsError?.buyLimit}
-          name="buy-limit"
-          defaultValue={actionData?.fields?.buyLimit || 1}
-          label="Buy Limit"
-          type="number"
-          id="buy-limit"
-        />
-        <Button type="submit" fullWidth variant="contained" color="primary">
-          Create Goodies
-        </Button>
-      </form>
+      <CreateGoodiesForm
+        formData={actionData}
+        redirectTo={searchParams.get("redirectTo")}
+      />
     </Container>
   );
 }

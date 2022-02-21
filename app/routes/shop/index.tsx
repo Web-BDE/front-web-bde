@@ -32,10 +32,10 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function Shop() {
-  const data = useLoaderData<Goodies[]>();
+  const loaderData = useLoaderData<Goodies[]>();
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
-      <GoodiesGrid goodies={data} />
+      <GoodiesGrid goodies={loaderData} />
     </Container>
   );
 }

@@ -21,39 +21,7 @@ function validateBuyLimit(buyLimit: number) {
   }
 }
 
-export async function handleCreateGoodies(
-  token: string,
-  name: string,
-  price: number,
-  buyLimit: number,
-  redirectTo: string,
-  description?: string
-) {
-  const fields = {
-    name,
-    description,
-    price,
-    buyLimit,
-  };
-  const fieldsError = {
-    reward: validatePrice(price),
-    buyLimit: validateBuyLimit(buyLimit),
-  };
 
-  if (Object.values(fieldsError).some(Boolean)) {
-    return json({ fields, fieldsError }, 400);
-  }
-
-  try {
-    await createGoodies(token, fields);
-  } catch (err) {
-    if (err instanceof APIError) {
-      return json({ formError: err.error.message, fields }, err.code);
-    }
-  }
-
-  return redirect(redirectTo);
-}
 
 export async function handleUpdateGoodies(
   token: string,
