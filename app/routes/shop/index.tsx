@@ -18,7 +18,7 @@ import { loadGoodies } from "~/controllers/goodies";
 
 import { Goodies } from "~/models/Goodies";
 
-import { requireUserInfo } from "~/services/authentication";
+import { requireAuth } from "~/services/authentication";
 
 //Data structure handled on GET resuests
 type LoaderData = {
@@ -27,7 +27,7 @@ type LoaderData = {
 
 //Function that handle GET resuests
 export const loader: LoaderFunction = async ({ request }) => {
-  await requireUserInfo(request, "/shop");
+  await requireAuth(request, "/shop");
 
   return await loadGoodies(request);
 };

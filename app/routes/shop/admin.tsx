@@ -13,7 +13,7 @@ import {
 } from "~/controllers/error";
 import { handleCreateGoodies } from "~/controllers/goodies";
 
-import { requireUserInfo } from "~/services/authentication";
+import { requireAuth } from "~/services/authentication";
 
 type ActionData = {
   formError?: string;
@@ -34,12 +34,12 @@ type ActionData = {
 import { TextField, Button, Typography, Container, Alert } from "@mui/material";
 
 export const loader: LoaderFunction = async ({ request }) => {
-  return await requireUserInfo(request, "/shop/admin");
+  return await requireAuth(request, "/shop/admin");
 };
 
 export const action: ActionFunction = async ({ request }) => {
   //Initialise fiels
-  await requireUserInfo(request, "/shop/admin");
+  await requireAuth(request, "/shop/admin");
   const form = await request.formData();
   const redirectTo = form.get("redirectTo");
   //Goodies fields

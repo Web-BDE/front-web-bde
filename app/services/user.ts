@@ -1,7 +1,7 @@
 import axios from "axios";
 import { User } from "~/models/User";
 import { handleAPIError } from "~/utils/axios";
-import { logout, requireUserInfo } from "./authentication";
+import { logout, requireAuth } from "./authentication";
 
 type RegisterInfo = {
   email: string;
@@ -32,7 +32,7 @@ export async function updateSelf(registerInfo: RegisterInfo) {
 }
 
 export async function getSelft(request: Request) {
-  const userInfo = await requireUserInfo(request, "/");
+  const userInfo = await requireAuth(request, "/");
 
   let user;
   try {

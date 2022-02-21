@@ -18,7 +18,7 @@ import {
 
 import { Challenge } from "~/models/Challenge";
 
-import { requireUserInfo } from "~/services/authentication";
+import { requireAuth } from "~/services/authentication";
 
 type LoaderData = {
   challenges?: Challenge[];
@@ -26,7 +26,7 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async ({ request }) => {
   //Require user to be logged in
-  await requireUserInfo(request, "/challenges");
+  await requireAuth(request, "/challenges");
 
   return await loadChallenges(request);
 };

@@ -23,7 +23,7 @@ import {
 import { Goodies } from "~/models/Goodies";
 import { Purchase } from "~/models/Purchase";
 
-import { requireUserInfo } from "~/services/authentication";
+import { requireAuth } from "~/services/authentication";
 import { getGoodies } from "~/services/goodies";
 import { getManyPurchase } from "~/services/purchase";
 import { getSelft } from "~/services/user";
@@ -82,7 +82,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     throw json("Invalid goodies query", 400);
   }
 
-  const userInfo = await requireUserInfo(
+  const userInfo = await requireAuth(
     request,
     `/shop/${params.challengeId}`
   );
@@ -117,7 +117,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     throw json("Invalid goodies query", 404);
   }
 
-  await requireUserInfo(request, `/shop/${params.challengeId}`);
+  await requireAuth(request, `/shop/${params.challengeId}`);
 
   //Initialize form fields
   const form = await request.formData();

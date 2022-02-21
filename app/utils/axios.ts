@@ -1,6 +1,6 @@
 import axios from "axios";
 import { json } from "remix";
-import { requireUserInfo } from "~/services/authentication";
+import { requireAuth } from "~/services/authentication";
 
 export function initAxiosConfig() {
   axios.defaults.baseURL = process.env["API_URL"] || "http://localhost:4000";
@@ -30,7 +30,7 @@ export function handleAPIError(err: unknown) {
 export async function buildAxiosHeaders(request: Request) {
   let token;
   try {
-    token = (await requireUserInfo(request)).token;
+    token = (await requireAuth(request)).token;
   } catch {}
 
   return { Authorization: `Bearer ${token}` };
