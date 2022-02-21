@@ -28,13 +28,9 @@ import { getGoodies } from "~/services/goodies";
 import { getManyPurchase } from "~/services/purchase";
 import { getSelft } from "~/services/user";
 
-import {
-  TextField,
-  Button,
-  Typography,
-  Container,
-  Alert,
-} from "@mui/material";
+import { TextField, Button, Typography, Container, Alert } from "@mui/material";
+import { useContext } from "react";
+import { UserContext } from "~/components/userContext";
 
 type LoaderData = {
   goodies: Goodies;
@@ -82,32 +78,29 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     throw json("Invalid goodies query", 400);
   }
 
-  const userInfo = await requireAuth(
-    request,
-    `/shop/${params.challengeId}`
-  );
+  const token = await requireAuth(request, `/shop/${params.challengeId}`);
 
-  const privilege = (await getSelft(request)).privilege;
+  const userInfo = useContext(UserContext);
 
-  const goodies = await getGoodies(request, parseInt(params.goodiesId));
+  const goodies = await getGoodies(token, parseInt(params.goodiesId));
 
   //Load purchases, we don't want to throwAPI errors
   let purchases;
   try {
-    purchases = await getManyPurchase(request);
+    purchases = await getManyPurchase(token);
   } catch (err) {
     return {
       goodies,
-      userId: userInfo.userId,
-      privilege,
+      userId: userInfo?.id,
+      privilege: userInfo?.privilege,
       purchases: { purchasesError: err },
     };
   }
 
   return {
     goodies,
-    userId: userInfo.userId,
-    privilege,
+    userId: userInfo!.id,
+    privilege: userInfo?.privilege,
     purchases: { purchases },
   };
 };
@@ -117,7 +110,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     throw json("Invalid goodies query", 404);
   }
 
-  await requireAuth(request, `/shop/${params.challengeId}`);
+  const token = await requireAuth(request, `/shop/${params.challengeId}`);
 
   //Initialize form fields
   const form = await request.formData();
@@ -143,7 +136,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         );
       }
 
-      return await handleCreatePurchase(request, parseInt(params.goodiesId));
+      return await handleCreatePurchase(token, parseInt(params.goodiesId));
     case "update-goodies":
       if (
         typeof name !== "string" ||
@@ -160,7 +153,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       }
 
       return await handleUpdateGoodies(
-        request,
+        token,
         name,
         description,
         parseInt(price),
@@ -168,7 +161,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         parseInt(params.goodiesId)
       );
     case "delete-goodies":
-      return await handleDeleteGoodies(request, parseInt(params.goodiesId));
+      return await handleDeleteGoodies(token, parseInt(params.goodiesId));
     case "refund-goodies":
       if (typeof purchaseId !== "string") {
         return json(
@@ -179,7 +172,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         );
       }
 
-      return await handleDeletePurchase(request, parseInt(purchaseId));
+      return await handleDeletePurchase(token, parseInt(purchaseId));
     default:
       throw new Error("There was an error during form handling");
   }

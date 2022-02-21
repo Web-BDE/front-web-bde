@@ -26,9 +26,9 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async ({ request }) => {
   //Require user to be logged in
-  await requireAuth(request, "/challenges");
+  const token = await requireAuth(request, "/challenges");
 
-  return await loadChallenges(request);
+  return await loadChallenges(token);
 };
 
 export default function Challenges() {

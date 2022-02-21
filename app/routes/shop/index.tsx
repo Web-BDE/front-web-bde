@@ -27,9 +27,9 @@ type LoaderData = {
 
 //Function that handle GET resuests
 export const loader: LoaderFunction = async ({ request }) => {
-  await requireAuth(request, "/shop");
+  const token = await requireAuth(request, "/shop");
 
-  return await loadGoodies(request);
+  return await loadGoodies(token);
 };
 
 export default function Shop() {

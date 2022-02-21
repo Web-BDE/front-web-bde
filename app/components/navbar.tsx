@@ -14,7 +14,8 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { Grid } from "@mui/material";
-import React from "react";
+import React, { useContext } from "react";
+import { UserContext } from "./userContext";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -69,8 +70,10 @@ function displayAuthMenu(userInfo?: User) {
   }
 }
 
-export default function NavBar({ userInfo }: { userInfo?: User }) {
+export default function NavBar() {
   let leftLinks: { name: string; link: string }[] = [];
+
+  const userInfo = useContext(UserContext);
 
   if (userInfo) {
     leftLinks.push(
