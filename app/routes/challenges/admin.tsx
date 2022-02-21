@@ -8,7 +8,7 @@ import {
   useSearchParams,
 } from "remix";
 
-import { Accomplishment } from "~/models/Accomplishment";
+import { Accomplishment, Validation } from "~/models/Accomplishment";
 
 import { requireAuth } from "~/services/authentication";
 
@@ -78,8 +78,10 @@ export const action: ActionFunction = async ({ request }) => {
     case "validate-accomplishment":
       //Should never happend
       if (
-        typeof validation !== "string" ||
-        typeof accomplishmentId !== "string"
+        typeof accomplishmentId !== "string" ||
+        (validation !== "ACCEPTED" &&
+          validation !== "PENDING" &&
+          validation !== "REFUSED")
       ) {
         return json(
           {
@@ -93,7 +95,7 @@ export const action: ActionFunction = async ({ request }) => {
 
       return await handleValidateAccomplishment(
         token,
-        null,
+        Validation[validation],
         parseInt(accomplishmentId)
       );
 

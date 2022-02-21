@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { Accomplishment } from "~/models/Accomplishment";
+import { Accomplishment, Validation } from "~/models/Accomplishment";
 
 import {
   buildAxiosHeaders,
@@ -36,7 +36,7 @@ export async function updateAccomplishment(
   token: string,
   accomplishmentId: number,
   accomplishmentInfo?: AccomplishmentInfo,
-  validation?: -1 | null | 1
+  validation?: Validation
 ) {
   try {
     const reply = await axios.put<{ message: string }>(
@@ -106,9 +106,14 @@ export async function getManyAccomplishment(
     const reply = await axios.get<{
       message: string;
       accomplishments: Accomplishment[];
-    }>(`/accomplishment/${searchParams.entries.length ? "?" + searchParams : ""}`, {
-      headers: buildAxiosHeaders(token),
-    });
+    }>(
+      `/accomplishment/${
+        searchParams.entries.length ? "?" + searchParams : ""
+      }`,
+      {
+        headers: buildAxiosHeaders(token),
+      }
+    );
 
     return reply.data;
   } catch (err) {
