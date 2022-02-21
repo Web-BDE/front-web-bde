@@ -11,7 +11,7 @@ import {
   useLoaderData,
 } from "remix";
 import type { MetaFunction } from "remix";
-import NavBar from "./components/navbar";
+import NavBar from "./components/navBar";
 import { UserContext } from "./components/userContext";
 import { User } from "./models/User";
 import { getSelft } from "./services/user";
