@@ -1,6 +1,10 @@
 import axios from "axios";
 import { User } from "~/models/User";
-import { handleAPIError } from "~/utils/axios";
+import {
+  buildAxiosHeaders,
+  buildSearchParams,
+  handleAPIError,
+} from "~/utils/axios";
 import { logout, requireAuth } from "./authentication";
 
 type RegisterInfo = {
@@ -13,39 +17,105 @@ type RegisterInfo = {
 
 export async function registerUser(registerInfo: RegisterInfo) {
   try {
-    await axios.put("/user", registerInfo);
+    const reply = await axios.put<{ message: string }>("/user", registerInfo);
+
+    return reply.data;
   } catch (err) {
     handleAPIError(err);
   }
-
-  return "User registered";
 }
 
-export async function updateSelf(registerInfo: RegisterInfo) {
+export async function updateSelf(token: string, registerInfo: RegisterInfo) {
   try {
-    await axios.patch("/user", registerInfo);
+    const reply = await axios.patch<{ message: string }>(
+      "/user",
+      registerInfo,
+      {
+        headers: buildAxiosHeaders(token),
+      }
+    );
+
+    return reply.data;
   } catch (err) {
     handleAPIError(err);
   }
-
-  return "User Updated";
 }
 
-export async function getSelft(request: Request) {
-  const userInfo = await requireAuth(request, "/");
-
-  let user;
+export async function updateUser(
+  token: string,
+  registerInfo: RegisterInfo,
+  userId: string
+) {
   try {
-    user = (
-      await axios.get<{ message: string; user: User }>(
-        `/user/${userInfo.userId}`,
-        {
-          headers: { Authorization: `Bearer ${userInfo.token}` },
-        }
-      )
-    ).data.user;
-  } catch {
-    throw logout(request);
+    const reply = await axios.patch<{ message: string }>(
+      `/user/${userId}`,
+      registerInfo,
+      {
+        headers: buildAxiosHeaders(token),
+      }
+    );
+
+    return reply.data;
+  } catch (err) {
+    handleAPIError(err);
   }
-  return user;
+}
+
+export async function deleteUser(token: string, userId: number) {
+  try {
+    const reply = await axios.delete<{ message: string }>(`/user/${userId}`, {
+      headers: buildAxiosHeaders(token),
+    });
+
+    return reply.data;
+  } catch (err) {
+    handleAPIError(err);
+  }
+}
+
+export async function getSelft(token: string) {
+  try {
+    const reply = await axios.get<{ message: string; user: User }>("/user/me", {
+      headers: buildAxiosHeaders(token),
+    });
+
+    return reply.data;
+  } catch (err) {
+    handleAPIError(err);
+  }
+}
+
+export async function getUser(token: string, userId: number) {
+  try {
+    const reply = await axios.get<{ message: string; user: User }>(
+      `/user/${userId}`,
+      {
+        headers: buildAxiosHeaders(token),
+      }
+    );
+
+    return reply.data;
+  } catch (err) {
+    handleAPIError(err);
+  }
+}
+
+export async function getManyUser(
+  token: string,
+  limit?: number,
+  offset?: number
+) {
+  const searchParams = buildSearchParams(limit?.toString(), offset?.toString());
+  try {
+    const reply = await axios.get<{ message: string; users: User[] }>(
+      `/user/${searchParams}`,
+      {
+        headers: buildAxiosHeaders(token),
+      }
+    );
+
+    return reply.data;
+  } catch (err) {
+    handleAPIError(err);
+  }
 }

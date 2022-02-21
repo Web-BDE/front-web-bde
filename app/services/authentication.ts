@@ -39,10 +39,11 @@ export async function loginUser(loginForm: LoginInfo, redirectTo: string) {
 
 export async function logout(request: Request) {
   const session = await storage.getSession(request.headers.get("Cookie"));
+  const token = session.get("token");
 
   try {
     await axios.delete<{ message: string }>(`/session`, {
-      headers: await buildAxiosHeaders(request),
+      headers: buildAxiosHeaders(token),
     });
 
     return redirect("/", {

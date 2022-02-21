@@ -27,11 +27,17 @@ export function handleAPIError(err: unknown) {
   throw err;
 }
 
-export async function buildAxiosHeaders(request: Request) {
-  let token;
-  try {
-    token = (await requireAuth(request)).token;
-  } catch {}
-
+export function buildAxiosHeaders(token: string) {
   return { Authorization: `Bearer ${token}` };
+}
+
+export function buildSearchParams(...args: Array<string | undefined>) {
+  if (args.length) {
+    let result = "?";
+    args.forEach((val) => {
+      result += val ? val : "";
+    });
+    console.log(result);
+    return result.slice(-1);
+  } else return "";
 }
