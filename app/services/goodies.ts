@@ -15,8 +15,8 @@ type GoodiesInfo = {
 
 export async function getManyGoodies(
   token: string,
-  limit: string,
-  offset: string
+  limit?: string,
+  offset?: string
 ) {
   const searchParams = buildSearchParams(
     { key: "limit", val: limit?.toString() },

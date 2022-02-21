@@ -14,11 +14,11 @@ function validateReward(reward: number) {
   }
 }
 
-export async function loadChallenges(request: Request) {
+export async function loadChallenges(token: string) {
   //Get challenges, if it throw an error we will cath it with Boundaries below
   let challenges;
   try {
-    challenges = await getManyChallenge(request);
+    challenges = await getManyChallenge(token);
   } catch (err) {
     if (err instanceof APIError) {
       throw json(err.error.message, err.code);
@@ -29,7 +29,7 @@ export async function loadChallenges(request: Request) {
 }
 
 export async function handleChallengeCreation(
-  request: Request,
+  token: string,
   name: string,
   reward: number,
   redirectTo: string,
@@ -47,7 +47,7 @@ export async function handleChallengeCreation(
 
   //Try to create challenge
   try {
-    await createChallenge(request, fields);
+    await createChallenge(token, fields);
   } catch (err) {
     //We don't want to throw API errors, we will show the in the form instead
     if (err instanceof APIError) {
@@ -64,7 +64,7 @@ export async function handleChallengeCreation(
 }
 
 export async function handleChallengeUpdate(
-  request: Request,
+  token: string,
   name: string,
   description: string,
   reward: number,
@@ -82,7 +82,7 @@ export async function handleChallengeUpdate(
 
   //Try to update challenge
   try {
-    await updateChallenge(request, fields, challengeId);
+    await updateChallenge(token, fields, challengeId);
   } catch (err) {
     //We don't want to throw API errors, we will show the in the form instead
     if (err instanceof APIError) {
@@ -99,12 +99,12 @@ export async function handleChallengeUpdate(
 }
 
 export async function handleDeleteChallenge(
-  request: Request,
+  token: string,
   challengeId: number
 ) {
   //Try to delete accomplishment
   try {
-    await deleteChallenge(request, challengeId);
+    await deleteChallenge(token, challengeId);
   } catch (err) {
     //We don't want to throw API errors, we will show the in the form instead
     if (err instanceof APIError) {

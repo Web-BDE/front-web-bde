@@ -91,10 +91,10 @@ export async function getAccomplishment(
 
 export async function getManyAccomplishment(
   token: string,
-  limit: number,
-  offset: number,
-  challengeId: number,
-  userId: number
+  limit?: number,
+  offset?: number,
+  challengeId?: number,
+  userId?: number
 ) {
   const searchParams = buildSearchParams(
     { key: "limit", val: limit?.toString() },

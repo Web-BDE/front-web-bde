@@ -84,5 +84,12 @@ export async function requireAuth(
     throw redirect(`/login?${searchParams}`);
   }
 
-  return { token };
+  return token;
+}
+
+export async function tryGetToken(request: Request) {
+  const session = await getUserSession(request);
+  const token = session.get("token");
+
+  return token;
 }

@@ -21,10 +21,10 @@ function validateBuyLimit(buyLimit: number) {
   }
 }
 
-export async function loadGoodies(request: Request) {
+export async function loadGoodies(token: string) {
   let goodies;
   try {
-    goodies = await getManyGoodies(request);
+    goodies = await getManyGoodies(token);
   } catch (err) {
     if (err instanceof APIError) {
       throw json(err.error.message, err.code);
@@ -36,7 +36,7 @@ export async function loadGoodies(request: Request) {
 }
 
 export async function handleCreateGoodies(
-  request: Request,
+  token: string,
   name: string,
   price: number,
   buyLimit: number,
@@ -59,7 +59,7 @@ export async function handleCreateGoodies(
   }
 
   try {
-    await createGoodies(request, fields);
+    await createGoodies(token, fields);
   } catch (err) {
     if (err instanceof APIError) {
       return json({ formError: err.error.message, fields }, err.code);
@@ -70,7 +70,7 @@ export async function handleCreateGoodies(
 }
 
 export async function handleUpdateGoodies(
-  request: Request,
+  token: string,
   name: string,
   description: string,
   price: number,
@@ -93,7 +93,7 @@ export async function handleUpdateGoodies(
   }
 
   try {
-    await updateGoodies(request, fields, goodiesId);
+    await updateGoodies(token, fields, goodiesId);
   } catch (err) {
     if (err instanceof APIError) {
       return json(
@@ -108,10 +108,10 @@ export async function handleUpdateGoodies(
   return json({ updateGoodies: { formSuccess: "Goodies updated" } }, 200);
 }
 
-export async function handleDeleteGoodies(request: Request, goodiesId: number) {
+export async function handleDeleteGoodies(token: string, goodiesId: number) {
   //Try to delete accomplishment
   try {
-    await deleteGoodies(request, goodiesId);
+    await deleteGoodies(token, goodiesId);
   } catch (err) {
     //We don't want to throw API errors, we will show the in the form instead
     if (err instanceof APIError) {

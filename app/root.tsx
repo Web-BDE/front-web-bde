@@ -19,6 +19,7 @@ import {
   generateExpectedError,
   generateUnexpectedError,
 } from "./controllers/error";
+import { tryGetToken } from "./services/authentication";
 
 export const meta: MetaFunction = () => {
   return { title: "Web BDE" };
@@ -43,13 +44,11 @@ type LoaderData = {
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
-  let userInfo;
-  try {
-    userInfo = await getSelft(request);
-  } catch {
-    return {};
+  const token = await tryGetToken(request);
+
+  if (token) {
+    return await getSelft(token);
   }
-  return { userInfo };
 };
 
 export default function App() {

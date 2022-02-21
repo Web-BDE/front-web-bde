@@ -4,15 +4,14 @@ import {
   deleteAccomplishment,
   getManyAccomplishment,
   updateAccomplishment,
-  validateAccomplishment,
 } from "~/services/accomplishment";
 import { APIError } from "~/utils/axios";
 
-export async function loadAccomplishments(request: Request) {
+export async function loadAccomplishments(token: string) {
   //Try to get accomplishments
   let accomplishments;
   try {
-    accomplishments = await getManyAccomplishment(request);
+    accomplishments = await getManyAccomplishment(token);
   } catch (err) {
     //We don't want to throw API errors, we will show the in the component instead
     if (err instanceof APIError) {
@@ -26,19 +25,19 @@ export async function loadAccomplishments(request: Request) {
 }
 
 export async function handleValidateAccomplishment(
-  request: Request,
-  validation: string,
+  token: string,
+  validation: 1 | -1 | null,
   accomplishmentId: number
 ) {
   //Validator for validation input
-  function validateValidation(validation: number) {
+  function validateValidation(validation: number | null) {
     if (validation !== -1 && validation !== 1) {
       return "Validation has invalid value";
     }
   }
 
   //Check for an error in the validation format
-  const validationError = validateValidation(parseInt(validation));
+  const validationError = validateValidation(validation);
 
   if (validationError) {
     return json(
@@ -51,11 +50,7 @@ export async function handleValidateAccomplishment(
 
   //Try to validate challenge
   try {
-    await validateAccomplishment(
-      request,
-      validation === "1" ? 1 : -1,
-      accomplishmentId
-    );
+    await updateAccomplishment(token, accomplishmentId, undefined, validation);
   } catch (err) {
     //We don't want to throw API errors, we will show the in the form instead
     if (err instanceof APIError) {
@@ -75,13 +70,13 @@ export async function handleValidateAccomplishment(
 }
 
 export async function handleAccomplishmentCreation(
-  request: Request,
+  token: string,
   proof: string,
   challengeId: number
 ) {
   try {
     await createAccomplishment(
-      request,
+      token,
       {
         proof,
       },
@@ -106,18 +101,12 @@ export async function handleAccomplishmentCreation(
 }
 
 export async function handleAccomplishmentUpdate(
-  request: Request,
+  token: string,
   proof: string,
   accomplishmentId: number
 ) {
   try {
-    await updateAccomplishment(
-      request,
-      {
-        proof,
-      },
-      accomplishmentId
-    );
+    await updateAccomplishment(token, accomplishmentId, { proof });
   } catch (err) {
     if (err instanceof APIError) {
       return json(
@@ -137,12 +126,12 @@ export async function handleAccomplishmentUpdate(
 }
 
 export async function handleDeleteAccomplishment(
-  request: Request,
+  token: string,
   accomplishmentId: number
 ) {
   //Try to delete accomplishment
   try {
-    await deleteAccomplishment(request, accomplishmentId);
+    await deleteAccomplishment(token, accomplishmentId);
   } catch (err) {
     //We don't want to throw API errors, we will show the in the form instead
     if (err instanceof APIError) {

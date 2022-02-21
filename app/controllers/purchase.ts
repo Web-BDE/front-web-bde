@@ -3,11 +3,11 @@ import { createPurchase, deletePurchase } from "~/services/purchase";
 import { APIError } from "~/utils/axios";
 
 export async function handleCreatePurchase(
-  request: Request,
+  token: string,
   goodiesId: number
 ) {
   try {
-    await createPurchase(request, {
+    await createPurchase(token, {
       goodiesId: goodiesId,
     });
   } catch (err) {
@@ -25,11 +25,11 @@ export async function handleCreatePurchase(
 }
 
 export async function handleDeletePurchase(
-  request: Request,
+  token: string,
   purchaseId: number
 ) {
   try {
-    await deletePurchase(request, purchaseId);
+    await deletePurchase(token, purchaseId);
   } catch (err) {
     if (err instanceof APIError) {
       return json(
