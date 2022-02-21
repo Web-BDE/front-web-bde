@@ -12,6 +12,7 @@ import {
 } from "remix";
 import type { MetaFunction } from "remix";
 import NavBar from "./components/navbar";
+import { UserContext } from "./components/userContext";
 import { User } from "./models/User";
 import { getSelft } from "./services/user";
 
@@ -47,8 +48,10 @@ export const loader: LoaderFunction = async ({ request }) => {
   const token = await tryGetToken(request);
 
   if (token) {
-    return await getSelft(token);
+    return { userInfo: (await getSelft(token))?.user };
   }
+
+  return {};
 };
 
 export default function App() {
@@ -62,11 +65,13 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <NavBar userInfo={data.userInfo} />
-        <Outlet />
-        <ScrollRestoration />
-        <Scripts />
-        {process.env.NODE_ENV === "development" && <LiveReload />}
+        <UserContext.Provider value={data.userInfo}>
+          <NavBar userInfo={data.userInfo} />
+          <Outlet />
+          <ScrollRestoration />
+          <Scripts />
+          {process.env.NODE_ENV === "development" && <LiveReload />}
+        </UserContext.Provider>
       </body>
     </html>
   );
