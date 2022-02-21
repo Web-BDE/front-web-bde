@@ -67,7 +67,7 @@ export default function Login() {
       <LoginForm
         formData={actionData}
         redirectTo={searchparams.get("redirectTo")}
-      ></LoginForm>
+      />
     </Container>
   );
 }

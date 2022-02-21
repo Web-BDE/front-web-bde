@@ -155,7 +155,7 @@ export default function Register() {
       <RegisterForm
         formData={actionData}
         redirectTo={searchparams.get("redirectTo")}
-      ></RegisterForm>
+      />
     </Container>
   );
 }

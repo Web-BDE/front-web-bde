@@ -21,20 +21,6 @@ function validateBuyLimit(buyLimit: number) {
   }
 }
 
-export async function loadGoodies(token: string) {
-  let goodies;
-  try {
-    goodies = await getManyGoodies(token);
-  } catch (err) {
-    if (err instanceof APIError) {
-      throw json(err.error.message, err.code);
-    }
-    throw err;
-  }
-
-  return { goodies: goodies };
-}
-
 export async function handleCreateGoodies(
   token: string,
   name: string,
