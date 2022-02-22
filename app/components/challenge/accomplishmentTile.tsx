@@ -22,6 +22,7 @@ export default function AccomplishmentTile({
   userPrivilege?: number;
   formData?: ValidateAccomplishmentFormData;
 }) {
+  console.log(accomplishment);
   return (
     <Card>
       <CardContent>
@@ -37,7 +38,7 @@ export default function AccomplishmentTile({
       </CardContent>
       {userPrivilege &&
       userPrivilege >= 1 &&
-      accomplishment.validation === Validation.PENDING ? (
+      accomplishment.validation === "PENDING" ? (
         <CardActions>
           {formData?.formError ? (
             <Alert severity="error">{formData?.formError}</Alert>

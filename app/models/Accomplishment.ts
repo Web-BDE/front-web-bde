@@ -7,8 +7,4 @@ export type Accomplishment = {
   validation: Validation;
 };
 
-export enum Validation {
-  ACCEPTED,
-  PENDING,
-  REFUSED,
-}
+export type Validation = "ACCEPTED" | "PENDING" | "REFUSED";

@@ -25,9 +25,10 @@ function displayAccomplishment(
   validateFormData?: ValidateAccomplishmentFormData
 ) {
   switch (accomplishment.validation) {
-    case Validation.PENDING:
+    case "PENDING":
+      console.log("coco");
       return (
-        <Grid item key={accomplishment.id}>
+        <div>
           <UpdateAccomplishmentForm
             accomplishment={accomplishment}
             formData={updateFormData}
@@ -36,17 +37,16 @@ function displayAccomplishment(
             accomplishment={accomplishment}
             formData={deleteFormData}
           />
-        </Grid>
+        </div>
       );
     default:
+      console.log("coucoueee");
       return (
-        <Grid item key={accomplishment.id}>
-          <AccomplishmentTile
-            accomplishment={accomplishment}
-            userPrivilege={userPrivilege}
-            formData={validateFormData}
-          />
-        </Grid>
+        <AccomplishmentTile
+          accomplishment={accomplishment}
+          userPrivilege={userPrivilege}
+          formData={validateFormData}
+        />
       );
   }
 }
@@ -63,6 +63,8 @@ export default function AccomplishmentsGrid({
   };
 }) {
   const userInfo = useContext(UserContext);
+
+  console.log(accomplishments);
 
   return (
     <Container style={{ marginTop: "50px", marginBottom: "50px" }}>
@@ -81,14 +83,17 @@ export default function AccomplishmentsGrid({
         {/* Display the user's accomplishments */}
         {accomplishments.accomplishments?.map((accomplishment) => {
           {
-            displayAccomplishment(
+            console.log("test");
+          }
+          <Grid item key={accomplishment.id}>
+            {displayAccomplishment(
               accomplishment,
               userInfo?.privilege,
               formData?.updateAccomplishment,
               formData?.deleteAccomplishment,
               formData?.validateAccomplishment
-            );
-          }
+            )}
+          </Grid>;
         })}
       </Grid>
     </Container>

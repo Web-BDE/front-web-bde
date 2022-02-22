@@ -60,7 +60,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 //Validator for validation input
 function validateValidation(validation: Validation) {
-  if (validation !== Validation.PENDING) {
+  if (validation !== "PENDING") {
     return "Validation has invalid value";
   }
 }
@@ -183,7 +183,7 @@ export const action: ActionFunction = async ({ request }) => {
 
       return await handleValidateAccomplishment(
         token,
-        Validation[validation],
+        validation,
         parseInt(accomplishmentId)
       );
 

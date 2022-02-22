@@ -386,9 +386,11 @@ export default function Challenge() {
         />
       </Container>
       {/* Display all user's accomplishment for this challenge */}
-      {loaderData.accomplishments ? (
-        <div>
-          <Typography variant="h4">Your accomplishments</Typography>
+      {loaderData.accomplishments.accomplishments ? (
+        <div style={{ marginTop: "50px" }}>
+          <Typography textAlign="center" variant="h4">
+            Your accomplishments
+          </Typography>
           <AccomplishmentsGrid
             accomplishments={loaderData.accomplishments}
             formData={{
