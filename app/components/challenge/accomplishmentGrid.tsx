@@ -63,7 +63,7 @@ export default function AccomplishmentsGrid({
   const userInfo = useContext(UserContext);
 
   return (
-    <Container style={{ marginTop: "50px", marginBottom: "50px" }}>
+    <Container style={{ marginBottom: "50px" }}>
       {accomplishments.error ? (
         <Alert severity="error">{accomplishments.error}</Alert>
       ) : (
@@ -79,16 +79,18 @@ export default function AccomplishmentsGrid({
         {/* Display the user's accomplishments */}
         {accomplishments.accomplishments?.map((accomplishment) => {
           {
+            return (
+              <Grid item key={accomplishment.id}>
+                {displayAccomplishment(
+                  accomplishment,
+                  userInfo?.privilege,
+                  formData?.updateAccomplishment,
+                  formData?.deleteAccomplishment,
+                  formData?.validateAccomplishment
+                )}
+              </Grid>
+            );
           }
-          <Grid item key={accomplishment.id}>
-            {displayAccomplishment(
-              accomplishment,
-              userInfo?.privilege,
-              formData?.updateAccomplishment,
-              formData?.deleteAccomplishment,
-              formData?.validateAccomplishment
-            )}
-          </Grid>;
         })}
       </Grid>
     </Container>

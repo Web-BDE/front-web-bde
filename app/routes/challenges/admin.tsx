@@ -237,8 +237,6 @@ export default function ChallengesAdmin() {
   const [searchParams] = useSearchParams();
   const loaderData = useLoaderData<{ accomplishments: AccomplishmentData }>();
 
-  console.log(loaderData.accomplishments);
-
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
       <Container maxWidth="xs">

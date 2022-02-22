@@ -39,7 +39,7 @@ export async function updateAccomplishment(
   validation?: Validation
 ) {
   try {
-    const reply = await axios.put<{ message: string }>(
+    const reply = await axios.patch<{ message: string }>(
       `/accomplishment/${accomplishmentId}`,
       { info: accomplishmentInfo, status: validation },
       {
