@@ -37,23 +37,21 @@ import { getSelft } from "~/services/user";
 import DeleteGoodiesForm, {
   DeleteGoodiesFormData,
 } from "~/components/shop/forms/deleteGoodiesForm";
+import PurchasesGrid, {
+  PurchaseData,
+} from "~/components/shop/grids/purchaseGrid";
+import { RefundPurchaseFormData } from "~/components/shop/grids/purchaseTile";
 
 type LoaderData = {
   goodies: Goodies;
-  purchases: {
-    purchases?: Purchase[];
-    purchasesError?: string;
-  };
+  purchases: PurchaseData;
 };
 
 type ActionData = {
   purchaseGoodies?: PurchaseGoodiesFormData;
   updateGoodies?: UpdateGoodiesFormData;
   deleteGoodies?: DeleteGoodiesFormData;
-  refundGoodies?: {
-    formError?: string;
-    formSuccess?: string;
-  };
+  refundGoodies?: RefundPurchaseFormData;
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -320,16 +318,31 @@ export default function Goodies() {
   const userInfo = useContext(UserContext);
 
   return (
-    <Container style={{ marginTop: "50px" }} component="main" maxWidth="xs">
-      <Typography variant="h4">Goodies</Typography>
-      {displayGoodies(loaderData.goodies, userInfo?.id, {
-        updateForm: actionData?.updateGoodies,
-        deleteForm: actionData?.deleteGoodies,
-      })}
+    <Container style={{ marginTop: "50px" }} component="main">
+      <Container maxWidth="xs">
+        <Typography variant="h4">Goodies</Typography>
+        {displayGoodies(loaderData.goodies, userInfo?.id, {
+          updateForm: actionData?.updateGoodies,
+          deleteForm: actionData?.deleteGoodies,
+        })}
+      </Container>
       {/* Form to buy goodies */}
-      <Container style={{ marginTop: "10px" }}>
+      <Container style={{ marginTop: "10px" }} maxWidth="xs">
         <PurchaseGoodiesForm formData={actionData?.purchaseGoodies} />
       </Container>
+      {loaderData.purchases.purchases ? (
+        <div style={{ marginTop: "50px" }}>
+          <Typography textAlign="center" variant="h4">
+            Undelivered purchases
+          </Typography>
+          <PurchasesGrid
+            purchases={loaderData.purchases}
+            formData={actionData?.refundGoodies}
+          />
+        </div>
+      ) : (
+        ""
+      )}
     </Container>
   );
 }

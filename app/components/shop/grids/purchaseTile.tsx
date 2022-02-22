@@ -31,9 +31,6 @@ export default function PurchaseTile({
         <Typography variant="h5" component="div">
           {purchase.userId}
         </Typography>
-        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-          {purchase?.goodiesId}
-        </Typography>
       </CardContent>
       {userPrivilege && userPrivilege >= 2 ? (
         <CardActions>
@@ -47,20 +44,35 @@ export default function PurchaseTile({
           ) : (
             ""
           )}
-          {/* Form to validate an purchase */}
-          <form method="post">
-            <input type="hidden" name="purchaseId" value={purchase.id} />
-            <input type="hidden" name="method" value="refund-purchase" />
-            <Button
-              size="small"
-              type="submit"
-              name="refund"
-              id="refund"
-              value="1"
-            >
-              Refund
-            </Button>
-          </form>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            {/* Form to validate an purchase */}
+            <form method="post">
+              <input type="hidden" name="purchaseId" value={purchase.id} />
+              <input type="hidden" name="method" value="refund-purchase" />
+              <Button
+                size="small"
+                type="submit"
+                name="refund"
+                id="refund"
+                value="1"
+              >
+                Refund
+              </Button>
+            </form>
+            <form method="post">
+              <input type="hidden" name="purchaseId" value={purchase.id} />
+              <input type="hidden" name="method" value="refund-purchase" />
+              <Button
+                size="small"
+                type="submit"
+                name="refund"
+                id="refund"
+                value="1"
+              >
+                Mark as delivered
+              </Button>
+            </form>
+          </div>
         </CardActions>
       ) : (
         ""
