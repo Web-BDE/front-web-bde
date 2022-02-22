@@ -37,29 +37,25 @@ import UpdateChallengeForm, {
   UpdateChallengeFormData,
 } from "~/components/challenge/updateChallengeForm";
 import ChallengeDisplay from "~/components/challenge/challengeDisplay";
-import AccomplishmentsGrid, { AccomplishmentData } from "~/components/challenge/accomplishmentGrid";
+import AccomplishmentsGrid, {
+  AccomplishmentData,
+} from "~/components/challenge/accomplishmentGrid";
 import { UpdateAccomplishmentFormData } from "~/components/challenge/updateAccomplishmentForm";
 import { DeleteAccomplishmentFormData } from "~/components/challenge/deleteAccomplishmentForm";
+import CreateAccomplishmentForm, {
+  CreateAccomplishmentFormData,
+} from "~/components/challenge/createAccomplishmentForm";
 
 type LoaderData = {
   challenge: Challenge;
-  accomplishments: AccomplishmentData
+  accomplishments: AccomplishmentData;
 };
 
 type ActionData = {
-  creacteAccomplishment?: {
-    formError?: string;
-    formSuccess?: string;
-    fieldsError?: {
-      proof?: string;
-    };
-    fields?: {
-      proof: string;
-    };
-  };
-  updateAccomplishment?: UpdateAccomplishmentFormData
+  creacteAccomplishment?: CreateAccomplishmentFormData;
+  updateAccomplishment?: UpdateAccomplishmentFormData;
   updateChallenge?: UpdateChallengeFormData;
-  deleteAccomplishment?: DeleteAccomplishmentFormData
+  deleteAccomplishment?: DeleteAccomplishmentFormData;
   deleteChallenge?: {
     formError?: string;
     formSuccess?: string;
@@ -242,51 +238,18 @@ export default function Challenge() {
         actionData?.updateChallenge
       )}
       <Container maxWidth="xs" style={{ marginTop: "50px" }}>
-        <div>
-          <Typography variant="h4">Submit Proof</Typography>
-          {actionData?.updateAccomplishment?.formError ? (
-            <Alert severity="error">
-              {actionData?.updateAccomplishment?.formError}
-            </Alert>
-          ) : (
-            ""
-          )}
-          {actionData?.updateChallenge?.formSuccess ? (
-            <Alert severity="info">
-              {actionData?.updateAccomplishment?.formSuccess}
-            </Alert>
-          ) : (
-            ""
-          )}
-          <form method="post">
-            <input type="hidden" name="method" value="create-accomplishment" />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="proof"
-              error={Boolean(
-                actionData?.updateAccomplishment?.fieldsError?.proof
-              )}
-              helperText={actionData?.updateAccomplishment?.fieldsError?.proof}
-              label="Proof"
-              name="proof"
-              autoComplete="proof"
-              defaultValue={actionData?.updateAccomplishment?.fields?.proof}
-              autoFocus
-            />
-            <Button type="submit" fullWidth variant="contained" color="primary">
-              Submit Proof
-            </Button>
-          </form>
-        </div>
+        <CreateAccomplishmentForm
+          formData={actionData?.creacteAccomplishment}
+        />
       </Container>
       {/* Display all user's accomplishment for this challenge */}
       {loaderData.accomplishments ? (
         <AccomplishmentsGrid
           accomplishments={loaderData.accomplishments}
-          formData={{updateAccomplishment: actionData?.updateAccomplishment, deleteAccomplishment: actionData?.deleteAccomplishment}}
+          formData={{
+            updateAccomplishment: actionData?.updateAccomplishment,
+            deleteAccomplishment: actionData?.deleteAccomplishment,
+          }}
         />
       ) : (
         ""
