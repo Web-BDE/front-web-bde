@@ -17,7 +17,7 @@ import { Container, Typography } from "@mui/material";
 
 import CreateGoodiesForm, {
   CreateGoodiesFormData,
-} from "~/components/shop/createGoodiesForm";
+} from "~/components/shop/forms/createGoodiesForm";
 
 import { createGoodies } from "~/services/goodies";
 

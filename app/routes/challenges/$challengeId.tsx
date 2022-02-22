@@ -34,17 +34,20 @@ import { useContext } from "react";
 import { UserContext } from "~/components/userContext";
 import UpdateChallengeForm, {
   UpdateChallengeFormData,
-} from "~/components/challenge/updateChallengeForm";
+} from "~/components/challenge/forms/updateChallengeForm";
 import ChallengeDisplay from "~/components/challenge/challengeDisplay";
 import AccomplishmentsGrid, {
   AccomplishmentData,
-} from "~/components/challenge/accomplishmentGrid";
-import { UpdateAccomplishmentFormData } from "~/components/challenge/updateAccomplishmentForm";
-import { DeleteAccomplishmentFormData } from "~/components/challenge/deleteAccomplishmentForm";
+} from "~/components/challenge/grids/accomplishmentGrid";
+import { UpdateAccomplishmentFormData } from "~/components/challenge/forms/updateAccomplishmentForm";
+import { DeleteAccomplishmentFormData } from "~/components/challenge/forms/deleteAccomplishmentForm";
 import CreateAccomplishmentForm, {
   CreateAccomplishmentFormData,
-} from "~/components/challenge/createAccomplishmentForm";
+} from "~/components/challenge/forms/createAccomplishmentForm";
 import { getSelft } from "~/services/user";
+import DeleteChallengeForm, {
+  DeleteChallengeFormData,
+} from "~/components/challenge/forms/deleteChallengeForm";
 
 type LoaderData = {
   challenge: Challenge;
@@ -52,14 +55,11 @@ type LoaderData = {
 };
 
 type ActionData = {
-  creacteAccomplishment?: CreateAccomplishmentFormData;
+  createAccomplishment?: CreateAccomplishmentFormData;
   updateAccomplishment?: UpdateAccomplishmentFormData;
   updateChallenge?: UpdateChallengeFormData;
   deleteAccomplishment?: DeleteAccomplishmentFormData;
-  deleteChallenge?: {
-    formError?: string;
-    formSuccess?: string;
-  };
+  deleteChallenge?: DeleteChallengeFormData;
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -124,7 +124,7 @@ async function handleAccomplishmentCreation(
     if (err instanceof APIError) {
       return json(
         {
-          creacteAccomplishment: { formError: err.error.message },
+          createAccomplishment: { formError: err.error.message },
         },
         err.code
       );
@@ -225,7 +225,7 @@ async function handleDeleteAccomplishment(
   }
 
   return json(
-    { updateChallenge: { formSuccess: "Accomplishment deleted" } },
+    { createAccomplishment: { formSuccess: "Accomplishment deleted" } },
     201
   );
 }
@@ -239,7 +239,7 @@ async function handleDeleteChallenge(token: string, challengeId: number) {
     if (err instanceof APIError) {
       return json(
         {
-          deleteChallenge: { formError: err.error.message },
+          updateChallenge: { formError: err.error.message },
         },
         err.code
       );
@@ -361,13 +361,23 @@ export const action: ActionFunction = async ({ request, params }) => {
 function displayChallenge(
   challenge: Challenge,
   userId?: number,
-  formData?: UpdateChallengeFormData
+  formData?: {
+    updateForm?: UpdateChallengeFormData;
+    deleteForm?: DeleteChallengeFormData;
+  }
 ) {
   if (userId === challenge.creatorId) {
     return (
       <Container maxWidth="xs">
         <Typography variant="h4">Challenge</Typography>
-        <UpdateChallengeForm challenge={challenge} formData={formData} />
+        <UpdateChallengeForm
+          challenge={challenge}
+          formData={formData?.updateForm}
+        />
+        <DeleteChallengeForm
+          challenge={challenge}
+          formData={formData?.deleteForm}
+        />
       </Container>
     );
   } else {
@@ -387,16 +397,13 @@ export default function Challenge() {
 
   return (
     <Container style={{ marginTop: "50px" }}>
-      {displayChallenge(
-        loaderData.challenge,
-        userInfo?.id,
-        actionData?.updateChallenge
-      )}
+      {displayChallenge(loaderData.challenge, userInfo?.id, {
+        updateForm: actionData?.updateChallenge,
+        deleteForm: actionData?.deleteChallenge,
+      })}
       <Container maxWidth="xs" style={{ marginTop: "50px" }}>
         <Typography variant="h4">Submit Proof</Typography>
-        <CreateAccomplishmentForm
-          formData={actionData?.creacteAccomplishment}
-        />
+        <CreateAccomplishmentForm formData={actionData?.createAccomplishment} />
       </Container>
       {/* Display all user's accomplishment for this challenge */}
       {loaderData.accomplishments.accomplishments ? (

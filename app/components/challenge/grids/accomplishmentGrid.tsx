@@ -1,16 +1,16 @@
 import { Alert, Container, Grid } from "@mui/material";
 import { useContext } from "react";
 import { Accomplishment } from "~/models/Accomplishment";
-import { UserContext } from "../userContext";
+import { UserContext } from "../../userContext";
 import AccomplishmentTile, {
   ValidateAccomplishmentFormData,
 } from "./accomplishmentTile";
 import DeleteAccomplishmentForm, {
   DeleteAccomplishmentFormData,
-} from "./deleteAccomplishmentForm";
+} from "../forms/deleteAccomplishmentForm";
 import UpdateAccomplishmentForm, {
   UpdateAccomplishmentFormData,
-} from "./updateAccomplishmentForm";
+} from "../forms/updateAccomplishmentForm";
 
 export type AccomplishmentData = {
   accomplishments?: Accomplishment[];

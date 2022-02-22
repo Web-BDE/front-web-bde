@@ -16,11 +16,11 @@ import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
 import { Container, Typography } from "@mui/material";
 import AccomplishmentsGrid, {
   AccomplishmentData,
-} from "~/components/challenge/accomplishmentGrid";
-import { ValidateAccomplishmentFormData } from "~/components/challenge/accomplishmentTile";
+} from "~/components/challenge/grids/accomplishmentGrid";
+import { ValidateAccomplishmentFormData } from "~/components/challenge/grids/accomplishmentTile";
 import CreateChallengeForm, {
   CreateChallengeFormData,
-} from "~/components/challenge/createChallengeForm";
+} from "~/components/challenge/forms/createChallengeForm";
 import {
   getManyAccomplishment,
   updateAccomplishment,
@@ -248,7 +248,7 @@ export default function ChallengesAdmin() {
       </Container>
       {/* Display a list of accomplishments that need to be validated */}
       {loaderData.accomplishments.accomplishments ? (
-        <div style={{ marginTop: "50px" }}>
+        <Container style={{ marginTop: "50px" }}>
           <Typography textAlign="center" variant="h4">
             Pending Accomplishments
           </Typography>
@@ -258,7 +258,7 @@ export default function ChallengesAdmin() {
               validateAccomplishment: actionData?.validateAccomplishment,
             }}
           />
-        </div>
+        </Container>
       ) : (
         ""
       )}

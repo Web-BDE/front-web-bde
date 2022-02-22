@@ -6,19 +6,21 @@ import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
 
 import { requireAuth } from "~/services/authentication";
 import { getManyGoodies } from "~/services/goodies";
-import GoodiesGrid from "~/components/shop/goodiesGrid";
+import GoodiesGrid from "~/components/shop/grids/goodiesGrid";
 import { Goodies } from "~/models/Goodies";
 import { APIError } from "~/utils/axios";
 
 async function loadGoodies(token: string) {
+  let goodies;
   try {
-    return (await getManyGoodies(token, 100))?.goodies;
+    goodies = (await getManyGoodies(token, 100))?.goodies;
   } catch (err) {
     if (err instanceof APIError) {
       throw json(err.error.message, err.code);
     }
     throw err;
   }
+  return { goodies };
 }
 
 //Function that handle GET resuests
