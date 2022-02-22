@@ -34,6 +34,9 @@ import PurchaseGoodiesForm, {
 } from "~/components/shop/purchaseGoodiesForm";
 import { APIError } from "~/utils/axios";
 import { getSelft } from "~/services/user";
+import DeleteGoodiesForm, {
+  DeleteGoodiesFormData,
+} from "~/components/shop/deleteGoodiesForm";
 
 type LoaderData = {
   goodies: Goodies;
@@ -46,10 +49,7 @@ type LoaderData = {
 type ActionData = {
   purchaseGoodies?: PurchaseGoodiesFormData;
   updateGoodies?: UpdateGoodiesFormData;
-  deleteGoodies?: {
-    formError?: string;
-    formSuccess?: string;
-  };
+  deleteGoodies?: DeleteGoodiesFormData;
   refundGoodies?: {
     formError?: string;
     formSuccess?: string;
@@ -292,12 +292,16 @@ export const action: ActionFunction = async ({ request, params }) => {
 function displayGoodies(
   goodies: Goodies,
   userId?: number,
-  formData?: UpdateGoodiesFormData
+  formData?: {
+    updateForm?: UpdateGoodiesFormData;
+    deleteForm?: DeleteGoodiesFormData;
+  }
 ) {
   if (goodies.creatorId === userId) {
     return (
       <Container>
-        <UpdateGoodiesForm goodies={goodies} formData={formData} />
+        <UpdateGoodiesForm goodies={goodies} formData={formData?.updateForm} />
+        <DeleteGoodiesForm goodies={goodies} formData={formData?.deleteForm} />
       </Container>
     );
   } else {
@@ -318,11 +322,10 @@ export default function Goodies() {
   return (
     <Container style={{ marginTop: "50px" }} component="main" maxWidth="xs">
       <Typography variant="h4">Goodies</Typography>
-      {displayGoodies(
-        loaderData.goodies,
-        userInfo?.id,
-        actionData?.updateGoodies
-      )}
+      {displayGoodies(loaderData.goodies, userInfo?.id, {
+        updateForm: actionData?.updateGoodies,
+        deleteForm: actionData?.deleteGoodies,
+      })}
       {/* Form to buy goodies */}
       <Container style={{ marginTop: "10px" }}>
         <PurchaseGoodiesForm formData={actionData?.purchaseGoodies} />
