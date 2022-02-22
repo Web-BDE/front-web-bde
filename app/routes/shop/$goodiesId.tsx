@@ -33,7 +33,6 @@ import PurchaseGoodiesForm, {
   PurchaseGoodiesFormData,
 } from "~/components/shop/purchaseGoodiesForm";
 import { APIError } from "~/utils/axios";
-import { Params } from "react-router";
 import { getSelft } from "~/services/user";
 
 type LoaderData = {

@@ -245,6 +245,8 @@ async function handleDeleteChallenge(token: string, challengeId: number) {
       );
     }
   }
+
+  return redirect("/challenges");
 }
 
 export const action: ActionFunction = async ({ request, params }) => {

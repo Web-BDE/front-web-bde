@@ -80,12 +80,12 @@ async function handleValidateAccomplishment(
   accomplishmentId: number
 ) {
   //Check for an error in the validation format
-  const validationError = validateValidation(validation);
+  const formError = validateValidation(validation);
 
-  if (validationError) {
+  if (formError) {
     return json(
       {
-        validateChallenge: { formError: validationError },
+        validateAccomplishment: { formError: formError },
       },
       400
     );
@@ -99,7 +99,7 @@ async function handleValidateAccomplishment(
     if (err instanceof APIError) {
       return json(
         {
-          validateChallenge: { formError: err.error.message },
+          validateAccomplishment: { formError: err.error.message },
         },
         err.code
       );
@@ -108,7 +108,7 @@ async function handleValidateAccomplishment(
   }
 
   return json({
-    validateChallenge: { formSuccess: "Challenge Validated" },
+    validateAccomplishment: { formSuccess: "Challenge Validated" },
   });
 }
 
@@ -182,8 +182,8 @@ export const action: ActionFunction = async ({ request }) => {
       ) {
         return json(
           {
-            validateChallenge: {
-              validationError: "There was an error, please try again",
+            validateAccomplishment: {
+              formError: "There was an error, please try again",
             },
           },
           400
