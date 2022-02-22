@@ -247,12 +247,21 @@ export default function ChallengesAdmin() {
         />
       </Container>
       {/* Display a list of accomplishments that need to be validated */}
-      <AccomplishmentsGrid
-        accomplishments={loaderData.accomplishments}
-        formData={{
-          validateAccomplishment: actionData?.validateAccomplishment,
-        }}
-      />
+      {loaderData.accomplishments.accomplishments ? (
+        <div style={{ marginTop: "50px" }}>
+          <Typography textAlign="center" variant="h4">
+            Pending Accomplishments
+          </Typography>
+          <AccomplishmentsGrid
+            accomplishments={loaderData.accomplishments}
+            formData={{
+              validateAccomplishment: actionData?.validateAccomplishment,
+            }}
+          />
+        </div>
+      ) : (
+        ""
+      )}
     </Container>
   );
 }
