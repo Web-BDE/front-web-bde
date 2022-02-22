@@ -7,7 +7,7 @@ import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
 import { Challenge } from "~/models/Challenge";
 
 import { requireAuth } from "~/services/authentication";
-import ChallengeGrid from "~/components/challenge/challengeGrid";
+import ChallengeGrid from "~/components/challenge/grids/challengeGrid";
 import { getManyChallenge } from "~/services/challenges";
 import { APIError } from "~/utils/axios";
 

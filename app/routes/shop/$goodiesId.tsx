@@ -28,15 +28,15 @@ import { useContext } from "react";
 import { UserContext } from "~/components/userContext";
 import UpdateGoodiesForm, {
   UpdateGoodiesFormData,
-} from "~/components/shop/updateGoodiesForm";
+} from "~/components/shop/forms/updateGoodiesForm";
 import PurchaseGoodiesForm, {
   PurchaseGoodiesFormData,
-} from "~/components/shop/purchaseGoodiesForm";
+} from "~/components/shop/forms/purchaseGoodiesForm";
 import { APIError } from "~/utils/axios";
 import { getSelft } from "~/services/user";
 import DeleteGoodiesForm, {
   DeleteGoodiesFormData,
-} from "~/components/shop/deleteGoodiesForm";
+} from "~/components/shop/forms/deleteGoodiesForm";
 
 type LoaderData = {
   goodies: Goodies;

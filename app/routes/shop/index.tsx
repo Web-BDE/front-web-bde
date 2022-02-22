@@ -6,7 +6,7 @@ import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
 
 import { requireAuth } from "~/services/authentication";
 import { getManyGoodies } from "~/services/goodies";
-import GoodiesGrid from "~/components/shop/goodiesGrid";
+import GoodiesGrid from "~/components/shop/grids/goodiesGrid";
 import { Goodies } from "~/models/Goodies";
 import { APIError } from "~/utils/axios";
 

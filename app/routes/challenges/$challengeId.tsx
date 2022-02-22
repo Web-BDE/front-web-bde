@@ -34,20 +34,20 @@ import { useContext } from "react";
 import { UserContext } from "~/components/userContext";
 import UpdateChallengeForm, {
   UpdateChallengeFormData,
-} from "~/components/challenge/updateChallengeForm";
+} from "~/components/challenge/forms/updateChallengeForm";
 import ChallengeDisplay from "~/components/challenge/challengeDisplay";
 import AccomplishmentsGrid, {
   AccomplishmentData,
-} from "~/components/challenge/accomplishmentGrid";
-import { UpdateAccomplishmentFormData } from "~/components/challenge/updateAccomplishmentForm";
-import { DeleteAccomplishmentFormData } from "~/components/challenge/deleteAccomplishmentForm";
+} from "~/components/challenge/grids/accomplishmentGrid";
+import { UpdateAccomplishmentFormData } from "~/components/challenge/forms/updateAccomplishmentForm";
+import { DeleteAccomplishmentFormData } from "~/components/challenge/forms/deleteAccomplishmentForm";
 import CreateAccomplishmentForm, {
   CreateAccomplishmentFormData,
-} from "~/components/challenge/createAccomplishmentForm";
+} from "~/components/challenge/forms/createAccomplishmentForm";
 import { getSelft } from "~/services/user";
 import DeleteChallengeForm, {
   DeleteChallengeFormData,
-} from "~/components/challenge/deleteChallengeForm";
+} from "~/components/challenge/forms/deleteChallengeForm";
 
 type LoaderData = {
   challenge: Challenge;

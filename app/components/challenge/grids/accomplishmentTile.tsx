@@ -50,7 +50,10 @@ export default function AccomplishmentTile({
             ""
           )}
           {/* Form to validate an accomplishment */}
-          <form method="post">
+          <form
+            style={{ display: "flex", justifyContent: "space-between" }}
+            method="post"
+          >
             <input
               type="hidden"
               name="accomplishmentId"
