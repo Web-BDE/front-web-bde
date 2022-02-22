@@ -23,7 +23,7 @@ export async function getManyChallenge(
   );
   try {
     const reply = await axios.get<{ message: string; challenges: Challenge[] }>(
-      `/challenge/${searchParams.entries.length ? "?" + searchParams : ""}`,
+      `/challenge/${searchParams.entries() ? "?" + searchParams.toString() : ""}`,
       {
         headers: buildAxiosHeaders(token),
       }

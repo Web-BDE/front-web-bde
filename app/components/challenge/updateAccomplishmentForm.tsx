@@ -26,7 +26,6 @@ export default function UpdateAccomplishmentForm({
   accomplishment: Accomplishment;
   formData?: UpdateAccomplishmentFormData;
 }) {
-  console.log(accomplishment);
   return (
     <Card>
       <CardContent>

@@ -383,6 +383,8 @@ export default function Challenge() {
 
   const userInfo = useContext(UserContext);
 
+  console.log(loaderData.accomplishments);
+
   return (
     <Container style={{ marginTop: "50px" }}>
       {displayChallenge(

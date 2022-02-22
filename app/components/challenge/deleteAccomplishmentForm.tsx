@@ -13,7 +13,6 @@ export default function DeleteAccomplishmentForm({
   accomplishment: Accomplishment;
   formData?: DeleteAccomplishmentFormData;
 }) {
-  console.log(accomplishment);
   return (
     <div>
       {formData?.formError ? (

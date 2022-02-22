@@ -22,7 +22,6 @@ export default function AccomplishmentTile({
   userPrivilege?: number;
   formData?: ValidateAccomplishmentFormData;
 }) {
-  console.log(accomplishment);
   return (
     <Card>
       <CardContent>

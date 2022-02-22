@@ -26,7 +26,6 @@ function displayAccomplishment(
 ) {
   switch (accomplishment.validation) {
     case "PENDING":
-      console.log("coco");
       return (
         <div>
           <UpdateAccomplishmentForm
@@ -40,7 +39,6 @@ function displayAccomplishment(
         </div>
       );
     default:
-      console.log("coucoueee");
       return (
         <AccomplishmentTile
           accomplishment={accomplishment}
@@ -64,8 +62,6 @@ export default function AccomplishmentsGrid({
 }) {
   const userInfo = useContext(UserContext);
 
-  console.log(accomplishments);
-
   return (
     <Container style={{ marginTop: "50px", marginBottom: "50px" }}>
       {accomplishments.error ? (
@@ -83,7 +79,6 @@ export default function AccomplishmentsGrid({
         {/* Display the user's accomplishments */}
         {accomplishments.accomplishments?.map((accomplishment) => {
           {
-            console.log("test");
           }
           <Grid item key={accomplishment.id}>
             {displayAccomplishment(

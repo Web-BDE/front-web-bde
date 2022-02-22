@@ -102,7 +102,7 @@ export async function getManyAccomplishment(
     { key: "offset", val: offset?.toString() },
     { key: "challengeId", val: challengeId?.toString() },
     { key: "userId", val: userId?.toString() },
-    { key: "validation", val: validation }
+    { key: "status", val: validation }
   );
   try {
     const reply = await axios.get<{
@@ -110,7 +110,7 @@ export async function getManyAccomplishment(
       accomplishments: Accomplishment[];
     }>(
       `/accomplishment/${
-        searchParams.entries.length ? "?" + searchParams : ""
+        searchParams.entries() ? "?" + searchParams.toString() : ""
       }`,
       {
         headers: buildAxiosHeaders(token),

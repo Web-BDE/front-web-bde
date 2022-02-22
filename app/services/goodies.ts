@@ -24,7 +24,7 @@ export async function getManyGoodies(
   );
   try {
     const reply = await axios.get<{ message: string; goodies: Goodies[] }>(
-      `/goodies/${searchParams.entries.length ? "?" + searchParams : ""}`,
+      `/goodies/${searchParams.entries() ? "?" + searchParams.toString() : ""}`,
       {
         headers: buildAxiosHeaders(token),
       }
