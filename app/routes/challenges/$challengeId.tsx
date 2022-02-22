@@ -8,8 +8,6 @@ import {
   useLoaderData,
 } from "remix";
 
-import Accomplishments from "~/components/challenge/accomplishments";
-
 import {
   handleAccomplishmentCreation,
   handleAccomplishmentUpdate,
@@ -20,7 +18,6 @@ import {
   handleDeleteChallenge,
 } from "~/controllers/challenge";
 
-import { Accomplishment } from "~/models/Accomplishment";
 import { Challenge } from "~/models/Challenge";
 
 import { getManyAccomplishment } from "~/services/accomplishment";
@@ -33,25 +30,20 @@ import {
   generateExpectedError,
 } from "../../utils/error";
 
-import {
-  TextField,
-  Button,
-  Typography,
-  Container,
-  Alert,
-} from "@mui/material";
+import { TextField, Button, Typography, Container, Alert } from "@mui/material";
 import { useContext } from "react";
 import { UserContext } from "~/components/userContext";
+import UpdateChallengeForm, {
+  UpdateChallengeFormData,
+} from "~/components/challenge/updateChallengeForm";
+import ChallengeDisplay from "~/components/challenge/challengeDisplay";
+import AccomplishmentsGrid, { AccomplishmentData } from "~/components/challenge/accomplishmentGrid";
+import { UpdateAccomplishmentFormData } from "~/components/challenge/updateAccomplishmentForm";
+import { DeleteAccomplishmentFormData } from "~/components/challenge/deleteAccomplishmentForm";
 
 type LoaderData = {
   challenge: Challenge;
-  userId: number;
-  accomplishments?: {
-    accomplishments?: Accomplishment[];
-    error?: string;
-    userId: number;
-    challengeId: number;
-  };
+  accomplishments: AccomplishmentData
 };
 
 type ActionData = {
@@ -65,34 +57,9 @@ type ActionData = {
       proof: string;
     };
   };
-  updateAccomplishment?: {
-    formError?: string;
-    formSuccess?: string;
-    fieldsError?: {
-      proof?: string;
-    };
-    fields?: {
-      proof: string;
-    };
-  };
-  updateChallenge?: {
-    formError?: string;
-    formSuccess?: string;
-    fieldsError?: {
-      name?: string;
-      description?: string;
-      reward?: string;
-    };
-    fields?: {
-      name: string;
-      description?: string;
-      reward: number;
-    };
-  };
-  deleteAccomplishment?: {
-    formError?: string;
-    formSuccess?: string;
-  };
+  updateAccomplishment?: UpdateAccomplishmentFormData
+  updateChallenge?: UpdateChallengeFormData;
+  deleteAccomplishment?: DeleteAccomplishmentFormData
   deleteChallenge?: {
     formError?: string;
     formSuccess?: string;
@@ -105,27 +72,21 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   }
 
   //Need to provide userId to filter in jsx
-  const token = await requireAuth(
-    request,
-    `/challenge/${params.challengeId}`
-  );
+  const token = await requireAuth(request, `/challenge/${params.challengeId}`);
 
-  const userInfo = useContext(UserContext);
-
-  const challenge = (await getChallenge(token, parseInt(params.challengeId)))?.challenge;
+  const challenge = (await getChallenge(token, parseInt(params.challengeId)))
+    ?.challenge;
 
   //Get Accomplishments, we don't throw API Errors because we will display them
   let accomplishments;
   try {
-    accomplishments = await getManyAccomplishment(token);
+    accomplishments = (await getManyAccomplishment(token))?.accomplishments;
   } catch (error) {
     if (error instanceof APIError) {
       return {
         challenge,
         accomplishments: {
           error: error.error.message,
-          userId: userInfo!.id,
-          challengeId: challenge!.id,
         },
       };
     }
@@ -134,11 +95,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   return {
     challenge,
-    userId: userInfo!.id,
     accomplishments: {
       accomplishments,
-      userId: userInfo!.id,
-      challengeId: challenge!.id,
     },
   };
 };
@@ -252,109 +210,19 @@ export const action: ActionFunction = async ({ request, params }) => {
 //If challenge creator is self transform normal inputs into a form to update it
 function displayChallenge(
   challenge: Challenge,
-  userId: number,
-  actionData?: ActionData
+  userId?: number,
+  formData?: UpdateChallengeFormData
 ) {
   if (userId === challenge.creatorId) {
     return (
       <Container maxWidth="xs">
-        <Typography variant="h4">Challenge</Typography>
-        {actionData?.updateChallenge?.formError ? (
-          <Alert severity="error">
-            {actionData?.updateChallenge.formError}
-          </Alert>
-        ) : (
-          ""
-        )}
-        {actionData?.updateChallenge?.formSuccess ? (
-          <Alert severity="info">
-            {actionData?.updateChallenge.formSuccess}
-          </Alert>
-        ) : (
-          ""
-        )}
-        <form method="post">
-          {/* Method that the form will have to handle */}
-          <input type="hidden" name="method" value="update-challenge" />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="name"
-            error={Boolean(actionData?.updateChallenge?.fieldsError?.name)}
-            helperText={actionData?.updateChallenge?.fieldsError?.name}
-            label="Name"
-            name="name"
-            autoComplete="name"
-            defaultValue={
-              actionData?.updateChallenge?.fields?.name || challenge.name
-            }
-            autoFocus
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            error={Boolean(
-              actionData?.updateChallenge?.fieldsError?.description
-            )}
-            helperText={actionData?.updateChallenge?.fieldsError?.description}
-            name="description"
-            defaultValue={
-              actionData?.updateChallenge?.fields?.description ||
-              challenge.description
-            }
-            label="description"
-            id="description"
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            error={Boolean(actionData?.updateChallenge?.fieldsError?.reward)}
-            helperText={actionData?.updateChallenge?.fieldsError?.reward}
-            name="reward"
-            defaultValue={
-              actionData?.updateChallenge?.fields?.reward || challenge.reward
-            }
-            label="reward"
-            type="number"
-            id="reward"
-          />
-          <Typography variant="h6" style={{ marginTop: "10px" }}>
-            Created : {challenge.createdAt}
-          </Typography>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            style={{ marginTop: "10px" }}
-          >
-            Update Challenge
-          </Button>
-        </form>
+        <UpdateChallengeForm challenge={challenge} formData={formData} />
       </Container>
     );
   } else {
     return (
       <Container maxWidth="xs">
-        <Typography variant="h4">Challenge</Typography>
-        <Typography variant="h3" style={{ marginTop: "10px" }}>
-          {challenge.name}
-        </Typography>
-        <Typography variant="h5" style={{ marginTop: "10px" }}>
-          <b>Reward : {challenge.reward}</b>
-        </Typography>
-        <Typography variant="body1" style={{ marginTop: "10px" }}>
-          {challenge.description}
-        </Typography>
-        <Typography variant="body1" style={{ marginTop: "10px" }}>
-          Created : {challenge.createdAt}
-        </Typography>
+        <ChallengeDisplay challenge={challenge} />
       </Container>
     );
   }
@@ -364,9 +232,15 @@ export default function Challenge() {
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
 
+  const userInfo = useContext(UserContext);
+
   return (
     <Container style={{ marginTop: "50px" }}>
-      {displayChallenge(loaderData.challenge, loaderData.userId, actionData)}
+      {displayChallenge(
+        loaderData.challenge,
+        userInfo?.id,
+        actionData?.updateChallenge
+      )}
       <Container maxWidth="xs" style={{ marginTop: "50px" }}>
         <div>
           <Typography variant="h4">Submit Proof</Typography>
@@ -410,9 +284,9 @@ export default function Challenge() {
       </Container>
       {/* Display all user's accomplishment for this challenge */}
       {loaderData.accomplishments ? (
-        <Accomplishments
+        <AccomplishmentsGrid
           accomplishments={loaderData.accomplishments}
-          formData={actionData?.updateAccomplishment}
+          formData={{updateAccomplishment: actionData?.updateAccomplishment, deleteAccomplishment: actionData?.deleteAccomplishment}}
         />
       ) : (
         ""

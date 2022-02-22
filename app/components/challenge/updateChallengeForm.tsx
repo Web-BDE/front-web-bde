@@ -1,33 +1,31 @@
 import { TextField, Button, Typography, Alert } from "@mui/material";
-import { Goodies } from "~/models/Goodies";
+import { Challenge } from "~/models/Challenge";
 
-export type UpdateGoodiesFormData = {
+export type UpdateChallengeFormData = {
   formError?: string;
   formSuccess?: string;
   fieldsError?: {
     name?: string;
     description?: string;
-    price?: string;
-    buyLimit?: string;
+    reward?: string;
   };
   fields?: {
     name: string;
     description: string;
-    price: number;
-    buyLimit: number;
+    reward: number;
   };
 };
 
-export default function UpdateGoodiesForm({
-  goodies,
+export default function UpdateChallengeForm({
+  challenge,
   formData,
 }: {
-  goodies: Goodies;
-  formData?: UpdateGoodiesFormData;
+  challenge: Challenge;
+  formData?: UpdateChallengeFormData;
 }) {
   return (
     <div>
-      <Typography variant="h4">Goodies</Typography>
+      <Typography variant="h4">Challenge</Typography>
       {formData?.formError ? (
         <Alert severity="error">{formData?.formError}</Alert>
       ) : (
@@ -40,7 +38,7 @@ export default function UpdateGoodiesForm({
       )}
       <form method="post">
         {/* Hiddent input with the method that the Action function will have to handle */}
-        <input type="hidden" name="method" value="update-goodies" />
+        <input type="hidden" name="method" value="update-challenge" />
         <TextField
           variant="outlined"
           margin="normal"
@@ -52,7 +50,7 @@ export default function UpdateGoodiesForm({
           label="Name"
           name="name"
           autoComplete="name"
-          defaultValue={formData?.fields?.name || goodies.name}
+          defaultValue={formData?.fields?.name || challenge.name}
           autoFocus
         />
         <TextField
@@ -63,7 +61,7 @@ export default function UpdateGoodiesForm({
           error={Boolean(formData?.fieldsError?.description)}
           helperText={formData?.fieldsError?.description}
           name="description"
-          defaultValue={formData?.fields?.description || goodies.description}
+          defaultValue={formData?.fields?.description || challenge.description}
           label="description"
           id="description"
         />
@@ -72,29 +70,16 @@ export default function UpdateGoodiesForm({
           margin="normal"
           required
           fullWidth
-          error={Boolean(formData?.fieldsError?.price)}
-          helperText={formData?.fieldsError?.price}
-          name="price"
-          defaultValue={formData?.fields?.price || goodies.price}
-          label="price"
+          error={Boolean(formData?.fieldsError?.reward)}
+          helperText={formData?.fieldsError?.reward}
+          name="reward"
+          defaultValue={formData?.fields?.reward || challenge.reward}
+          label="reward"
           type="number"
-          id="price"
-        />
-        <TextField
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          error={Boolean(formData?.fieldsError?.buyLimit)}
-          helperText={formData?.fieldsError?.buyLimit}
-          name="buy-limit"
-          defaultValue={formData?.fields?.buyLimit || goodies.buyLimit}
-          label="buy-limit"
-          type="number"
-          id="buy-limit"
+          id="reward"
         />
         <Typography variant="h6" align="center" style={{ marginTop: "10px" }}>
-          Creation date : {new Date(goodies.createdAt).toLocaleDateString()}
+          Creation date : {new Date(challenge.createdAt).toLocaleDateString()}
         </Typography>
         <Button
           type="submit"
@@ -103,7 +88,7 @@ export default function UpdateGoodiesForm({
           color="primary"
           style={{ marginTop: "10px" }}
         >
-          Update Goodies
+          Update Challenge
         </Button>
       </form>
     </div>

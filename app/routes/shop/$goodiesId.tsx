@@ -72,12 +72,9 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     purchases = (await getManyPurchase(token))?.purchases;
   } catch (err) {
     if (err instanceof APIError) {
-      return json(
-        { goodies, purchases: { purchasesError: err.error.message } },
-        err.code
-      );
+      return { goodies, purchases: { purchasesError: err.error.message } };
     }
-    return json({ goodies, purchases: { purchasesError: err } }, 500);
+    throw err;
   }
 
   return {

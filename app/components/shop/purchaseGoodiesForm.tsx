@@ -5,7 +5,7 @@ export type PurchaseGoodiesFormData = {
   formSuccess?: string;
 };
 
-export default function ({ formData }: { formData?: PurchaseGoodiesFormData }) {
+export default function PurchaseGoodiesForm ({ formData }: { formData?: PurchaseGoodiesFormData }) {
   return (
     <form method="post">
       {formData?.formError ? (
