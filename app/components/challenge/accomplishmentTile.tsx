@@ -6,7 +6,7 @@ import {
   Button,
   Alert,
 } from "@mui/material";
-import { Accomplishment } from "~/models/Accomplishment";
+import { Accomplishment, Validation } from "~/models/Accomplishment";
 
 export type ValidateAccomplishmentFormData = {
   formError?: string;
@@ -37,7 +37,7 @@ export default function AccomplishmentTile({
       </CardContent>
       {userPrivilege &&
       userPrivilege >= 1 &&
-      accomplishment.validation === null ? (
+      accomplishment.validation === Validation.PENDING ? (
         <CardActions>
           {formData?.formError ? (
             <Alert severity="error">{formData?.formError}</Alert>

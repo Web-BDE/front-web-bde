@@ -59,8 +59,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 //Validator for validation input
-function validateValidation(validation: number | null) {
-  if (validation !== -1 && validation !== 1) {
+function validateValidation(validation: Validation) {
+  if (validation !== Validation.PENDING) {
     return "Validation has invalid value";
   }
 }

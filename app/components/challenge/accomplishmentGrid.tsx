@@ -1,6 +1,6 @@
 import { Alert, Container, Grid } from "@mui/material";
 import { useContext } from "react";
-import { Accomplishment } from "~/models/Accomplishment";
+import { Accomplishment, Validation } from "~/models/Accomplishment";
 import { UserContext } from "../userContext";
 import AccomplishmentTile, {
   ValidateAccomplishmentFormData,
@@ -25,7 +25,7 @@ function displayAccomplishment(
   validateFormData?: ValidateAccomplishmentFormData
 ) {
   switch (accomplishment.validation) {
-    case null:
+    case Validation.PENDING:
       return (
         <Grid item key={accomplishment.id}>
           <UpdateAccomplishmentForm
