@@ -8,21 +8,20 @@ import {
   useLoaderData,
 } from "remix";
 
-import {
-  handleAccomplishmentCreation,
-  handleAccomplishmentUpdate,
-  handleDeleteAccomplishment,
-} from "~/controllers/accomplishment";
-import {
-  handleChallengeUpdate,
-  handleDeleteChallenge,
-} from "~/controllers/challenge";
-
 import { Challenge } from "~/models/Challenge";
 
-import { getManyAccomplishment } from "~/services/accomplishment";
+import {
+  createAccomplishment,
+  deleteAccomplishment,
+  getManyAccomplishment,
+  updateAccomplishment,
+} from "~/services/accomplishment";
 import { requireAuth } from "~/services/authentication";
-import { getChallenge } from "~/services/challenges";
+import {
+  deleteChallenge,
+  getChallenge,
+  updateChallenge,
+} from "~/services/challenges";
 import { APIError } from "~/utils/axios";
 
 import {
@@ -30,7 +29,7 @@ import {
   generateExpectedError,
 } from "../../utils/error";
 
-import { TextField, Button, Typography, Container, Alert } from "@mui/material";
+import { Container } from "@mui/material";
 import { useContext } from "react";
 import { UserContext } from "~/components/userContext";
 import UpdateChallengeForm, {
@@ -97,6 +96,146 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   };
 };
 
+async function handleAccomplishmentCreation(
+  token: string,
+  proof: string,
+  challengeId: number
+) {
+  try {
+    await createAccomplishment(
+      token,
+      {
+        proof,
+      },
+      challengeId
+    );
+  } catch (err) {
+    if (err instanceof APIError) {
+      return json(
+        {
+          creacteAccomplishment: { formError: err.error.message },
+        },
+        err.code
+      );
+    }
+    throw err;
+  }
+
+  return json(
+    { createAccomplishment: { formSuccess: "Accomplishment created" } },
+    201
+  );
+}
+
+async function handleAccomplishmentUpdate(
+  token: string,
+  proof: string,
+  accomplishmentId: number
+) {
+  try {
+    await updateAccomplishment(token, accomplishmentId, { proof });
+  } catch (err) {
+    if (err instanceof APIError) {
+      return json(
+        {
+          updateAccomplishment: { formError: err.error.message },
+        },
+        err.code
+      );
+    }
+    throw err;
+  }
+
+  return json(
+    { updateAccomplishment: { formSuccess: "Accomplishment updated" } },
+    201
+  );
+}
+
+//Validator for field reward
+function validateReward(reward: number) {
+  if (reward < 0) {
+    return "Reward must be positive";
+  }
+}
+
+async function handleChallengeUpdate(
+  token: string,
+  name: string,
+  description: string,
+  reward: number,
+  challengeId: number
+) {
+  //Check fields format errors
+  const fields = { name, description, reward: reward };
+  const fieldsError = {
+    reward: validateReward(reward),
+  };
+
+  if (Object.values(fieldsError).some(Boolean)) {
+    return json({ updateChallenge: { fields, fieldsError } }, 400);
+  }
+
+  //Try to update challenge
+  try {
+    await updateChallenge(token, fields, challengeId);
+  } catch (err) {
+    //We don't want to throw API errors, we will show the in the form instead
+    if (err instanceof APIError) {
+      return json(
+        {
+          updateChallenge: { formError: err.error.message, fields },
+        },
+        err.code
+      );
+    }
+  }
+
+  return json({ updateChallenge: { formSuccess: "Challenge updated" } }, 201);
+}
+
+async function handleDeleteAccomplishment(
+  token: string,
+  accomplishmentId: number
+) {
+  //Try to delete accomplishment
+  try {
+    await deleteAccomplishment(token, accomplishmentId);
+  } catch (err) {
+    //We don't want to throw API errors, we will show the in the form instead
+    if (err instanceof APIError) {
+      return json(
+        {
+          deleteAccomplishment: { formError: err.error.message },
+        },
+        err.code
+      );
+    }
+  }
+
+  return json(
+    { updateChallenge: { formSuccess: "Accomplishment deleted" } },
+    201
+  );
+}
+
+async function handleDeleteChallenge(token: string, challengeId: number) {
+  //Try to delete accomplishment
+  try {
+    await deleteChallenge(token, challengeId);
+  } catch (err) {
+    //We don't want to throw API errors, we will show the in the form instead
+    if (err instanceof APIError) {
+      return json(
+        {
+          deleteChallenge: { formError: err.error.message },
+        },
+        err.code
+      );
+    }
+  }
+}
+
 export const action: ActionFunction = async ({ request, params }) => {
   if (!params.challengeId) {
     throw json("Invalid challenge query", 404);
@@ -121,9 +260,11 @@ export const action: ActionFunction = async ({ request, params }) => {
       if (typeof proof !== "string") {
         return json(
           {
-            creacteAccomplishment: { formError: "You must fill all fields" },
+            creacteAccomplishment: {
+              formError: "Something went wrong, please try again",
+            },
           },
-          400
+          500
         );
       }
 
