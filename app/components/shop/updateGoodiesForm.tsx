@@ -93,8 +93,8 @@ export default function ({
           type="number"
           id="buy-limit"
         />
-        <Typography variant="h6" style={{ marginTop: "10px" }}>
-          Created : {goodies.createdAt}
+        <Typography variant="h6" align="center" style={{ marginTop: "10px" }}>
+          Creation date : {new Date(goodies.createdAt).toLocaleDateString()}
         </Typography>
         <Button
           type="submit"

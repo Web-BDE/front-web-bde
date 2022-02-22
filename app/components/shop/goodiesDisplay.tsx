@@ -17,7 +17,7 @@ export default function GoodiesDisplay({ goodies }: { goodies: Goodies }) {
         {goodies.description}
       </Typography>
       <Typography variant="body1" style={{ marginTop: "10px" }}>
-        Created : {goodies.createdAt}
+        Creation date : {new Date(goodies.createdAt).toLocaleDateString()}
       </Typography>
     </div>
   );
