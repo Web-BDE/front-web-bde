@@ -12,7 +12,7 @@ import { Goodies } from "~/models/Goodies";
 async function loadGoodies(token: string) {
   const goodies = (await getManyGoodies(token))?.goodies;
 
-  return goodies;
+  return { goodies };
 }
 
 //Function that handle GET resuests
@@ -23,10 +23,10 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function Shop() {
-  const loaderData = useLoaderData<Goodies[]>();
+  const loaderData = useLoaderData<{ goodies: Goodies[] }>();
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
-      <GoodiesGrid goodies={loaderData} />
+      <GoodiesGrid goodies={loaderData.goodies} />
     </Container>
   );
 }

@@ -33,6 +33,7 @@ import PurchaseGoodiesForm, {
   PurchaseGoodiesFormData,
 } from "~/components/shop/purchaseGoodiesForm";
 import { APIError } from "~/utils/axios";
+import { Params } from "react-router";
 
 type LoaderData = {
   goodies: Goodies;
@@ -60,9 +61,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     throw json("Invalid goodies query", 400);
   }
 
-  const token = await requireAuth(request, `/shop/${params.challengeId}`);
+  const token = await requireAuth(request, `/shop/${params.goodiesId}`);
 
-  const goodies = await getGoodies(token, parseInt(params.goodiesId));
+  const goodies = (await getGoodies(token, parseInt(params.goodiesId)))
+    ?.goodies;
 
   //Load purchases, we don't want to throwAPI errors
   let purchases;
