@@ -44,6 +44,7 @@ import { DeleteAccomplishmentFormData } from "~/components/challenge/deleteAccom
 import CreateAccomplishmentForm, {
   CreateAccomplishmentFormData,
 } from "~/components/challenge/createAccomplishmentForm";
+import { getSelft } from "~/services/user";
 
 type LoaderData = {
   challenge: Challenge;
@@ -69,13 +70,23 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   //Need to provide userId to filter in jsx
   const token = await requireAuth(request, `/challenge/${params.challengeId}`);
 
+  const userInfo = (await getSelft(token))?.user;
+
   const challenge = (await getChallenge(token, parseInt(params.challengeId)))
     ?.challenge;
 
   //Get Accomplishments, we don't throw API Errors because we will display them
   let accomplishments;
   try {
-    accomplishments = (await getManyAccomplishment(token))?.accomplishments;
+    accomplishments = (
+      await getManyAccomplishment(
+        token,
+        undefined,
+        undefined,
+        parseInt(params.challengeId),
+        userInfo?.id
+      )
+    )?.accomplishments;
   } catch (error) {
     if (error instanceof APIError) {
       return {
