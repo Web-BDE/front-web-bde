@@ -59,10 +59,7 @@ type ActionData = {
   updateAccomplishment?: UpdateAccomplishmentFormData;
   updateChallenge?: UpdateChallengeFormData;
   deleteAccomplishment?: DeleteAccomplishmentFormData;
-  deleteChallenge?: {
-    formError?: string;
-    formSuccess?: string;
-  };
+  deleteChallenge?: DeleteChallengeFormData;
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
