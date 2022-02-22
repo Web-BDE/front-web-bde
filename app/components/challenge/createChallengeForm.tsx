@@ -40,7 +40,7 @@ export default function CreateChallengeForm({
         <input
           type="hidden"
           name="redirectTo"
-          value={redirectTo || "/challenge"}
+          value={redirectTo || "/challenges"}
         />
         <input type="hidden" name="method" value="create-challenge" />
         <TextField

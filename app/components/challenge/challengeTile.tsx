@@ -22,7 +22,7 @@ export default function ChallengeTile({ challenge }: { challenge: Challenge }) {
           </Typography>
         </CardContent>
         <CardActions>
-          <Link to={`/shop/${challenge.id}`}>
+          <Link to={`/challenges/${challenge.id}`}>
             <Button size="small">Details</Button>
           </Link>
         </CardActions>
