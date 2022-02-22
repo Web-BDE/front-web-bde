@@ -55,7 +55,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   //User need to be logged in
   const token = await requireAuth(request, `/challenges/admin`);
 
-  return await loadAccomplishments(token);
+  return { accomplishments: await loadAccomplishments(token) };
 };
 
 //Validator for validation input
