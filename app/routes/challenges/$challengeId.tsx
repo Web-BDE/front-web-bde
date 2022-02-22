@@ -29,7 +29,7 @@ import {
   generateExpectedError,
 } from "../../utils/error";
 
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import { useContext } from "react";
 import { UserContext } from "~/components/userContext";
 import UpdateChallengeForm, {
@@ -385,13 +385,16 @@ export default function Challenge() {
       </Container>
       {/* Display all user's accomplishment for this challenge */}
       {loaderData.accomplishments ? (
-        <AccomplishmentsGrid
-          accomplishments={loaderData.accomplishments}
-          formData={{
-            updateAccomplishment: actionData?.updateAccomplishment,
-            deleteAccomplishment: actionData?.deleteAccomplishment,
-          }}
-        />
+        <div>
+          <Typography variant="h4">Your accomplishments</Typography>
+          <AccomplishmentsGrid
+            accomplishments={loaderData.accomplishments}
+            formData={{
+              updateAccomplishment: actionData?.updateAccomplishment,
+              deleteAccomplishment: actionData?.deleteAccomplishment,
+            }}
+          />
+        </div>
       ) : (
         ""
       )}

@@ -2,50 +2,54 @@ import {
   ActionFunction,
   json,
   LoaderFunction,
+  redirect,
   useActionData,
   useCatch,
   useLoaderData,
   useSearchParams,
 } from "remix";
 
-import { Accomplishment, Validation } from "~/models/Accomplishment";
-
 import { requireAuth } from "~/services/authentication";
 
-import AccomplishmentsAdmin from "~/components/challenge/accomplishmentsAdmin";
-
 import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
-import {
-  handleValidateAccomplishment,
-  loadAccomplishments,
-} from "~/controllers/accomplishment";
-import { handleChallengeCreation } from "~/controllers/challenge";
 
-import { TextField, Button, Typography, Container, Alert } from "@mui/material";
+import { Container } from "@mui/material";
+import AccomplishmentsGrid, {
+  AccomplishmentData,
+} from "~/components/challenge/accomplishmentGrid";
+import { ValidateAccomplishmentFormData } from "~/components/challenge/accomplishmentTile";
+import CreateChallengeForm, {
+  CreateChallengeFormData,
+} from "~/components/challenge/createChallengeForm";
+import {
+  getManyAccomplishment,
+  updateAccomplishment,
+} from "~/services/accomplishment";
+import { APIError } from "~/utils/axios";
+import { createChallenge } from "~/services/challenges";
+import { Validation } from "~/models/Accomplishment";
 
 type ActionData = {
-  createChallenge?: {
-    formError?: string;
-    fieldsError?: {
-      name?: string;
-      description?: string;
-      reward?: string;
-    };
-    fields?: {
-      name: string;
-      description?: string;
-      reward: number;
-    };
-  };
-  validateChallenge?: {
-    validationError?: string;
-  };
+  createChallenge?: CreateChallengeFormData;
+  validateAccomplishment?: ValidateAccomplishmentFormData;
 };
 
-type LoaderData = {
-  accomplishments?: Accomplishment[];
-  accomplishmentError?: string;
-};
+async function loadAccomplishments(token: string) {
+  //Try to get accomplishments
+  let accomplishments;
+  try {
+    accomplishments = await getManyAccomplishment(token);
+  } catch (err) {
+    //We don't want to throw API errors, we will show the in the component instead
+    if (err instanceof APIError) {
+      return {
+        accomplishmenError: err.error.message,
+      };
+    }
+    throw err;
+  }
+  return { accomplishments };
+}
 
 export const loader: LoaderFunction = async ({ request }) => {
   //User need to be logged in
@@ -53,6 +57,93 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   return await loadAccomplishments(token);
 };
+
+//Validator for validation input
+function validateValidation(validation: number | null) {
+  if (validation !== -1 && validation !== 1) {
+    return "Validation has invalid value";
+  }
+}
+
+async function handleValidateAccomplishment(
+  token: string,
+  validation: Validation,
+  accomplishmentId: number
+) {
+  //Check for an error in the validation format
+  const validationError = validateValidation(validation);
+
+  if (validationError) {
+    return json(
+      {
+        validateChallenge: { formError: validationError },
+      },
+      400
+    );
+  }
+
+  //Try to validate challenge
+  try {
+    await updateAccomplishment(token, accomplishmentId, undefined, validation);
+  } catch (err) {
+    //We don't want to throw API errors, we will show the in the form instead
+    if (err instanceof APIError) {
+      return json(
+        {
+          validateChallenge: { formError: err.error.message },
+        },
+        err.code
+      );
+    }
+    throw err;
+  }
+
+  return json({
+    validateChallenge: { formSuccess: "Challenge Validated" },
+  });
+}
+
+//Validator for field reward
+function validateReward(reward: number) {
+  if (reward < 0) {
+    return "Reward must be positive";
+  }
+}
+
+export async function handleChallengeCreation(
+  token: string,
+  name: string,
+  reward: number,
+  redirectTo: string,
+  description?: string
+) {
+  //Check fields format errors
+  const fields = { name, description, reward: reward };
+  const fieldsError = {
+    reward: validateReward(reward),
+  };
+
+  if (Object.values(fieldsError).some(Boolean)) {
+    return json({ createChallenge: { fields, fieldsError } }, 400);
+  }
+
+  //Try to create challenge
+  try {
+    await createChallenge(token, fields);
+  } catch (err) {
+    //We don't want to throw API errors, we will show the in the form instead
+    if (err instanceof APIError) {
+      return json(
+        {
+          createChallenge: { formError: err.error.message, fields },
+        },
+        err.code
+      );
+    }
+  }
+
+  return redirect(redirectTo);
+}
 
 export const action: ActionFunction = async ({ request }) => {
   //User need to be logged in
@@ -135,75 +226,23 @@ export const action: ActionFunction = async ({ request }) => {
 export default function ChallengesAdmin() {
   const actionData = useActionData<ActionData>();
   const [searchParams] = useSearchParams();
-  const loaderData = useLoaderData<LoaderData>();
+  const loaderData = useLoaderData<{ accomplishments: AccomplishmentData }>();
 
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
       <Container maxWidth="xs">
-        <Typography variant="h4">Create Challenge</Typography>
-        {actionData?.createChallenge?.formError ? (
-          <Alert severity="error">
-            {actionData?.createChallenge.formError}
-          </Alert>
-        ) : (
-          ""
-        )}
-        <form method="post">
-          {/* Hidden input with redirection URL in it */}
-          <input
-            type="hidden"
-            name="redirectTo"
-            value={searchParams.get("redirectTo") || "/challenges"}
-          />
-          {/* Method that the Action function will have to handle */}
-          <input type="hidden" name="method" value="create-challenge" />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="name"
-            error={Boolean(actionData?.createChallenge?.fieldsError?.name)}
-            helperText={actionData?.createChallenge?.fieldsError?.name}
-            label="Name"
-            name="name"
-            autoComplete="name"
-            defaultValue={actionData?.createChallenge?.fields?.name}
-            autoFocus
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            error={Boolean(
-              actionData?.createChallenge?.fieldsError?.description
-            )}
-            helperText={actionData?.createChallenge?.fieldsError?.description}
-            name="description"
-            defaultValue={actionData?.createChallenge?.fields?.description}
-            label="description"
-            id="description"
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            error={Boolean(actionData?.createChallenge?.fieldsError?.reward)}
-            helperText={actionData?.createChallenge?.fieldsError?.reward}
-            name="reward"
-            defaultValue={actionData?.createChallenge?.fields?.reward || 0}
-            label="reward"
-            type="number"
-            id="reward"
-          />
-          <Button type="submit" fullWidth variant="contained" color="primary">
-            Create Challenge
-          </Button>
-        </form>
+        <CreateChallengeForm
+          formData={actionData?.createChallenge}
+          redirectTo={searchParams.get("redirectTo")}
+        />
       </Container>
       {/* Display a list of accomplishments that need to be validated */}
-      <AccomplishmentsAdmin loaderData={loaderData} actionData={actionData} />
+      <AccomplishmentsGrid
+        accomplishments={loaderData.accomplishments}
+        formData={{
+          validateAccomplishment: actionData?.validateAccomplishment,
+        }}
+      />
     </Container>
   );
 }

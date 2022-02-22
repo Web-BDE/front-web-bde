@@ -1,8 +1,10 @@
-import { Alert, Container, Grid, Typography } from "@mui/material";
+import { Alert, Container, Grid } from "@mui/material";
 import { useContext } from "react";
 import { Accomplishment } from "~/models/Accomplishment";
 import { UserContext } from "../userContext";
-import AccomplishmentTile from "./accomplishmentTile";
+import AccomplishmentTile, {
+  ValidateAccomplishmentFormData,
+} from "./accomplishmentTile";
 import DeleteAccomplishmentForm, {
   DeleteAccomplishmentFormData,
 } from "./deleteAccomplishmentForm";
@@ -15,10 +17,12 @@ export type AccomplishmentData = {
   error?: string;
 };
 
-function displayValidation(
+function displayAccomplishment(
   accomplishment: Accomplishment,
+  userPrivilege?: number,
   updateFormData?: UpdateAccomplishmentFormData,
-  deleteFormData?: DeleteAccomplishmentFormData
+  deleteFormData?: DeleteAccomplishmentFormData,
+  validateFormData?: ValidateAccomplishmentFormData
 ) {
   switch (accomplishment.validation) {
     case null:
@@ -37,7 +41,11 @@ function displayValidation(
     default:
       return (
         <Grid item key={accomplishment.id}>
-          <AccomplishmentTile accomplishment={accomplishment} />
+          <AccomplishmentTile
+            accomplishment={accomplishment}
+            userPrivilege={userPrivilege}
+            formData={validateFormData}
+          />
         </Grid>
       );
   }
@@ -51,13 +59,13 @@ export default function AccomplishmentsGrid({
   formData?: {
     updateAccomplishment?: UpdateAccomplishmentFormData;
     deleteAccomplishment?: DeleteAccomplishmentFormData;
+    validateAccomplishment?: ValidateAccomplishmentFormData;
   };
 }) {
   const userInfo = useContext(UserContext);
 
   return (
     <Container style={{ marginTop: "50px", marginBottom: "50px" }}>
-      <Typography variant="h4">Your accomplishments</Typography>
       {accomplishments.error ? (
         <Alert severity="error">{accomplishments.error}</Alert>
       ) : (
@@ -73,10 +81,12 @@ export default function AccomplishmentsGrid({
         {/* Display the user's accomplishments */}
         {accomplishments.accomplishments?.map((accomplishment) => {
           {
-            displayValidation(
+            displayAccomplishment(
               accomplishment,
+              userInfo?.privilege,
               formData?.updateAccomplishment,
-              formData?.deleteAccomplishment
+              formData?.deleteAccomplishment,
+              formData?.validateAccomplishment
             );
           }
         })}

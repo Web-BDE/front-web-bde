@@ -1,10 +1,26 @@
-import { Card, CardContent, Typography } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  CardActions,
+  Typography,
+  Button,
+  Alert,
+} from "@mui/material";
 import { Accomplishment } from "~/models/Accomplishment";
+
+export type ValidateAccomplishmentFormData = {
+  formError?: string;
+  formSuccess?: string;
+};
 
 export default function AccomplishmentTile({
   accomplishment,
+  userPrivilege,
+  formData,
 }: {
   accomplishment: Accomplishment;
+  userPrivilege?: number;
+  formData?: ValidateAccomplishmentFormData;
 }) {
   return (
     <Card>
@@ -19,6 +35,55 @@ export default function AccomplishmentTile({
           {accomplishment?.proof}
         </Typography>
       </CardContent>
+      {userPrivilege &&
+      userPrivilege >= 1 &&
+      accomplishment.validation === null ? (
+        <CardActions>
+          {formData?.formError ? (
+            <Alert severity="error">{formData?.formError}</Alert>
+          ) : (
+            ""
+          )}
+          {formData?.formSuccess ? (
+            <Alert severity="success">{formData?.formSuccess}</Alert>
+          ) : (
+            ""
+          )}
+          {/* Form to validate an accomplishment */}
+          <form method="post">
+            <input
+              type="hidden"
+              name="accomplishmentId"
+              value={accomplishment.id}
+            />
+            <input
+              type="hidden"
+              name="method"
+              value="validate-accomplishment"
+            />
+            <Button
+              size="small"
+              type="submit"
+              name="validation"
+              id="validation"
+              value="1"
+            >
+              Validate
+            </Button>
+            <Button
+              size="small"
+              type="submit"
+              name="validation"
+              value="-1"
+              id="validation"
+            >
+              Refuse
+            </Button>
+          </form>
+        </CardActions>
+      ) : (
+        ""
+      )}
     </Card>
   );
 }
