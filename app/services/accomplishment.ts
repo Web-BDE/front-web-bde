@@ -94,13 +94,15 @@ export async function getManyAccomplishment(
   limit?: number,
   offset?: number,
   challengeId?: number,
-  userId?: number
+  userId?: number,
+  validation?: Validation
 ) {
   const searchParams = buildSearchParams(
     { key: "limit", val: limit?.toString() },
     { key: "offset", val: offset?.toString() },
     { key: "challengeId", val: challengeId?.toString() },
-    { key: "userId", val: userId?.toString() }
+    { key: "userId", val: userId?.toString() },
+    { key: "validation", val: validation }
   );
   try {
     const reply = await axios.get<{

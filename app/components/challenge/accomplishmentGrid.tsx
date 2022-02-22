@@ -1,6 +1,6 @@
 import { Alert, Container, Grid } from "@mui/material";
 import { useContext } from "react";
-import { Accomplishment, Validation } from "~/models/Accomplishment";
+import { Accomplishment } from "~/models/Accomplishment";
 import { UserContext } from "../userContext";
 import AccomplishmentTile, {
   ValidateAccomplishmentFormData,

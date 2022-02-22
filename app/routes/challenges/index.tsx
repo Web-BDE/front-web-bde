@@ -15,7 +15,7 @@ async function loadChallenges(token: string) {
   //Get challenges, if it throw an error we will cath it with Boundaries below
   let challenges;
   try {
-    challenges = (await getManyChallenge(token))?.challenges;
+    challenges = (await getManyChallenge(token, 100))?.challenges;
   } catch (err) {
     if (err instanceof APIError) {
       throw json(err.error.message, err.code);

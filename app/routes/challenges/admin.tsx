@@ -38,7 +38,16 @@ async function loadAccomplishments(token: string) {
   //Try to get accomplishments
   let accomplishments;
   try {
-    accomplishments = await getManyAccomplishment(token);
+    accomplishments = (
+      await getManyAccomplishment(
+        token,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        "PENDING"
+      )
+    )?.accomplishments;
   } catch (err) {
     //We don't want to throw API errors, we will show the in the component instead
     if (err instanceof APIError) {
