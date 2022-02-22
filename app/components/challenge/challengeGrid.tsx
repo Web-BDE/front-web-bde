@@ -3,9 +3,9 @@ import { Challenge } from "~/models/Challenge";
 import ChallengeTile from "./challengeTile";
 
 export default function ChallengeGrid({
-  challenge,
+  challenges,
 }: {
-  challenge?: Challenge[];
+  challenges?: Challenge[];
 }) {
   return (
     <div>
@@ -18,8 +18,8 @@ export default function ChallengeGrid({
         spacing={{ xs: 2, md: 3 }}
         columns={{ xs: 1, sm: 8, md: 12 }}
       >
-        {challenge?.map((goodie) => (
-          <ChallengeTile challenge={goodie}></ChallengeTile>
+        {challenges?.map((challenge) => (
+          <ChallengeTile challenge={challenge}></ChallengeTile>
         ))}
       </Grid>
     </div>

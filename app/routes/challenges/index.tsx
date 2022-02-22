@@ -15,7 +15,7 @@ async function loadChallenges(token: string) {
   //Get challenges, if it throw an error we will cath it with Boundaries below
   let challenges;
   try {
-    challenges = await getManyChallenge(token);
+    challenges = (await getManyChallenge(token))?.challenges;
   } catch (err) {
     if (err instanceof APIError) {
       throw json(err.error.message, err.code);
@@ -36,7 +36,7 @@ export default function Challenges() {
   const loaderData = useLoaderData<{ challenges: Challenge[] }>();
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
-      <ChallengeGrid challenge={loaderData.challenges} />
+      <ChallengeGrid challenges={loaderData.challenges} />
     </Container>
   );
 }

@@ -37,7 +37,12 @@ export default function CreateChallengeForm({
       )}
       <form method="post">
         {/* Hidden input with the redirection URL in it */}
-        <input type="hidden" name="redirectTo" value={redirectTo || "/shop"} />
+        <input
+          type="hidden"
+          name="redirectTo"
+          value={redirectTo || "/challenge"}
+        />
+        <input type="hidden" name="method" value="create-challenge" />
         <TextField
           variant="outlined"
           margin="normal"
