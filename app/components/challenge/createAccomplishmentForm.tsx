@@ -24,7 +24,7 @@ export default function CreateAccomplishmentForm({
         ""
       )}
       {formData?.formSuccess ? (
-        <Alert severity="info">{formData?.formSuccess}</Alert>
+        <Alert severity="success">{formData?.formSuccess}</Alert>
       ) : (
         ""
       )}
