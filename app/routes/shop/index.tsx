@@ -10,7 +10,7 @@ import GoodiesGrid from "~/components/shop/goodiesGrid";
 import { Goodies } from "~/models/Goodies";
 
 async function loadGoodies(token: string) {
-  const goodies = await getManyGoodies(token);
+  const goodies = (await getManyGoodies(token))?.goodies;
 
   return goodies;
 }

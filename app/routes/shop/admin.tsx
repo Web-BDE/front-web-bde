@@ -64,13 +64,12 @@ async function handleCreateGoodies(
 
   try {
     await createGoodies(token, fields);
+    return redirect(redirectTo);
   } catch (err) {
     if (err instanceof APIError) {
       return json({ formError: err.error.message, fields }, err.code);
     }
   }
-
-  return redirect(redirectTo);
 }
 
 export const action: ActionFunction = async ({ request }) => {

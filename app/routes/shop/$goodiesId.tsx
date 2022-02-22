@@ -2,6 +2,7 @@ import {
   ActionFunction,
   json,
   LoaderFunction,
+  redirect,
   useActionData,
   useCatch,
   useLoaderData,
@@ -10,21 +11,17 @@ import {
 import GoodiesDisplay from "~/components/shop/goodiesDisplay";
 
 import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
-import {
-  handleDeleteGoodies,
-  handleUpdateGoodies,
-} from "~/controllers/goodies";
-import {
-  handleCreatePurchase,
-  handleDeletePurchase,
-} from "~/controllers/purchase";
 
 import { Goodies } from "~/models/Goodies";
 import { Purchase } from "~/models/Purchase";
 
 import { requireAuth } from "~/services/authentication";
-import { getGoodies } from "~/services/goodies";
-import { getManyPurchase } from "~/services/purchase";
+import { deleteGoodies, getGoodies, updateGoodies } from "~/services/goodies";
+import {
+  createPurchase,
+  deletePurchase,
+  getManyPurchase,
+} from "~/services/purchase";
 
 import { Container } from "@mui/material";
 import { useContext } from "react";
@@ -87,6 +84,78 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   };
 };
 
+async function handleCreatePurchase(token: string, goodiesId: number) {
+  try {
+    await createPurchase(token, {
+      goodiesId: goodiesId,
+    });
+  } catch (err) {
+    if (err instanceof APIError) {
+      return json(
+        {
+          purchaseGoodies: { formError: err.error.message },
+        },
+        err.code
+      );
+    }
+  }
+
+  return json({ purchaseGoodies: { formSuccess: "Goodies bought" } }, 201);
+}
+
+//Validator for price fiels
+function validatePrice(price: number) {
+  if (price < 0) {
+    return "Price must be positive";
+  }
+}
+
+//Validator for buy limit field
+function validateBuyLimit(buyLimit: number) {
+  if (buyLimit < 1) {
+    return "Buy limit must be more than 1";
+  }
+}
+
+async function handleUpdateGoodies(
+  token: string,
+  name: string,
+  description: string,
+  price: number,
+  buyLimit: number,
+  goodiesId: number
+) {
+  const fields = {
+    name,
+    description,
+    price: price,
+    buyLimit: buyLimit,
+  };
+  const fieldsError = {
+    reward: validatePrice(price),
+    buyLimit: validateBuyLimit(buyLimit),
+  };
+
+  if (Object.values(fieldsError).some(Boolean)) {
+    return json({ updateGoodies: { fields, fieldsError } }, 400);
+  }
+
+  try {
+    await updateGoodies(token, fields, goodiesId);
+  } catch (err) {
+    if (err instanceof APIError) {
+      return json(
+        {
+          updateGoodies: { formError: err.error.message, fields },
+        },
+        err.code
+      );
+    }
+  }
+
+  return json({ updateGoodies: { formSuccess: "Goodies updated" } }, 200);
+}
+
 export const action: ActionFunction = async ({ request, params }) => {
   if (!params.goodiesId) {
     throw json("Invalid goodies query", 404);
@@ -117,6 +186,42 @@ export const action: ActionFunction = async ({ request, params }) => {
       },
       500
     );
+  }
+
+  async function handleDeleteGoodies(token: string, goodiesId: number) {
+    //Try to delete accomplishment
+    try {
+      await deleteGoodies(token, goodiesId);
+    } catch (err) {
+      //We don't want to throw API errors, we will show the in the form instead
+      if (err instanceof APIError) {
+        return json(
+          {
+            deleteGoodies: { formError: err.error.message },
+          },
+          err.code
+        );
+      }
+    }
+
+    return redirect("/shop");
+  }
+
+  async function handleDeletePurchase(token: string, purchaseId: number) {
+    try {
+      await deletePurchase(token, purchaseId);
+    } catch (err) {
+      if (err instanceof APIError) {
+        return json(
+          {
+            refundGoodies: { formError: err.error.message },
+          },
+          err.code
+        );
+      }
+    }
+
+    return json({ refundGoodies: { formSuccess: "Goodies refuned" } }, 200);
   }
 
   switch (method) {
