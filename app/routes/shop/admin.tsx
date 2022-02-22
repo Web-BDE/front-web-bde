@@ -13,7 +13,7 @@ import { APIError } from "~/utils/axios";
 
 import { requireAuth } from "~/services/authentication";
 
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 
 import CreateGoodiesForm, {
   CreateGoodiesFormData,
@@ -119,6 +119,7 @@ export default function ShopAdmin() {
   const [searchParams] = useSearchParams();
   return (
     <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
+      <Typography variant="h4">Create Goodies</Typography>
       <CreateGoodiesForm
         formData={actionData}
         redirectTo={searchParams.get("redirectTo")}

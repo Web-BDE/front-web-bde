@@ -13,7 +13,7 @@ import { requireAuth } from "~/services/authentication";
 
 import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
 
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import AccomplishmentsGrid, {
   AccomplishmentData,
 } from "~/components/challenge/accomplishmentGrid";
@@ -231,6 +231,7 @@ export default function ChallengesAdmin() {
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
       <Container maxWidth="xs">
+        <Typography variant="h4">Create Challenge</Typography>
         <CreateChallengeForm
           formData={actionData?.createChallenge}
           redirectTo={searchParams.get("redirectTo")}

@@ -23,7 +23,7 @@ import {
   getManyPurchase,
 } from "~/services/purchase";
 
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import { useContext } from "react";
 import { UserContext } from "~/components/userContext";
 import UpdateGoodiesForm, {
@@ -307,6 +307,7 @@ export default function Goodies() {
 
   return (
     <Container style={{ marginTop: "50px" }} component="main" maxWidth="xs">
+      <Typography variant="h4">Goodies</Typography>
       {displayGoodies(
         loaderData.goodies,
         userInfo?.id,

@@ -27,7 +27,6 @@ export default function UpdateGoodiesForm({
 }) {
   return (
     <div>
-      <Typography variant="h4">Goodies</Typography>
       {formData?.formError ? (
         <Alert severity="error">{formData?.formError}</Alert>
       ) : (

@@ -24,7 +24,6 @@ export default function CreateChallengeForm({
 }) {
   return (
     <div>
-      <Typography variant="h4">Create Challenge</Typography>
       {formData?.formError ? (
         <Alert severity="error">{formData?.formError}</Alert>
       ) : (

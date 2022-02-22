@@ -19,7 +19,9 @@ export default function ChallengeGrid({
         columns={{ xs: 1, sm: 8, md: 12 }}
       >
         {challenges?.map((challenge) => (
-          <ChallengeTile challenge={challenge}></ChallengeTile>
+          <Grid item xs={2} sm={4} md={4} key={challenge.id}>
+            <ChallengeTile challenge={challenge}></ChallengeTile>
+          </Grid>
         ))}
       </Grid>
     </div>

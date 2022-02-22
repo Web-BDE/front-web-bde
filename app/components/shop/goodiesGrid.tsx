@@ -15,7 +15,9 @@ export default function GoodiesGrid({ goodies }: { goodies?: Goodies[] }) {
         columns={{ xs: 1, sm: 8, md: 12 }}
       >
         {goodies?.map((goodie) => (
-          <GoodiesTile goodies={goodie}></GoodiesTile>
+          <Grid item xs={2} sm={4} md={4} key={goodie.id}>
+            <GoodiesTile goodies={goodie}></GoodiesTile>
+          </Grid>
         ))}
       </Grid>
     </div>

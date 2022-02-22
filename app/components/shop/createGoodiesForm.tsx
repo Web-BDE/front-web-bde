@@ -1,4 +1,4 @@
-import { TextField, Button, Typography, Alert } from "@mui/material";
+import { TextField, Button, Alert } from "@mui/material";
 
 export type CreateGoodiesFormData = {
   formError?: string;
@@ -26,7 +26,6 @@ export default function CreateGoodiesForm({
 }) {
   return (
     <div>
-      <Typography variant="h4">Create Goodies</Typography>
       {formData?.formError ? (
         <Alert severity="error">{formData?.formError}</Alert>
       ) : (

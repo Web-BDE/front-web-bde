@@ -353,6 +353,7 @@ function displayChallenge(
   if (userId === challenge.creatorId) {
     return (
       <Container maxWidth="xs">
+        <Typography variant="h4">Challenge</Typography>
         <UpdateChallengeForm challenge={challenge} formData={formData} />
       </Container>
     );
@@ -379,6 +380,7 @@ export default function Challenge() {
         actionData?.updateChallenge
       )}
       <Container maxWidth="xs" style={{ marginTop: "50px" }}>
+        <Typography variant="h4">Submit Proof</Typography>
         <CreateAccomplishmentForm
           formData={actionData?.creacteAccomplishment}
         />
