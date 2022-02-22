@@ -11,7 +11,7 @@ import {
   useLoaderData,
 } from "remix";
 import type { MetaFunction } from "remix";
-import NavBar from "./components/navbar";
+import NavBar from "./components/navBar";
 import { UserContext } from "./components/userContext";
 import { User } from "./models/User";
 import { getSelft } from "./services/user";
@@ -19,7 +19,7 @@ import { getSelft } from "./services/user";
 import {
   generateExpectedError,
   generateUnexpectedError,
-} from "./controllers/error";
+} from "./utils/error";
 import { tryGetToken } from "./services/authentication";
 
 export const meta: MetaFunction = () => {
@@ -55,7 +55,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function App() {
-  const data = useLoaderData<LoaderData>();
+  const loaderData = useLoaderData<LoaderData>();
   return (
     <html lang="en">
       <head>
@@ -65,7 +65,7 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <UserContext.Provider value={data.userInfo}>
+        <UserContext.Provider value={loaderData.userInfo}>
           <NavBar />
           <Outlet />
           <ScrollRestoration />

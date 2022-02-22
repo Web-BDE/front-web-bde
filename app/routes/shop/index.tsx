@@ -1,29 +1,25 @@
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Container,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Container } from "@mui/material";
 
-import { Link, LoaderFunction, useCatch, useLoaderData } from "remix";
+import { json, LoaderFunction, useCatch, useLoaderData } from "remix";
 
-import {
-  generateExpectedError,
-  generateUnexpectedError,
-} from "~/controllers/error";
-import { loadGoodies } from "~/controllers/goodies";
-
-import { Goodies } from "~/models/Goodies";
+import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
 
 import { requireAuth } from "~/services/authentication";
+import { getManyGoodies } from "~/services/goodies";
+import GoodiesGrid from "~/components/shop/goodiesGrid";
+import { Goodies } from "~/models/Goodies";
+import { APIError } from "~/utils/axios";
 
-//Data structure handled on GET resuests
-type LoaderData = {
-  goodies?: Goodies[];
-};
+async function loadGoodies(token: string) {
+  try {
+    return (await getManyGoodies(token, 100))?.goodies;
+  } catch (err) {
+    if (err instanceof APIError) {
+      throw json(err.error.message, err.code);
+    }
+    throw err;
+  }
+}
 
 //Function that handle GET resuests
 export const loader: LoaderFunction = async ({ request }) => {
@@ -33,38 +29,10 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function Shop() {
-  const data = useLoaderData<LoaderData>();
+  const loaderData = useLoaderData<{ goodies: Goodies[] }>();
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
-      <Typography style={{ textAlign: "center" }} variant="h2">
-        Shop
-      </Typography>
-      <Grid
-        style={{ marginTop: "50px" }}
-        container
-        spacing={{ xs: 2, md: 3 }}
-        columns={{ xs: 1, sm: 8, md: 12 }}
-      >
-        {data.goodies?.map((goodie) => (
-          <Grid item xs={2} sm={4} md={4} key={goodie.id}>
-            <Card sx={{ minWidth: 275 }}>
-              <CardContent>
-                <Typography variant="h5" component="div">
-                  {goodie.name}
-                </Typography>
-                <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                  Price : {goodie.price}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Link to={`/shop/${goodie.id}`}>
-                  <Button size="small">Details</Button>
-                </Link>
-              </CardActions>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+      <GoodiesGrid goodies={loaderData.goodies} />
     </Container>
   );
 }

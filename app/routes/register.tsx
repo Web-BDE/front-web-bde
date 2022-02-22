@@ -1,44 +1,104 @@
 import {
   ActionFunction,
   json,
-  Link,
+  redirect,
   useActionData,
   useCatch,
   useSearchParams,
 } from "remix";
 
-//Controllers
-import {
-  generateExpectedError,
-  generateUnexpectedError,
-} from "~/controllers/error";
-import { handleRegister } from "~/controllers/authentication";
+import RegisterForm, { RegisterFormData } from "~/components/registerForm";
 
-//MUI Components
-import {
-  Grid,
-  TextField,
-  Button,
-  Typography,
-  Container,
-  Alert,
-} from "@mui/material";
+import { Container } from "@mui/material";
 
-//Data caught by POST requests
-type ActionData = {
-  formError?: string;
-  fieldsError?: {
-    email?: string;
-    password?: string;
-    pseudo?: string;
+import { registerUser } from "~/services/user";
+import { loginUser } from "~/services/authentication";
+
+import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
+import { APIError } from "~/utils/axios";
+
+//Validator for email field
+function validateEmail(email: string) {
+  if (
+    !new RegExp(
+      process.env["EMAIL_REGEX"] || /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
+    ).test(email)
+  ) {
+    return "User email must match your student email domain";
+  }
+}
+
+//Validator for password field
+function validatePasswordAndConfirm(password: string, confirm: string) {
+  if (password !== confirm) {
+    return "Passwords need to match";
+  }
+  if (password.length < 8) {
+    return "Password is too small";
+  }
+}
+
+//Validator for pseudo field
+function validatePseudo(pseudo: string) {
+  if (pseudo.length < 3) {
+    return "Pseudo is too small";
+  }
+}
+
+async function handleRegister(
+  email: string,
+  password: string,
+  confirm: string,
+  pseudo: string,
+  redirectTo: string,
+  name?: string,
+  surname?: string
+) {
+  const fields = {
+    email,
+    password,
+    pseudo,
+    name: name ? name : undefined,
+    surname: surname ? surname : undefined,
   };
-  fields?: {
-    email: string;
-    pseudo: string;
-    name?: string;
-    surname?: string;
+  const fieldsError = {
+    email: validateEmail(email),
+    password: validatePasswordAndConfirm(password, confirm),
+    confirm: validatePasswordAndConfirm(password, confirm),
+    pseudo: validatePseudo(pseudo),
   };
-};
+
+  if (Object.values(fieldsError).some(Boolean)) {
+    return json({ fields, fieldsError }, 400);
+  }
+
+  try {
+    await registerUser(fields);
+  } catch (err) {
+    if (err instanceof APIError) {
+      return json({ formError: err.error.message, fields }, err.code);
+    }
+    throw err;
+  }
+
+  try {
+    return await loginUser(
+      { email: fields.email, password: fields.password },
+      redirectTo
+    );
+  } catch (err) {
+    if (err instanceof APIError) {
+      return redirect(
+        "/login",
+        json(
+          { formError: err.error.message, fields: { email: fields.email } },
+          err.code
+        )
+      );
+    }
+    throw err;
+  }
+}
 
 //Function that handle POST requests
 export const action: ActionFunction = async ({ request }) => {
@@ -55,7 +115,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   //Check if redirection is here, should always be
   if (typeof redirectTo !== "string") {
-    return json({ formError: "There was an error, please try again" });
+    return json({ formError: "There was an error, please try again" }, 500);
   }
 
   //Check for fields type
@@ -67,7 +127,13 @@ export const action: ActionFunction = async ({ request }) => {
     (typeof name !== "string" && name !== null) ||
     (typeof surname !== "string" && surname !== null)
   ) {
-    return json({ formError: "You must fill the required fields" }, 400);
+    return json(
+      {
+        formError:
+          "Invalid data provided, please check if you have fill all the requierd fields",
+      },
+      400
+    );
   }
 
   return await handleRegister(
@@ -82,108 +148,14 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Register() {
-  const actionData = useActionData<ActionData>();
+  const actionData = useActionData<RegisterFormData>();
   const [searchparams] = useSearchParams();
   return (
     <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
-      <Typography component="h1" variant="h5">
-        Register
-      </Typography>
-      {actionData?.formError ? (
-        <Alert severity="error">{actionData?.formError}</Alert>
-      ) : (
-        ""
-      )}
-      <form method="post">
-        <input
-          type="hidden"
-          name="redirectTo"
-          value={searchparams.get("redirectTo") || "/"}
-        />
-        <div style={{ display: "flex" }}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="name"
-            label="name"
-            defaultValue={actionData?.fields?.name}
-            type="name"
-            id="name"
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="surname"
-            defaultValue={actionData?.fields?.surname}
-            label="surname"
-            type="surname"
-            id="surname"
-          />
-        </div>
-        <TextField
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          id="email"
-          error={Boolean(actionData?.fieldsError?.email)}
-          helperText={actionData?.fieldsError?.email}
-          label="Email Address"
-          name="email"
-          autoComplete="email"
-          defaultValue={actionData?.fields?.email}
-          autoFocus
-        />
-        <TextField
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          error={Boolean(actionData?.fieldsError?.password)}
-          helperText={actionData?.fieldsError?.password}
-          name="password"
-          label="Password"
-          type="password"
-          id="password"
-        />
-        <TextField
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          error={Boolean(actionData?.fieldsError?.password)}
-          helperText={actionData?.fieldsError?.password}
-          name="confirm-password"
-          label="Confirm password"
-          type="password"
-          id="confirm-password"
-        />
-        <TextField
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          error={Boolean(actionData?.fieldsError?.pseudo)}
-          helperText={actionData?.fieldsError?.pseudo}
-          name="pseudo"
-          defaultValue={actionData?.fields?.pseudo}
-          label="pseudo"
-          type="pseudo"
-          id="pseudo"
-        />
-        <Button type="submit" fullWidth variant="contained" color="primary">
-          Sign In
-        </Button>
-        <Grid container>
-          <Grid item>
-            <Link to="/register">{"Don't have an account? Sign Up"}</Link>
-          </Grid>
-        </Grid>
-      </form>
+      <RegisterForm
+        formData={actionData}
+        redirectTo={searchparams.get("redirectTo")}
+      />
     </Container>
   );
 }

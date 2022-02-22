@@ -61,7 +61,7 @@ export async function getManyPurchase(
   );
   try {
     const reply = await axios.get<{ message: string; purchases: Purchase[] }>(
-      `/purchase/${searchParams.entries.length ? "?" + searchParams : ""}`,
+      `/purchase/${searchParams.entries() ? "?" + searchParams.toString() : ""}`,
       {
         headers: buildAxiosHeaders(token),
       }

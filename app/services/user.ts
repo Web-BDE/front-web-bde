@@ -111,7 +111,7 @@ export async function getManyUser(
   );
   try {
     const reply = await axios.get<{ message: string; users: User[] }>(
-      `/user/${searchParams.entries.length ? "?" + searchParams : ""}`,
+      `/user/${searchParams.entries() ? "?" + searchParams.toString() : ""}`,
       {
         headers: buildAxiosHeaders(token),
       }

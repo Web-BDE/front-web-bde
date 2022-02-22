@@ -1,6 +1,4 @@
 import { Container, Grid, Typography } from "@mui/material";
-import { useContext } from "react";
-import { UserContext } from "~/components/userContext";
 
 export default function Index() {
   return (
