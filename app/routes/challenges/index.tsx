@@ -1,28 +1,29 @@
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Container,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Container } from "@mui/material";
 
-import { Link, LoaderFunction, useCatch, useLoaderData } from "remix";
+import { json, LoaderFunction, useCatch, useLoaderData } from "remix";
 
-import { loadChallenges } from "~/controllers/challenge";
-import {
-  generateExpectedError,
-  generateUnexpectedError,
-} from "~/utils/error";
+import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
 
 import { Challenge } from "~/models/Challenge";
 
 import { requireAuth } from "~/services/authentication";
+import ChallengeGrid from "~/components/challenge/challengeGrid";
+import { getManyChallenge } from "~/services/challenges";
+import { APIError } from "~/utils/axios";
 
-type LoaderData = {
-  challenges?: Challenge[];
-};
+async function loadChallenges(token: string) {
+  //Get challenges, if it throw an error we will cath it with Boundaries below
+  let challenges;
+  try {
+    challenges = await getManyChallenge(token);
+  } catch (err) {
+    if (err instanceof APIError) {
+      throw json(err.error.message, err.code);
+    }
+    throw err;
+  }
+  return { challenges };
+}
 
 export const loader: LoaderFunction = async ({ request }) => {
   //Require user to be logged in
@@ -32,39 +33,10 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function Challenges() {
-  const data = useLoaderData<LoaderData>();
+  const loaderData = useLoaderData<{ challenges: Challenge[] }>();
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
-      <Typography style={{ textAlign: "center" }} variant="h2">
-        Challenges
-      </Typography>
-      <Grid
-        textAlign="center"
-        style={{ marginTop: "50px" }}
-        container
-        spacing={{ xs: 2, md: 3 }}
-        columns={{ xs: 1, sm: 8, md: 12 }}
-      >
-        {data.challenges?.map((challenge) => (
-          <Grid item xs={2} sm={4} md={4} key={challenge.id}>
-            <Card sx={{ minWidth: 275 }}>
-              <CardContent>
-                <Typography variant="h5" component="div">
-                  {challenge.name}
-                </Typography>
-                <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                  Reward : {challenge.reward}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Link to={`/challenges/${challenge.id}`}>
-                  <Button size="small">Details</Button>
-                </Link>
-              </CardActions>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+      <ChallengeGrid challenge={loaderData.challenges} />
     </Container>
   );
 }

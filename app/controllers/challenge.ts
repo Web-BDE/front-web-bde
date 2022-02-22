@@ -14,20 +14,6 @@ function validateReward(reward: number) {
   }
 }
 
-export async function loadChallenges(token: string) {
-  //Get challenges, if it throw an error we will cath it with Boundaries below
-  let challenges;
-  try {
-    challenges = await getManyChallenge(token);
-  } catch (err) {
-    if (err instanceof APIError) {
-      throw json(err.error.message, err.code);
-    }
-    throw err;
-  }
-  return { challenges };
-}
-
 export async function handleChallengeCreation(
   token: string,
   name: string,
