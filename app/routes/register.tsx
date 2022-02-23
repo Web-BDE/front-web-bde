@@ -1,7 +1,6 @@
 import {
   ActionFunction,
   json,
-  redirect,
   useActionData,
   useCatch,
   useSearchParams,
@@ -12,10 +11,13 @@ import RegisterForm, { RegisterFormData } from "~/components/registerForm";
 import { Container } from "@mui/material";
 
 import { registerUser } from "~/services/user";
-import { loginUser } from "~/services/authentication";
 
 import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
 import { handleLogin } from "./login";
+
+type ActionData = {
+  registerUser: RegisterFormData;
+};
 
 //Validator for email field
 function validateEmail(email: string) {
@@ -69,13 +71,13 @@ async function handleRegister(
   };
 
   if (Object.values(fieldsError).some(Boolean)) {
-    return json({ fields, fieldsError }, 400);
+    return json({ registerUser: { fields, fieldsError } } as ActionData, 400);
   }
 
   const { code, ...registerResult } = await registerUser(fields);
 
   if (registerResult.error) {
-    return json(registerResult, code);
+    return json({ registerUser: { registerResult } } as ActionData, code);
   }
 
   return await handleLogin(fields.email, fields.password, redirectTo);
@@ -96,7 +98,12 @@ export const action: ActionFunction = async ({ request }) => {
 
   //Check if redirection is here, should always be
   if (typeof redirectTo !== "string") {
-    return json({ formError: "There was an error, please try again" }, 500);
+    return json(
+      {
+        registerUser: { formError: "There was an error, please try again" },
+      } as ActionData,
+      500
+    );
   }
 
   //Check for fields type
@@ -110,9 +117,11 @@ export const action: ActionFunction = async ({ request }) => {
   ) {
     return json(
       {
-        formError:
-          "Invalid data provided, please check if you have fill all the requierd fields",
-      },
+        registerUser: {
+          formError:
+            "Invalid data provided, please check if you have fill all the requierd fields",
+        },
+      } as ActionData,
       400
     );
   }

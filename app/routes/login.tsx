@@ -14,6 +14,10 @@ import LoginForm, { LoginFormData } from "~/components/loginForm";
 import { Container } from "@mui/material";
 import { loginUser } from "~/services/authentication";
 
+type ActionData = {
+  loginUser: LoginFormData;
+};
+
 export async function handleLogin(
   email: string,
   password: string,
@@ -25,7 +29,11 @@ export async function handleLogin(
 
   if (loginResult.error || !loginResult.cookie) {
     return json(
-      { error: loginResult.error || "Cloud not find logout cookies", fields },
+      {
+        loginUser: {
+          error: loginResult.error || "Cloud not find logout cookies",
+        },
+      } as ActionData,
       code || 500
     );
   }
@@ -48,15 +56,22 @@ export const action: ActionFunction = async ({ request }) => {
 
   //Should never happend, check if redirectTo is present
   if (typeof redirectTo !== "string") {
-    return json({ formError: "Something went wrong, please try again" }, 500);
+    return json(
+      {
+        loginUser: { formError: "Something went wrong, please try again" },
+      } as ActionData,
+      500
+    );
   }
 
   if (typeof email !== "string" || typeof password !== "string") {
     return json(
       {
-        formError:
-          "Invalid data provided, please check if you have fill all the requierd fields",
-      },
+        loginUser: {
+          formError:
+            "Invalid data provided, please check if you have fill all the requierd fields",
+        },
+      } as ActionData,
       400
     );
   }
