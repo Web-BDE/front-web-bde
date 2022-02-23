@@ -29,7 +29,7 @@ export async function getManyGoodies(
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return { message: reply.data.message, code: reply.status, goodies: reply.data.goodies };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -50,7 +50,7 @@ export async function getGoodies(token: string, goodiesId: number) {
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return { message: reply.data.message, code: reply.status, goodies: reply.data.goodies };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&

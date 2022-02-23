@@ -79,7 +79,7 @@ export async function getManyPurchase(
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return { message: reply.data.message, code: reply.status, purchases: reply.data.purchases };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -100,7 +100,7 @@ export async function getPurchase(token: string, purchaseId: number) {
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return { message: reply.data.message, code: reply.status, purchase: reply.data.purchase };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&

@@ -30,7 +30,7 @@ export async function getManyChallenge(
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return { message: reply.data.message, code: reply.status, challenges: reply.data.challenges };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -51,7 +51,7 @@ export async function getChallenge(token: string, challengeId: number) {
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return { message: reply.data.message, code: reply.status, challenge: reply.data.challenge };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&

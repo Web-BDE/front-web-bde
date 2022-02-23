@@ -98,7 +98,11 @@ export async function getSelft(token: string) {
       headers: buildAxiosHeaders(token),
     });
 
-    return { message: reply.data.message, code: reply.status };
+    return {
+      message: reply.data.message,
+      code: reply.status,
+      user: reply.data.user,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -119,7 +123,11 @@ export async function getUser(token: string, userId: number) {
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return {
+      message: reply.data.message,
+      code: reply.status,
+      user: reply.data.user,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -148,7 +156,11 @@ export async function getManyUser(
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return {
+      message: reply.data.message,
+      code: reply.status,
+      users: reply.data.users,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&

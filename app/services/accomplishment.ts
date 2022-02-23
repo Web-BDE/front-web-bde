@@ -100,7 +100,7 @@ export async function getAccomplishment(
       headers: buildAxiosHeaders(token),
     });
 
-    return { message: reply.data.message, code: reply.status };
+    return { message: reply.data.message, code: reply.status, accomplishment: reply.data.accomplishment };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -140,7 +140,7 @@ export async function getManyAccomplishment(
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return { message: reply.data.message, code: reply.status, accomplishments: reply.data.accomplishments };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
