@@ -14,20 +14,20 @@ import LoginForm, { LoginFormData } from "~/components/loginForm";
 import { Container } from "@mui/material";
 import { loginUser } from "~/services/authentication";
 
-async function handleLogin(
+export async function handleLogin(
   email: string,
   password: string,
   redirectTo: string
 ) {
   const fields = { email, password };
 
-  const loginResult = await loginUser({
-    email: fields.email,
-    password: fields.password,
-  });
+  const { code, ...loginResult } = await loginUser(fields);
 
   if (loginResult.error || !loginResult.cookie) {
-    return redirect("/login");
+    return json(
+      { error: loginResult.error || "Cloud not find logout cookies", fields },
+      code || 500
+    );
   }
 
   return redirect(redirectTo, {

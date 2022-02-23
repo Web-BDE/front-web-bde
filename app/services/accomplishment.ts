@@ -2,10 +2,7 @@ import axios from "axios";
 
 import { Accomplishment, Validation } from "~/models/Accomplishment";
 
-import {
-  buildAxiosHeaders,
-  buildSearchParams,
-} from "~/utils/axios";
+import { buildAxiosHeaders, buildSearchParams } from "~/utils/axios";
 
 type AccomplishmentInfo = {
   proof?: string;
@@ -25,7 +22,7 @@ export async function createAccomplishment(
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -52,7 +49,7 @@ export async function updateAccomplishment(
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -76,7 +73,7 @@ export async function deleteAccomplishment(
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -100,7 +97,11 @@ export async function getAccomplishment(
       headers: buildAxiosHeaders(token),
     });
 
-    return { message: reply.data.message, code: reply.status, accomplishment: reply.data.accomplishment };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      accomplishment: reply.data.accomplishment,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -140,7 +141,11 @@ export async function getManyAccomplishment(
       }
     );
 
-    return { message: reply.data.message, code: reply.status, accomplishments: reply.data.accomplishments };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      accomplishments: reply.data.accomplishments,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&

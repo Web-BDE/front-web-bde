@@ -35,7 +35,7 @@ export async function loginUser(loginForm: LoginInfo) {
     session.set("token", reply.data.token);
 
     return {
-      message: reply.data.message,
+      success: reply.data.message,
       code: reply.status,
       cookie: await storage.commitSession(session),
     };
@@ -60,7 +60,7 @@ export async function logout(request: Request) {
     });
 
     return {
-      message: reply.data.message,
+      success: reply.data.message,
       code: reply.status,
       cookie: await storage.destroySession(session),
     };

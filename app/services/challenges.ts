@@ -1,9 +1,6 @@
 import axios from "axios";
 import { Challenge } from "~/models/Challenge";
-import {
-  buildAxiosHeaders,
-  buildSearchParams,
-} from "~/utils/axios";
+import { buildAxiosHeaders, buildSearchParams } from "~/utils/axios";
 
 type ChallengeInfo = {
   name: string;
@@ -30,7 +27,11 @@ export async function getManyChallenge(
       }
     );
 
-    return { message: reply.data.message, code: reply.status, challenges: reply.data.challenges };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      challenges: reply.data.challenges,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -51,7 +52,11 @@ export async function getChallenge(token: string, challengeId: number) {
       }
     );
 
-    return { message: reply.data.message, code: reply.status, challenge: reply.data.challenge };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      challenge: reply.data.challenge,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -76,7 +81,7 @@ export async function createChallenge(
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -102,7 +107,7 @@ export async function updateChallenge(
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -123,7 +128,7 @@ export async function deleteChallenge(token: string, challengeId: number) {
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&

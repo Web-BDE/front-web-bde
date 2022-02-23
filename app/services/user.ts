@@ -14,7 +14,7 @@ export async function registerUser(registerInfo: RegisterInfo) {
   try {
     const reply = await axios.put<{ message: string }>("/user", registerInfo);
 
-    return { message: reply.data.message, code: reply.status };
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -36,7 +36,7 @@ export async function updateSelf(token: string, registerInfo: RegisterInfo) {
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -62,7 +62,7 @@ export async function updateUser(
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -80,7 +80,7 @@ export async function deleteUser(token: string, userId: number) {
       headers: buildAxiosHeaders(token),
     });
 
-    return { message: reply.data.message, code: reply.status };
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -99,7 +99,7 @@ export async function getSelft(token: string) {
     });
 
     return {
-      message: reply.data.message,
+      success: reply.data.message,
       code: reply.status,
       user: reply.data.user,
     };
@@ -124,7 +124,7 @@ export async function getUser(token: string, userId: number) {
     );
 
     return {
-      message: reply.data.message,
+      success: reply.data.message,
       code: reply.status,
       user: reply.data.user,
     };
@@ -157,7 +157,7 @@ export async function getManyUser(
     );
 
     return {
-      message: reply.data.message,
+      success: reply.data.message,
       code: reply.status,
       users: reply.data.users,
     };

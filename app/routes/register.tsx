@@ -15,6 +15,7 @@ import { registerUser } from "~/services/user";
 import { loginUser } from "~/services/authentication";
 
 import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
+import { handleLogin } from "./login";
 
 //Validator for email field
 function validateEmail(email: string) {
@@ -71,26 +72,13 @@ async function handleRegister(
     return json({ fields, fieldsError }, 400);
   }
 
-  const registerResult = await registerUser(fields);
+  const { code, ...registerResult } = await registerUser(fields);
 
   if (registerResult.error) {
-    return json({ formError: registerResult.error }, registerResult.code);
+    return json(registerResult, code);
   }
 
-  const loginResult = await loginUser({
-    email: fields.email,
-    password: fields.password,
-  });
-
-  if (loginResult.error || !loginResult.cookie) {
-    return redirect("/login");
-  }
-
-  return redirect(redirectTo, {
-    headers: {
-      "Set-Cookie": loginResult.cookie,
-    },
-  });
+  return await handleLogin(fields.email, fields.password, redirectTo);
 }
 
 //Function that handle POST requests

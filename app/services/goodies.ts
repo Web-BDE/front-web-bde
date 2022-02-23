@@ -1,9 +1,6 @@
 import axios from "axios";
 import { Goodies } from "~/models/Goodies";
-import {
-  buildAxiosHeaders,
-  buildSearchParams,
-} from "~/utils/axios";
+import { buildAxiosHeaders, buildSearchParams } from "~/utils/axios";
 
 type GoodiesInfo = {
   name: string;
@@ -29,7 +26,11 @@ export async function getManyGoodies(
       }
     );
 
-    return { message: reply.data.message, code: reply.status, goodies: reply.data.goodies };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      goodies: reply.data.goodies,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -50,7 +51,11 @@ export async function getGoodies(token: string, goodiesId: number) {
       }
     );
 
-    return { message: reply.data.message, code: reply.status, goodies: reply.data.goodies };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      goodies: reply.data.goodies,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -72,7 +77,7 @@ export async function createGoodies(token: string, goodiesInfo: GoodiesInfo) {
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -98,7 +103,7 @@ export async function updateGoodies(
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -119,7 +124,7 @@ export async function deleteGoodies(token: string, goodiesId: number) {
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&

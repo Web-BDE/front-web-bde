@@ -1,10 +1,7 @@
 import axios from "axios";
 import { Purchase } from "~/models/Purchase";
 
-import {
-  buildAxiosHeaders,
-  buildSearchParams,
-} from "~/utils/axios";
+import { buildAxiosHeaders, buildSearchParams } from "~/utils/axios";
 
 type PurchaseInfo = {
   goodiesId: number;
@@ -23,7 +20,7 @@ export async function createPurchase(
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -44,7 +41,7 @@ export async function deletePurchase(token: string, purchaseId: number) {
       }
     );
 
-    return { message: reply.data.message, code: reply.status };
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -79,7 +76,11 @@ export async function getManyPurchase(
       }
     );
 
-    return { message: reply.data.message, code: reply.status, purchases: reply.data.purchases };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      purchases: reply.data.purchases,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -100,7 +101,11 @@ export async function getPurchase(token: string, purchaseId: number) {
       }
     );
 
-    return { message: reply.data.message, code: reply.status, purchase: reply.data.purchase };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      purchase: reply.data.purchase,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&

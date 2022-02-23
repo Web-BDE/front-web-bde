@@ -2,15 +2,15 @@ import { Grid, TextField, Button, Typography, Alert } from "@mui/material";
 import { Link } from "remix";
 
 export type LoginFormData = {
-  formError?: string;
-  formSuccess?: string;
+  error?: string;
+  success?: string;
   fieldsError?: {
     email?: string;
     password?: string;
   };
   fields?: {
     email: string;
-    password: string;
+    password?: string;
   };
 };
 
@@ -26,13 +26,9 @@ export default function LoginForm({
       <Typography component="h1" variant="h5">
         Log in
       </Typography>
-      {formData?.formError ? (
-        <Alert severity="error">{formData?.formError}</Alert>
-      ) : (
-        ""
-      )}
-      {formData?.formSuccess ? (
-        <Alert severity="success">{formData?.formSuccess}</Alert>
+      {formData?.error ? <Alert severity="error">{formData?.error}</Alert> : ""}
+      {formData?.success ? (
+        <Alert severity="success">{formData?.success}</Alert>
       ) : (
         ""
       )}

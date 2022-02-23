@@ -3,8 +3,8 @@ import { Grid, TextField, Button, Typography, Alert } from "@mui/material";
 import { Link } from "remix";
 
 export type RegisterFormData = {
-  formError?: string;
-  formSuccess?: string;
+  error?: string;
+  success?: string;
   fieldsError?: {
     email?: string;
     password?: string;
@@ -35,13 +35,9 @@ export default function RegisterForm({
       <Typography component="h1" variant="h5">
         Register
       </Typography>
-      {formData?.formError ? (
-        <Alert severity="error">{formData?.formError}</Alert>
-      ) : (
-        ""
-      )}
-      {formData?.formSuccess ? (
-        <Alert severity="success">{formData?.formSuccess}</Alert>
+      {formData?.error ? <Alert severity="error">{formData?.error}</Alert> : ""}
+      {formData?.success ? (
+        <Alert severity="success">{formData?.success}</Alert>
       ) : (
         ""
       )}
