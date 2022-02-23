@@ -1,6 +1,7 @@
 import {
   ActionFunction,
   json,
+  redirect,
   useActionData,
   useCatch,
   useSearchParams,
@@ -12,7 +13,6 @@ import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
 import LoginForm, { LoginFormData } from "~/components/loginForm";
 import { Container } from "@mui/material";
 import { loginUser } from "~/services/authentication";
-import { APIError } from "~/utils/axios";
 
 async function handleLogin(
   email: string,
@@ -21,14 +21,20 @@ async function handleLogin(
 ) {
   const fields = { email, password };
 
-  try {
-    return await loginUser(fields, redirectTo);
-  } catch (err) {
-    if (err instanceof APIError) {
-      return json({ formError: err.error.message, fields }, err.code);
-    }
-    throw err;
+  const loginResult = await loginUser({
+    email: fields.email,
+    password: fields.password,
+  });
+
+  if (loginResult.error || !loginResult.cookie) {
+    return redirect("/login");
   }
+
+  return redirect(redirectTo, {
+    headers: {
+      "Set-Cookie": loginResult.cookie,
+    },
+  });
 }
 
 //Function that handle POST requests

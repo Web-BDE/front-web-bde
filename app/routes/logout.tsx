@@ -1,9 +1,22 @@
-import { ActionFunction, LoaderFunction, redirect } from "remix";
+import { ActionFunction, json, LoaderFunction, redirect } from "remix";
 
 import { logout } from "~/services/authentication";
 
 export const action: ActionFunction = async ({ request }) => {
-  return logout(request);
+  const logoutResult = await logout(request);
+
+  if (logoutResult.error || !logoutResult.cookie) {
+    throw json(
+      logoutResult.error || "Cloud not find logout cookies",
+      logoutResult.code || 500
+    );
+  }
+
+  return redirect("/", {
+    headers: {
+      "Set-Cookie": logoutResult.cookie,
+    },
+  });
 };
 
 export const loader: LoaderFunction = async () => {

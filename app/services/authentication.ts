@@ -24,7 +24,7 @@ const storage = createCookieSessionStorage({
   },
 });
 
-export async function loginUser(loginForm: LoginInfo, redirectTo: string) {
+export async function loginUser(loginForm: LoginInfo) {
   try {
     const reply = await axios.put<{
       message: string;

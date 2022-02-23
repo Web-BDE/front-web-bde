@@ -15,7 +15,6 @@ import { registerUser } from "~/services/user";
 import { loginUser } from "~/services/authentication";
 
 import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
-import { APIError } from "~/utils/axios";
 
 //Validator for email field
 function validateEmail(email: string) {
@@ -72,32 +71,26 @@ async function handleRegister(
     return json({ fields, fieldsError }, 400);
   }
 
-  try {
-    await registerUser(fields);
-  } catch (err) {
-    if (err instanceof APIError) {
-      return json({ formError: err.error.message, fields }, err.code);
-    }
-    throw err;
+  const registerResult = await registerUser(fields);
+
+  if (registerResult.error) {
+    return json({ formError: registerResult.error }, registerResult.code);
   }
 
-  try {
-    return await loginUser(
-      { email: fields.email, password: fields.password },
-      redirectTo
-    );
-  } catch (err) {
-    if (err instanceof APIError) {
-      return redirect(
-        "/login",
-        json(
-          { formError: err.error.message, fields: { email: fields.email } },
-          err.code
-        )
-      );
-    }
-    throw err;
+  const loginResult = await loginUser({
+    email: fields.email,
+    password: fields.password,
+  });
+
+  if (loginResult.error || !loginResult.cookie) {
+    return redirect("/login");
   }
+
+  return redirect(redirectTo, {
+    headers: {
+      "Set-Cookie": loginResult.cookie,
+    },
+  });
 }
 
 //Function that handle POST requests
