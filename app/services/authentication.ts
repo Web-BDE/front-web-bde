@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createCookieSessionStorage, json, redirect } from "remix";
-import { buildAxiosHeaders, handleAPIError } from "~/utils/axios";
+import { buildAxiosHeaders } from "~/utils/axios";
 
 type LoginInfo = {
   email: string;
@@ -31,9 +31,22 @@ export async function loginUser(loginForm: LoginInfo, redirectTo: string) {
       token: string;
     }>("/session", loginForm);
 
-    return createUserSession(reply.data.token, redirectTo);
+    const session = await storage.getSession();
+    session.set("token", reply.data.token);
+
+    return {
+      message: reply.data.message,
+      code: reply.status,
+      cookie: await storage.commitSession(session),
+    };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -42,30 +55,24 @@ export async function logout(request: Request) {
   const token = session.get("token");
 
   try {
-    await axios.delete<{ message: string }>(`/session`, {
+    const reply = await axios.delete<{ message: string }>(`/session`, {
       headers: buildAxiosHeaders(token),
     });
 
-    return redirect("/", {
-      headers: {
-        "Set-Cookie": await storage.destroySession(session),
-      },
-    });
+    return {
+      message: reply.data.message,
+      code: reply.status,
+      cookie: await storage.destroySession(session),
+    };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
-}
-
-async function createUserSession(token: string, redirectTo: string) {
-  const session = await storage.getSession();
-
-  session.set("token", token);
-
-  return redirect(redirectTo, {
-    headers: {
-      "Set-Cookie": await storage.commitSession(session),
-    },
-  });
 }
 
 function getUserSession(request: Request) {

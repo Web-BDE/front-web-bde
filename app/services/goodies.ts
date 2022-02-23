@@ -3,7 +3,6 @@ import { Goodies } from "~/models/Goodies";
 import {
   buildAxiosHeaders,
   buildSearchParams,
-  handleAPIError,
 } from "~/utils/axios";
 
 type GoodiesInfo = {
@@ -30,9 +29,15 @@ export async function getManyGoodies(
       }
     );
 
-    return reply.data;
+    return { message: reply.data.message, code: reply.status };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -45,9 +50,15 @@ export async function getGoodies(token: string, goodiesId: number) {
       }
     );
 
-    return reply.data;
+    return { message: reply.data.message, code: reply.status };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -61,9 +72,15 @@ export async function createGoodies(token: string, goodiesInfo: GoodiesInfo) {
       }
     );
 
-    return reply.data;
+    return { message: reply.data.message, code: reply.status };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -81,9 +98,15 @@ export async function updateGoodies(
       }
     );
 
-    return reply.data;
+    return { message: reply.data.message, code: reply.status };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -96,8 +119,14 @@ export async function deleteGoodies(token: string, goodiesId: number) {
       }
     );
 
-    return reply.data;
+    return { message: reply.data.message, code: reply.status };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }

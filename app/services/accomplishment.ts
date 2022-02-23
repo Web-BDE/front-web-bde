@@ -5,7 +5,6 @@ import { Accomplishment, Validation } from "~/models/Accomplishment";
 import {
   buildAxiosHeaders,
   buildSearchParams,
-  handleAPIError,
 } from "~/utils/axios";
 
 type AccomplishmentInfo = {
@@ -26,9 +25,15 @@ export async function createAccomplishment(
       }
     );
 
-    return reply.data;
+    return { message: reply.data.message, code: reply.status };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -47,9 +52,15 @@ export async function updateAccomplishment(
       }
     );
 
-    return reply.data;
+    return { message: reply.data.message, code: reply.status };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -65,9 +76,15 @@ export async function deleteAccomplishment(
       }
     );
 
-    return reply.data;
+    return { message: reply.data.message, code: reply.status };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -83,9 +100,15 @@ export async function getAccomplishment(
       headers: buildAxiosHeaders(token),
     });
 
-    return reply.data;
+    return { message: reply.data.message, code: reply.status };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -117,8 +140,14 @@ export async function getManyAccomplishment(
       }
     );
 
-    return reply.data;
+    return { message: reply.data.message, code: reply.status };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
