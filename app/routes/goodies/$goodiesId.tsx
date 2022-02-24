@@ -32,7 +32,6 @@ import {
 } from "~/services/purchase";
 
 import { Container, Typography } from "@mui/material";
-import { useContext } from "react";
 import UpdateGoodiesForm from "~/components/goodies/forms/updateGoodiesForm";
 import PurchaseGoodiesForm from "~/components/goodies/forms/purchaseGoodiesForm";
 import DeleteGoodiesForm from "~/components/goodies/forms/deleteGoodiesForm";
@@ -42,11 +41,17 @@ import {
   PurchaseGoodiesFormData,
   RefundGoodiesFormData,
 } from "~/models/Purchase";
-import { Params } from "react-router";
 import { ContextData } from "~/root";
+import { User } from "~/models/User";
+import { getSelft, getUser } from "~/services/user";
 
 type LoaderData = {
-  goodiesResponse?: { error?: string; success?: string; goodies?: Goodies };
+  goodiesResponse?: {
+    error?: string;
+    success?: string;
+    goodies?: Goodies;
+    creatorResponse?: { user?: User; error?: string; success?: string };
+  };
   purchaseResponse?: {
     error?: string;
     success?: string;
@@ -77,47 +82,59 @@ type ActionData = {
   };
 };
 
-async function loadPurchase(
+async function loadPurchases(
   token: string,
-  goodiesResponse: { error?: string; success?: string; goodies?: Goodies },
-  goodiesCode: number,
+  goodiesId?: number,
   userId?: number
 ) {
   const { code, ...purchaseResponse } = await getManyPurchase(
     token,
     100,
     0,
-    goodiesResponse.goodies?.id,
+    goodiesId,
     userId
   );
 
-  return json({ goodiesResponse, purchaseResponse } as LoaderData, goodiesCode);
+  return purchaseResponse;
+}
+
+async function loadGoodiesCreator(token: string, creatorId: number) {
+  const { code, ...userResponse } = await getUser(token, creatorId);
+
+  return userResponse;
 }
 
 async function loadGoodies(token: string, goodiesId: number, userId?: number) {
   const { code, ...goodiesResponse } = await getGoodies(token, goodiesId);
 
-  return loadPurchase(token, goodiesResponse, code, userId);
+  return json(
+    {
+      goodiesResponse: {
+        ...goodiesResponse,
+        creatorResponse:
+          goodiesResponse.goodies?.creatorId &&
+          (await loadGoodiesCreator(token, goodiesResponse.goodies?.creatorId)),
+      },
+      purchaseResponse: await loadPurchases(
+        token,
+        goodiesResponse.goodies?.id,
+        userId
+      ),
+    } as LoaderData,
+    code
+  );
 }
 
-export const loader: LoaderFunction = async ({
-  request,
-  params,
-  context,
-}: {
-  request: Request;
-  params: Params<string>;
-  context: ContextData;
-}) => {
+export const loader: LoaderFunction = async ({ request, params }) => {
   if (!params.goodiesId) {
     throw json("Invalid goodies query", 404);
   }
 
   const token = await requireAuth(request, `/goodies/${params.goodiesId}`);
 
-  const userInfo = context.userInfo;
+  const { user } = await getSelft(token);
 
-  return await loadGoodies(token, parseInt(params.goodiesId), userInfo?.id);
+  return await loadGoodies(token, parseInt(params.goodiesId), user?.id);
 };
 
 async function handleCreatePurchase(token: string, goodiesId: number) {
@@ -207,7 +224,7 @@ async function handleRefundGoodies(token: string, purchaseId: number) {
   return json({ refundGoodiesResponse } as ActionData, code);
 }
 
-export const action: ActionFunction = async ({ request, params, context }) => {
+export const action: ActionFunction = async ({ request, params }) => {
   if (!params.goodiesId) {
     return json(
       {
@@ -313,12 +330,17 @@ function displayGoodies(
     updateForm?: CreateGoodiesFormData;
     deleteForm?: DeleteGoodiesFormData;
   },
+  creator?: User,
   userId?: number
 ) {
   if (goodies?.creatorId === userId) {
     return (
       <div>
-        <UpdateGoodiesForm goodies={goodies} formData={formData?.updateForm} />
+        <UpdateGoodiesForm
+          creator={creator}
+          goodies={goodies}
+          formData={formData?.updateForm}
+        />
         <DeleteGoodiesForm goodies={goodies} formData={formData?.deleteForm} />
       </div>
     );
@@ -335,7 +357,9 @@ export default function Goodies() {
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
 
-  const userInfo = useOutletContext<ContextData>().userInfo;
+  console.log(loaderData);
+
+  const { userInfo } = useOutletContext<ContextData>();
 
   return (
     <Container style={{ marginTop: "50px" }} component="main">
@@ -354,6 +378,7 @@ export default function Goodies() {
                 updateForm: actionData?.updateGoodiesResponse?.formData,
                 deleteForm: actionData?.deleteGoodiesResponse?.formData,
               },
+              loaderData.goodiesResponse.creatorResponse?.user,
               userInfo?.id
             )}
             <PurchaseGoodiesForm

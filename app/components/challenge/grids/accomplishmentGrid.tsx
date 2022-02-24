@@ -1,15 +1,15 @@
-import { Alert, Container, Grid } from "@mui/material";
-import { useContext } from "react";
+import { Grid } from "@mui/material";
 import {
   Accomplishment,
   CreateAccomplishmentFormData,
   DeleteAccomplishmentFormData,
   ValidateAccomplishmentFormData,
 } from "~/models/Accomplishment";
-import { UserContext } from "../../userContext";
 import AccomplishmentTile from "./accomplishmentTile";
 import DeleteAccomplishmentForm from "../forms/deleteAccomplishmentForm";
 import UpdateAccomplishmentForm from "../forms/updateAccomplishmentForm";
+import { useOutletContext } from "remix";
+import { ContextData } from "~/root";
 
 function displayAccomplishment(
   accomplishment: Accomplishment,
@@ -56,7 +56,7 @@ export default function AccomplishmentsGrid({
     validateForm?: ValidateAccomplishmentFormData;
   };
 }) {
-  const userInfo = useContext(UserContext);
+  const {userInfo} = useOutletContext<ContextData>();
 
   return (
     <Grid

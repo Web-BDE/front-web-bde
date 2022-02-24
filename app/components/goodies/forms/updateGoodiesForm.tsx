@@ -1,12 +1,15 @@
 import { TextField, Button, Typography } from "@mui/material";
 import { Form } from "remix";
 import { CreateGoodiesFormData, Goodies } from "~/models/Goodies";
+import { User } from "~/models/User";
 
 export default function UpdateGoodiesForm({
   goodies,
+  creator,
   formData,
 }: {
   goodies: Goodies;
+  creator?: User;
   formData?: CreateGoodiesFormData;
 }) {
   return (
@@ -67,6 +70,11 @@ export default function UpdateGoodiesForm({
       <Typography variant="h6" align="center" style={{ marginTop: "10px" }}>
         Creation date : {new Date(goodies.createdAt).toLocaleDateString()}
       </Typography>
+      {creator && (
+        <Typography variant="h6" align="center" style={{ marginTop: "10px" }}>
+          Creator : {creator?.pseudo}
+        </Typography>
+      )}
       <Button
         type="submit"
         fullWidth
