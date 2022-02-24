@@ -19,7 +19,7 @@ export default function DeleteGoodiesForm({
         color="primary"
         style={{ marginTop: "10px" }}
       >
-        Delete
+        Delete Goodies
       </Button>
     </Form>
   );

@@ -346,25 +346,22 @@ export default function Goodies() {
           </div>
         )}
       </Container>
-      {loaderData.purchaseResponse?.purchases && (
-        <div style={{ marginTop: "50px" }}>
-          <Typography textAlign="center" variant="h4">
-            Undelivered purchases
-          </Typography>
-          {generateAlert("error", loaderData.purchaseResponse.error)}
-          {generateAlert("error", actionData?.purchaseGoodiesResponse?.error)}
-          {generateAlert(
-            "success",
-            actionData?.purchaseGoodiesResponse?.success
-          )}
-          {generateAlert("error", actionData?.refundGoodiesResponse?.error)}
-          {generateAlert("success", actionData?.refundGoodiesResponse?.success)}
+      <div style={{ marginTop: "50px" }}>
+        <Typography textAlign="center" variant="h4">
+          Undelivered purchases
+        </Typography>
+        {generateAlert("error", loaderData.purchaseResponse?.error)}
+        {generateAlert("error", actionData?.purchaseGoodiesResponse?.error)}
+        {generateAlert("success", actionData?.purchaseGoodiesResponse?.success)}
+        {generateAlert("error", actionData?.refundGoodiesResponse?.error)}
+        {generateAlert("success", actionData?.refundGoodiesResponse?.success)}
+        {loaderData.purchaseResponse?.purchases && (
           <PurchasesGrid
             purchases={loaderData.purchaseResponse.purchases}
             formData={actionData?.refundGoodiesResponse?.formData}
           />
-        </div>
-      )}
+        )}
+      </div>
     </Container>
   );
 }
