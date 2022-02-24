@@ -1,6 +1,5 @@
-import { TextField, Button, Typography, Alert } from "@mui/material";
+import { TextField, Button } from "@mui/material";
 import { CreateAccomplishmentFormData } from "~/models/Accomplishment";
-import { generateAlert } from "~/utils/error";
 
 export default function CreateAccomplishmentForm({
   formData,
@@ -8,29 +7,25 @@ export default function CreateAccomplishmentForm({
   formData?: CreateAccomplishmentFormData;
 }) {
   return (
-    <div>
-      {generateAlert("error", formData?.error)}
-      {generateAlert("success", formData?.success)}
-      <form method="post">
-        <input type="hidden" name="method" value="create-accomplishment" />
-        <TextField
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          id="proof"
-          label="Proof"
-          name="proof"
-          autoComplete="proof"
-          autoFocus
-          defaultValue={formData?.fields?.proof}
-          error={Boolean(formData?.fieldsError?.proof)}
-          helperText={formData?.fieldsError?.proof}
-        />
-        <Button type="submit" fullWidth variant="contained" color="primary">
-          Submit Proof
-        </Button>
-      </form>
-    </div>
+    <form method="post">
+      <input type="hidden" name="method" value="create-accomplishment" />
+      <TextField
+        variant="outlined"
+        margin="normal"
+        required
+        fullWidth
+        id="proof"
+        label="Proof"
+        name="proof"
+        autoComplete="proof"
+        autoFocus
+        defaultValue={formData?.fields?.proof}
+        error={Boolean(formData?.fieldsError?.proof)}
+        helperText={formData?.fieldsError?.proof}
+      />
+      <Button type="submit" fullWidth variant="contained" color="primary">
+        Submit Proof
+      </Button>
+    </form>
   );
 }

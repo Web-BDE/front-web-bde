@@ -20,7 +20,4 @@ export type CreateChallengeFormData = {
   };
 };
 
-export type DeleteChallengeFormData = {
-  formError?: string;
-  formSuccess?: string;
-};
+export type DeleteChallengeFormData = {};

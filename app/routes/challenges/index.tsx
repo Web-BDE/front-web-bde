@@ -36,6 +36,9 @@ export default function Challenges() {
   const loaderData = useLoaderData<{ challenges: Challenge[] }>();
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
+      <Typography style={{ textAlign: "center" }} variant="h2">
+        Challenges
+      </Typography>
       <ChallengeGrid challenges={loaderData.challenges} />
     </Container>
   );

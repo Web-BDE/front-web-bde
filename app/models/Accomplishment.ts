@@ -10,8 +10,6 @@ export type Accomplishment = {
 export type Validation = "ACCEPTED" | "PENDING" | "REFUSED";
 
 export type CreateAccomplishmentFormData = {
-  formError?: string;
-  formSuccess?: string;
   fieldsError?: {
     proof?: string;
   };
@@ -20,7 +18,6 @@ export type CreateAccomplishmentFormData = {
   };
 };
 
-export type DeleteAccomplishmentFormData = {
-  formError?: string;
-  formSuccess?: string;
-};
+export type DeleteAccomplishmentFormData = {};
+
+export type ValidateAccomplishmentFormData = {};
