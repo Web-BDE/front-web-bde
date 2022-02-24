@@ -8,10 +8,14 @@ import {
 } from "remix";
 
 //Controllers
-import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
+import {
+  generateAlert,
+  generateExpectedError,
+  generateUnexpectedError,
+} from "~/utils/error";
 
 import LoginForm, { LoginFormData } from "~/components/loginForm";
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import { loginUser } from "~/services/authentication";
 
 type ActionData = {
@@ -23,9 +27,9 @@ export async function handleLogin(
   password: string,
   redirectTo: string
 ) {
-  const fields = { email, password };
+  const fields = { email };
 
-  const { code, ...loginResult } = await loginUser(fields);
+  const { code, ...loginResult } = await loginUser({ ...fields, password });
 
   if (loginResult.error || !loginResult.cookie) {
     return json(
@@ -80,13 +84,18 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Login() {
-  const actionData = useActionData<LoginFormData>();
+  const actionData = useActionData<ActionData>();
   const [searchparams] = useSearchParams();
 
   return (
     <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
+      <Typography component="h1" variant="h5">
+        Log in
+      </Typography>
+      {generateAlert("error", actionData?.loginUser.error)}
+      {generateAlert("success", actionData?.loginUser.success)}
       <LoginForm
-        formData={actionData}
+        formData={actionData?.loginUser}
         redirectTo={searchparams.get("redirectTo")}
       />
     </Container>

@@ -8,11 +8,15 @@ import {
 
 import RegisterForm, { RegisterFormData } from "~/components/registerForm";
 
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 
 import { registerUser } from "~/services/user";
 
-import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
+import {
+  generateAlert,
+  generateExpectedError,
+  generateUnexpectedError,
+} from "~/utils/error";
 import { handleLogin } from "./login";
 
 type ActionData = {
@@ -58,10 +62,9 @@ async function handleRegister(
 ) {
   const fields = {
     email,
-    password,
     pseudo,
-    name: name ? name : undefined,
-    surname: surname ? surname : undefined,
+    name,
+    surname,
   };
   const fieldsError = {
     email: validateEmail(email),
@@ -74,13 +77,19 @@ async function handleRegister(
     return json({ registerUser: { fields, fieldsError } } as ActionData, 400);
   }
 
-  const { code, ...registerResult } = await registerUser(fields);
+  const { code, ...registerResult } = await registerUser({
+    ...fields,
+    password,
+  });
 
   if (registerResult.error) {
-    return json({ registerUser: { registerResult } } as ActionData, code);
+    return json(
+      { registerUser: { registerResult, fields, fieldsError } } as ActionData,
+      code
+    );
   }
 
-  return await handleLogin(fields.email, fields.password, redirectTo);
+  return await handleLogin(email, password, redirectTo);
 }
 
 //Function that handle POST requests
@@ -138,12 +147,17 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Register() {
-  const actionData = useActionData<RegisterFormData>();
+  const actionData = useActionData<ActionData>();
   const [searchparams] = useSearchParams();
   return (
     <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
+      <Typography component="h1" variant="h5">
+        Register
+      </Typography>
+      {generateAlert("error", actionData?.registerUser.error)}
+      {generateAlert("success", actionData?.registerUser.success)}
       <RegisterForm
-        formData={actionData}
+        formData={actionData?.registerUser}
         redirectTo={searchparams.get("redirectTo")}
       />
     </Container>
