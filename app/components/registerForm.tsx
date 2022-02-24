@@ -1,6 +1,6 @@
 //MUI Components
 import { Grid, TextField, Button } from "@mui/material";
-import { Link } from "remix";
+import { Form, Link } from "remix";
 import { RegisterFormData } from "~/models/User";
 
 export default function RegisterForm({
@@ -11,7 +11,7 @@ export default function RegisterForm({
   redirectTo: string | null;
 }) {
   return (
-    <form method="post" action="/register">
+    <Form method="put" action="/register">
       <input type="hidden" name="redirectTo" value={redirectTo || "/"} />
       <div style={{ display: "flex" }}>
         <TextField
@@ -98,6 +98,6 @@ export default function RegisterForm({
           <Link to="/login">{"Already have an account ? Sign in"}</Link>
         </Grid>
       </Grid>
-    </form>
+    </Form>
   );
 }

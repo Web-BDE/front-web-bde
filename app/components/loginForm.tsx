@@ -1,5 +1,5 @@
 import { Grid, TextField, Button } from "@mui/material";
-import { Link } from "remix";
+import { Form, Link } from "remix";
 import { LoginFormData } from "~/models/User";
 
 export default function LoginForm({
@@ -11,7 +11,7 @@ export default function LoginForm({
 }) {
   return (
     //TODO : add action on forms to redirect on apropriate routes
-    <form method="post" action="/login">
+    <Form method="post" action="/login">
       <input type="hidden" name="redirectTo" value={redirectTo || "/"} />
       <TextField
         variant="outlined"
@@ -48,6 +48,6 @@ export default function LoginForm({
           <Link to="/register">{"Don't have an account? Sign Up"}</Link>
         </Grid>
       </Grid>
-    </form>
+    </Form>
   );
 }

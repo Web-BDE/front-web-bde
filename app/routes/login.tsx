@@ -52,36 +52,42 @@ export async function handleLogin(
 
 //Function that handle POST requests
 export const action: ActionFunction = async ({ request }) => {
-  //Initialise form
-  const form = await request.formData();
-  const redirectTo = form.get("redirectTo");
-  //Initialise data
-  const email = form.get("email");
-  const password = form.get("password");
+  switch (request.method) {
+    case "POST":
+      //Initialise form
+      const form = await request.formData();
+      const redirectTo = form.get("redirectTo");
+      //Initialise data
+      const email = form.get("email");
+      const password = form.get("password");
 
-  //Should never happend, check if redirectTo is present
-  if (typeof redirectTo !== "string") {
-    return json(
-      {
-        loginUser: { error: "Something went wrong, please try again" },
-      } as ActionData,
-      500
-    );
+      //Should never happend, check if redirectTo is present
+      if (typeof redirectTo !== "string") {
+        return json(
+          {
+            loginUser: { error: "Something went wrong, please try again" },
+          } as ActionData,
+          500
+        );
+      }
+
+      if (typeof email !== "string" || typeof password !== "string") {
+        return json(
+          {
+            loginUser: {
+              error:
+                "Invalid data provided, please check if you have fill all the requierd fields",
+            },
+          } as ActionData,
+          400
+        );
+      }
+
+      return await handleLogin(email, password, redirectTo);
+
+    default:
+      throw new Error("Bad request method");
   }
-
-  if (typeof email !== "string" || typeof password !== "string") {
-    return json(
-      {
-        loginUser: {
-          error:
-            "Invalid data provided, please check if you have fill all the requierd fields",
-        },
-      } as ActionData,
-      400
-    );
-  }
-
-  return await handleLogin(email, password, redirectTo);
 };
 
 export default function Login() {
