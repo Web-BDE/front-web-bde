@@ -1,7 +1,8 @@
 import { Grid } from "@mui/material";
 import { useContext } from "react";
+import { useOutletContext } from "remix";
 import { Purchase, RefundGoodiesFormData } from "~/models/Purchase";
-import { UserContext } from "../../userContext";
+import { ContextData } from "~/root";
 import PurchaseTile from "./purchaseTile";
 
 export default function PurchasesGrid({
@@ -11,7 +12,7 @@ export default function PurchasesGrid({
   purchases: Purchase[];
   formData?: RefundGoodiesFormData;
 }) {
-  const userInfo = useContext(UserContext);
+  const userInfo = useOutletContext<ContextData>().userInfo;
 
   return (
     <Grid
