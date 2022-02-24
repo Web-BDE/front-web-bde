@@ -47,14 +47,15 @@ import {
   DeleteAccomplishmentFormData,
 } from "~/models/Accomplishment";
 import { ContextData } from "~/root";
-import { Params } from "react-router";
-import { getSelft } from "~/services/user";
+import { getSelft, getUser } from "~/services/user";
+import { User } from "~/models/User";
 
 type LoaderData = {
   challengeResponse?: {
     challenge?: Challenge;
     error?: string;
     success?: string;
+    creatorResponse?: { error?: string; success?: string; user?: User };
   };
   accomplishmentResponse?: {
     accomplishments?: Accomplishment[];
@@ -91,28 +92,26 @@ type ActionData = {
   };
 };
 
-async function loadAccomplishment(
+async function loadAccomplishments(
   token: string,
-  challengeResponse: {
-    error?: string;
-    success?: string;
-    challenge?: Challenge;
-  },
-  challengeCode: number,
+  challengeId?: number,
   userId?: number
 ) {
   const { code, ...accomplishmentResponse } = await getManyAccomplishment(
     token,
     100,
     0,
-    challengeResponse.challenge?.id,
+    challengeId,
     userId
   );
 
-  return json(
-    { challengeResponse, accomplishmentResponse } as LoaderData,
-    challengeCode
-  );
+  return accomplishmentResponse;
+}
+
+async function loadChallengeCreator(token: string, creatorId: number) {
+  const { code, ...userResponse } = await getUser(token, creatorId);
+
+  return userResponse;
 }
 
 async function loadChallenge(
@@ -122,7 +121,25 @@ async function loadChallenge(
 ) {
   const { code, ...challengeResponse } = await getChallenge(token, challengeId);
 
-  return loadAccomplishment(token, challengeResponse, code, userId);
+  return json(
+    {
+      challengeResponse: {
+        ...challengeResponse,
+        creatorResponse:
+          challengeResponse.challenge?.creatorId &&
+          (await loadChallengeCreator(
+            token,
+            challengeResponse.challenge?.creatorId
+          )),
+      },
+      purchaseResponse: await loadAccomplishments(
+        token,
+        challengeResponse.challenge?.id,
+        userId
+      ),
+    } as LoaderData,
+    code
+  );
 }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -420,7 +437,8 @@ function displayChallenge(
     updateForm?: CreateChallengeFormData;
     deleteForm?: DeleteChallengeFormData;
   },
-  userId?: number
+  userId?: number,
+  creator?: User
 ) {
   if (userId === challenge.creatorId) {
     return (
@@ -428,6 +446,7 @@ function displayChallenge(
         <UpdateChallengeForm
           challenge={challenge}
           formData={formData?.updateForm}
+          creator={creator}
         />
         <DeleteChallengeForm
           challenge={challenge}
@@ -438,7 +457,7 @@ function displayChallenge(
   } else {
     return (
       <Container maxWidth="xs">
-        <ChallengeDisplay challenge={challenge} />
+        <ChallengeDisplay creator={creator} challenge={challenge} />
       </Container>
     );
   }
@@ -467,7 +486,8 @@ export default function Challenge() {
                 updateForm: actionData?.updateChallengeResponse?.formData,
                 deleteForm: actionData?.deleteChallengeResponse?.formData,
               },
-              userInfo?.id
+              userInfo?.id,
+              loaderData.challengeResponse.creatorResponse?.user
             )}
             <Typography marginTop="50px" variant="h4">
               Submit Proof

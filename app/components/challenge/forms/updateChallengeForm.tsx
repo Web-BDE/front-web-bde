@@ -1,13 +1,16 @@
 import { TextField, Button, Typography } from "@mui/material";
 import { Form } from "remix";
 import { Challenge, CreateChallengeFormData } from "~/models/Challenge";
+import { User } from "~/models/User";
 
 export default function UpdateChallengeForm({
   challenge,
   formData,
+  creator,
 }: {
   challenge: Challenge;
   formData?: CreateChallengeFormData;
+  creator?: User;
 }) {
   return (
     <Form method="patch" action={`/challenges/${challenge.id}`}>
@@ -55,6 +58,11 @@ export default function UpdateChallengeForm({
       <Typography variant="h6" align="center" style={{ marginTop: "10px" }}>
         Creation date : {new Date(challenge.createdAt).toLocaleDateString()}
       </Typography>
+      {creator && (
+        <Typography variant="h6" align="center" style={{ marginTop: "10px" }}>
+          Creator : {creator?.pseudo}
+        </Typography>
+      )}
       <Button
         type="submit"
         fullWidth
