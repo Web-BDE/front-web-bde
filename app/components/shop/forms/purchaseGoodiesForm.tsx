@@ -1,20 +1,20 @@
 import { Alert, Button } from "@mui/material";
 
 export type PurchaseGoodiesFormData = {
-  formError?: string;
-  formSuccess?: string;
+  error?: string;
+  success?: string;
 };
 
 export default function PurchaseGoodiesForm ({ formData }: { formData?: PurchaseGoodiesFormData }) {
   return (
     <form method="post">
-      {formData?.formError ? (
-        <Alert severity="error">{formData?.formError}</Alert>
+      {formData?.error ? (
+        <Alert severity="error">{formData?.error}</Alert>
       ) : (
         ""
       )}
-      {formData?.formSuccess ? (
-        <Alert severity="success">{formData?.formSuccess}</Alert>
+      {formData?.success ? (
+        <Alert severity="success">{formData?.success}</Alert>
       ) : (
         ""
       )}

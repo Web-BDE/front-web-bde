@@ -2,8 +2,8 @@ import { TextField, Button, Typography, Alert } from "@mui/material";
 import { Goodies } from "~/models/Goodies";
 
 export type UpdateGoodiesFormData = {
-  formError?: string;
-  formSuccess?: string;
+  error?: string;
+  success?: string;
   fieldsError?: {
     name?: string;
     description?: string;
@@ -27,13 +27,13 @@ export default function UpdateGoodiesForm({
 }) {
   return (
     <div>
-      {formData?.formError ? (
-        <Alert severity="error">{formData?.formError}</Alert>
+      {formData?.error ? (
+        <Alert severity="error">{formData?.error}</Alert>
       ) : (
         ""
       )}
-      {formData?.formSuccess ? (
-        <Alert severity="success">{formData?.formSuccess}</Alert>
+      {formData?.success ? (
+        <Alert severity="success">{formData?.success}</Alert>
       ) : (
         ""
       )}

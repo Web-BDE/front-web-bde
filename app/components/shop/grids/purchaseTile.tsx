@@ -9,8 +9,8 @@ import {
 import { Purchase } from "~/models/Purchase";
 
 export type RefundPurchaseFormData = {
-  formError?: string;
-  formSuccess?: string;
+  error?: string;
+  success?: string;
 };
 
 export default function PurchaseTile({
@@ -34,13 +34,13 @@ export default function PurchaseTile({
       </CardContent>
       {userPrivilege && userPrivilege >= 2 ? (
         <CardActions>
-          {formData?.formError ? (
-            <Alert severity="error">{formData?.formError}</Alert>
+          {formData?.error ? (
+            <Alert severity="error">{formData?.error}</Alert>
           ) : (
             ""
           )}
-          {formData?.formSuccess ? (
-            <Alert severity="success">{formData?.formSuccess}</Alert>
+          {formData?.success ? (
+            <Alert severity="success">{formData?.success}</Alert>
           ) : (
             ""
           )}

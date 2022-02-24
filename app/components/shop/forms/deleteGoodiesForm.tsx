@@ -2,8 +2,8 @@ import { Alert, Button } from "@mui/material";
 import { Goodies } from "~/models/Goodies";
 
 export type DeleteGoodiesFormData = {
-  formError?: string;
-  formSuccess?: string;
+  error?: string;
+  success?: string;
 };
 
 export default function DeleteGoodiesForm({
@@ -15,13 +15,13 @@ export default function DeleteGoodiesForm({
 }) {
   return (
     <div>
-      {formData?.formError ? (
-        <Alert severity="error">{formData?.formError}</Alert>
+      {formData?.error ? (
+        <Alert severity="error">{formData?.error}</Alert>
       ) : (
         ""
       )}
-      {formData?.formSuccess ? (
-        <Alert severity="success">{formData?.formSuccess}</Alert>
+      {formData?.success ? (
+        <Alert severity="success">{formData?.success}</Alert>
       ) : (
         ""
       )}

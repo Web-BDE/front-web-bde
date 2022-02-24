@@ -4,7 +4,8 @@ import { Purchase } from "~/models/Purchase";
 import { UserContext } from "../../userContext";
 import PurchaseTile, { RefundPurchaseFormData } from "./purchaseTile";
 
-export type PurchaseData = {
+export type PurchaseResponse = {
+  success?: string;
   purchases?: Purchase[];
   error?: string;
 };
@@ -13,7 +14,7 @@ export default function PurchasesGrid({
   purchases,
   formData,
 }: {
-  purchases: PurchaseData;
+  purchases: PurchaseResponse;
   formData?: RefundPurchaseFormData;
 }) {
   const userInfo = useContext(UserContext);

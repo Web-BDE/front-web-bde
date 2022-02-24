@@ -8,19 +8,20 @@ import { requireAuth } from "~/services/authentication";
 import { getManyGoodies } from "~/services/goodies";
 import GoodiesGrid from "~/components/shop/grids/goodiesGrid";
 import { Goodies } from "~/models/Goodies";
-import { APIError } from "~/utils/axios";
+
+type LoaderData = {
+  goodiesResponse: { error?: string; goodies?: Goodies[]; message?: string };
+};
 
 async function loadGoodies(token: string) {
-  let goodies;
-  try {
-    goodies = (await getManyGoodies(token, 100))?.goodies;
-  } catch (err) {
-    if (err instanceof APIError) {
-      throw json(err.error.message, err.code);
-    }
-    throw err;
+  const { code, ...goodiesResponse } = await getManyGoodies(token, 100, 0);
+
+  //TODO : don't throw
+  if (goodiesResponse.error) {
+    throw json(goodiesResponse, code);
   }
-  return { goodies };
+
+  return json({ goodiesResponse: { goodiesResponse } } as LoaderData, code);
 }
 
 //Function that handle GET resuests
@@ -31,10 +32,10 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function Shop() {
-  const loaderData = useLoaderData<{ goodies: Goodies[] }>();
+  const loaderData = useLoaderData<LoaderData>();
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
-      <GoodiesGrid goodies={loaderData.goodies} />
+      <GoodiesGrid goodies={loaderData.goodiesResponse.goodies} />
     </Container>
   );
 }

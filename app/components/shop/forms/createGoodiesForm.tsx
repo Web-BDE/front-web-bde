@@ -1,8 +1,8 @@
 import { TextField, Button, Alert } from "@mui/material";
 
 export type CreateGoodiesFormData = {
-  formError?: string;
-  formSuccess?: string;
+  error?: string;
+  success?: string;
   fieldsError?: {
     name?: string;
     description?: string;
@@ -26,13 +26,9 @@ export default function CreateGoodiesForm({
 }) {
   return (
     <div>
-      {formData?.formError ? (
-        <Alert severity="error">{formData?.formError}</Alert>
-      ) : (
-        ""
-      )}
-      {formData?.formSuccess ? (
-        <Alert severity="success">{formData?.formSuccess}</Alert>
+      {formData?.error ? <Alert severity="error">{formData?.error}</Alert> : ""}
+      {formData?.success ? (
+        <Alert severity="success">{formData?.success}</Alert>
       ) : (
         ""
       )}
