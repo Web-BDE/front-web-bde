@@ -83,14 +83,14 @@ export default function NavBar() {
       },
       {
         name: "Shop",
-        link: "/shop",
+        link: "/goodies",
       }
     );
 
     if (userInfo?.privilege && userInfo?.privilege > 0) {
       leftLinks.push(
         { name: "Challenge Admin", link: "/challenges/admin" },
-        { name: "Shop Admin", link: "/shop/admin" }
+        { name: "Shop Admin", link: "/goodies/admin" }
       );
     }
   } else {

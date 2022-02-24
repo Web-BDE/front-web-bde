@@ -10,7 +10,7 @@ import {
 
 import { requireAuth } from "~/services/authentication";
 import { getManyGoodies } from "~/services/goodies";
-import GoodiesGrid from "~/components/shop/grids/goodiesGrid";
+import GoodiesGrid from "~/components/goodies/grids/goodiesGrid";
 import { Goodies } from "~/models/Goodies";
 
 type LoaderData = {
@@ -25,7 +25,7 @@ async function loadGoodies(token: string) {
 
 //Function that handle GET resuests
 export const loader: LoaderFunction = async ({ request }) => {
-  const token = await requireAuth(request, "/shop");
+  const token = await requireAuth(request, "/goodies");
 
   return await loadGoodies(token);
 };
@@ -37,8 +37,8 @@ export default function Shop() {
       <Typography style={{ textAlign: "center" }} variant="h2">
         Shop
       </Typography>
-      {generateAlert("error", loaderData.goodiesResponse.error)}
-      {loaderData.goodiesResponse.goodies && (
+      {generateAlert("error", loaderData.goodiesResponse?.error)}
+      {loaderData.goodiesResponse?.goodies && (
         <GoodiesGrid goodies={loaderData.goodiesResponse.goodies} />
       )}
     </Container>
