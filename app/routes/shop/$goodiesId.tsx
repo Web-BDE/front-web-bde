@@ -186,7 +186,7 @@ async function handleDeleteGoodies(token: string, goodiesId: number) {
     return json({ deleteGoodiesResponse } as ActionData, code);
   }
 
-  return redirect("/shop", code);
+  return redirect("/shop");
 }
 
 async function handleRefundGoodies(token: string, purchaseId: number) {

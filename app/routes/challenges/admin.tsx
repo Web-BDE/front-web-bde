@@ -130,8 +130,7 @@ export async function handleChallengeCreation(
     );
   }
 
-  //TODO : remove some redirectTos
-  return redirect(redirectTo, code);
+  return redirect("/challenges");
 }
 
 export const action: ActionFunction = async ({ request }) => {

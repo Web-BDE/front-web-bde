@@ -91,7 +91,7 @@ async function handleCreateGoodies(
     );
   }
 
-  return redirect(redirectTo, code);
+  return redirect("/shop");
 }
 
 export const action: ActionFunction = async ({ request }) => {
