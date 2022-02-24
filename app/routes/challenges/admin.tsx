@@ -11,7 +11,11 @@ import {
 
 import { requireAuth } from "~/services/authentication";
 
-import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
+import {
+  generateAlert,
+  generateExpectedError,
+  generateUnexpectedError,
+} from "~/utils/error";
 
 import { Container, Typography } from "@mui/material";
 import AccomplishmentsGrid from "~/components/challenge/grids/accomplishmentGrid";
@@ -221,6 +225,8 @@ export default function ChallengesAdmin() {
     <Container component="main" style={{ marginTop: "50px" }}>
       <Container maxWidth="xs">
         <Typography variant="h4">Create Challenge</Typography>
+        {generateAlert("error", actionData?.createChallengeResponse?.error)}
+        {generateAlert("success", actionData?.createChallengeResponse?.success)}
         <CreateChallengeForm
           formData={actionData?.createChallengeResponse?.formData}
           redirectTo={searchParams.get("redirectTo")}
@@ -232,6 +238,14 @@ export default function ChallengesAdmin() {
           <Typography textAlign="center" variant="h4">
             Pending Accomplishments
           </Typography>
+          {generateAlert(
+            "error",
+            actionData?.validateAccomplishmentResponse?.error
+          )}
+          {generateAlert(
+            "success",
+            actionData?.validateAccomplishmentResponse?.success
+          )}
           <AccomplishmentsGrid
             accomplishments={loaderData.accomplishmentResponse.accomplishments}
             formData={{

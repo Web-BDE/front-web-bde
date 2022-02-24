@@ -30,6 +30,7 @@ import {
 import {
   generateUnexpectedError,
   generateExpectedError,
+  generateAlert,
 } from "../../utils/error";
 
 import { Container, Typography } from "@mui/material";
@@ -376,7 +377,6 @@ function displayChallenge(
   if (userId === challenge.creatorId) {
     return (
       <Container maxWidth="xs">
-        <Typography variant="h4">Challenge</Typography>
         <UpdateChallengeForm
           challenge={challenge}
           formData={formData?.updateForm}
@@ -405,6 +405,11 @@ export default function Challenge() {
   return (
     <Container style={{ marginTop: "50px" }}>
       <Container maxWidth="xs" style={{ marginTop: "50px" }}>
+        <Typography variant="h4">Challenge</Typography>
+        {generateAlert("error", loaderData.challengeResponse?.error)}
+        {generateAlert("error", actionData?.updateChallengeResponse?.error)}
+        {generateAlert("error", actionData?.deleteChallengeResponse?.error)}
+        {generateAlert("success", actionData?.updateChallengeResponse?.success)}
         {loaderData.challengeResponse.challenge && (
           <div>
             {displayChallenge(
@@ -416,6 +421,14 @@ export default function Challenge() {
               userInfo?.id
             )}
             <Typography variant="h4">Submit Proof</Typography>
+            {generateAlert(
+              "error",
+              actionData?.createAccomplishmentResponse?.error
+            )}
+            {generateAlert(
+              "success",
+              actionData?.createAccomplishmentResponse?.success
+            )}
             <CreateAccomplishmentForm
               formData={actionData?.createAccomplishmentResponse?.formData}
             />
@@ -428,6 +441,18 @@ export default function Challenge() {
           <Typography textAlign="center" variant="h4">
             Your accomplishments
           </Typography>
+          {generateAlert(
+            "error",
+            actionData?.updateAccomplishmentResponse?.error
+          )}
+          {generateAlert(
+            "error",
+            actionData?.deleteAccomplishmentResponse?.error
+          )}
+          {generateAlert(
+            "success",
+            actionData?.updateAccomplishmentResponse?.success
+          )}
           <AccomplishmentsGrid
             accomplishments={loaderData.accomplishmentResponse.accomplishments}
             formData={{
