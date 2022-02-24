@@ -4,14 +4,8 @@ import {
   CardActions,
   Typography,
   Button,
-  Alert,
 } from "@mui/material";
-import { Purchase } from "~/models/Purchase";
-
-export type RefundPurchaseFormData = {
-  formError?: string;
-  formSuccess?: string;
-};
+import { Purchase, RefundGoodiesFormData } from "~/models/Purchase";
 
 export default function PurchaseTile({
   purchase,
@@ -20,7 +14,7 @@ export default function PurchaseTile({
 }: {
   purchase: Purchase;
   userPrivilege?: number;
-  formData?: RefundPurchaseFormData;
+  formData?: RefundGoodiesFormData;
 }) {
   return (
     <Card>
@@ -34,18 +28,7 @@ export default function PurchaseTile({
       </CardContent>
       {userPrivilege && userPrivilege >= 2 ? (
         <CardActions>
-          {formData?.formError ? (
-            <Alert severity="error">{formData?.formError}</Alert>
-          ) : (
-            ""
-          )}
-          {formData?.formSuccess ? (
-            <Alert severity="success">{formData?.formSuccess}</Alert>
-          ) : (
-            ""
-          )}
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            {/* Form to validate an purchase */}
             <form method="post">
               <input type="hidden" name="purchaseId" value={purchase.id} />
               <input type="hidden" name="method" value="refund-purchase" />
@@ -59,7 +42,8 @@ export default function PurchaseTile({
                 Refund
               </Button>
             </form>
-            <form method="post">
+            {/* //TODO mark as delivered */}
+            <form method="get">
               <input type="hidden" name="purchaseId" value={purchase.id} />
               <input type="hidden" name="method" value="refund-purchase" />
               <Button

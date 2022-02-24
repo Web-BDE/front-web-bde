@@ -1,26 +1,26 @@
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 
 import { json, LoaderFunction, useCatch, useLoaderData } from "remix";
 
-import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
+import {
+  generateAlert,
+  generateExpectedError,
+  generateUnexpectedError,
+} from "~/utils/error";
 
 import { requireAuth } from "~/services/authentication";
 import { getManyGoodies } from "~/services/goodies";
 import GoodiesGrid from "~/components/shop/grids/goodiesGrid";
 import { Goodies } from "~/models/Goodies";
-import { APIError } from "~/utils/axios";
+
+type LoaderData = {
+  goodiesResponse?: { error?: string; goodies?: Goodies[]; success?: string };
+};
 
 async function loadGoodies(token: string) {
-  let goodies;
-  try {
-    goodies = (await getManyGoodies(token, 100))?.goodies;
-  } catch (err) {
-    if (err instanceof APIError) {
-      throw json(err.error.message, err.code);
-    }
-    throw err;
-  }
-  return { goodies };
+  const { code, ...goodiesResponse } = await getManyGoodies(token, 100, 0);
+
+  return json({ goodiesResponse } as LoaderData, code);
 }
 
 //Function that handle GET resuests
@@ -31,10 +31,16 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function Shop() {
-  const loaderData = useLoaderData<{ goodies: Goodies[] }>();
+  const loaderData = useLoaderData<LoaderData>();
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
-      <GoodiesGrid goodies={loaderData.goodies} />
+      <Typography style={{ textAlign: "center" }} variant="h2">
+        Shop
+      </Typography>
+      {generateAlert("error", loaderData.goodiesResponse.error)}
+      {loaderData.goodiesResponse.goodies && (
+        <GoodiesGrid goodies={loaderData.goodiesResponse.goodies} />
+      )}
     </Container>
   );
 }

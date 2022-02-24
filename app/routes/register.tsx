@@ -1,21 +1,32 @@
 import {
   ActionFunction,
   json,
-  redirect,
   useActionData,
   useCatch,
   useSearchParams,
 } from "remix";
 
-import RegisterForm, { RegisterFormData } from "~/components/registerForm";
+import RegisterForm from "~/components/registerForm";
 
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 
 import { registerUser } from "~/services/user";
-import { loginUser } from "~/services/authentication";
 
-import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
-import { APIError } from "~/utils/axios";
+import {
+  generateAlert,
+  generateExpectedError,
+  generateUnexpectedError,
+} from "~/utils/error";
+import { handleLogin } from "./login";
+import { RegisterFormData } from "~/models/User";
+
+type ActionData = {
+  registerUser?: {
+    formData?: RegisterFormData;
+    error?: string;
+    success?: string;
+  };
+};
 
 //Validator for email field
 function validateEmail(email: string) {
@@ -56,10 +67,9 @@ async function handleRegister(
 ) {
   const fields = {
     email,
-    password,
     pseudo,
-    name: name ? name : undefined,
-    surname: surname ? surname : undefined,
+    name,
+    surname,
   };
   const fieldsError = {
     email: validateEmail(email),
@@ -69,35 +79,27 @@ async function handleRegister(
   };
 
   if (Object.values(fieldsError).some(Boolean)) {
-    return json({ fields, fieldsError }, 400);
-  }
-
-  try {
-    await registerUser(fields);
-  } catch (err) {
-    if (err instanceof APIError) {
-      return json({ formError: err.error.message, fields }, err.code);
-    }
-    throw err;
-  }
-
-  try {
-    return await loginUser(
-      { email: fields.email, password: fields.password },
-      redirectTo
+    return json(
+      { registerUser: { formData: { fields, fieldsError } } } as ActionData,
+      400
     );
-  } catch (err) {
-    if (err instanceof APIError) {
-      return redirect(
-        "/login",
-        json(
-          { formError: err.error.message, fields: { email: fields.email } },
-          err.code
-        )
-      );
-    }
-    throw err;
   }
+
+  const { code, ...registerResult } = await registerUser({
+    ...fields,
+    password,
+  });
+
+  if (registerResult.error) {
+    return json(
+      {
+        registerUser: { ...registerResult, formData: { fields, fieldsError } },
+      } as ActionData,
+      code
+    );
+  }
+
+  return await handleLogin(email, password, redirectTo);
 }
 
 //Function that handle POST requests
@@ -115,7 +117,12 @@ export const action: ActionFunction = async ({ request }) => {
 
   //Check if redirection is here, should always be
   if (typeof redirectTo !== "string") {
-    return json({ formError: "There was an error, please try again" }, 500);
+    return json(
+      {
+        registerUser: { error: "There was an error, please try again" },
+      } as ActionData,
+      500
+    );
   }
 
   //Check for fields type
@@ -129,9 +136,11 @@ export const action: ActionFunction = async ({ request }) => {
   ) {
     return json(
       {
-        formError:
-          "Invalid data provided, please check if you have fill all the requierd fields",
-      },
+        registerUser: {
+          error:
+            "Invalid data provided, please check if you have fill all the requierd fields",
+        },
+      } as ActionData,
       400
     );
   }
@@ -148,12 +157,17 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Register() {
-  const actionData = useActionData<RegisterFormData>();
+  const actionData = useActionData<ActionData>();
   const [searchparams] = useSearchParams();
   return (
     <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
+      <Typography component="h1" variant="h5">
+        Register
+      </Typography>
+      {generateAlert("error", actionData?.registerUser?.error)}
+      {generateAlert("success", actionData?.registerUser?.success)}
       <RegisterForm
-        formData={actionData}
+        formData={actionData?.registerUser?.formData}
         redirectTo={searchparams.get("redirectTo")}
       />
     </Container>

@@ -11,105 +11,77 @@ import {
 
 import { requireAuth } from "~/services/authentication";
 
-import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
+import {
+  generateAlert,
+  generateExpectedError,
+  generateUnexpectedError,
+} from "~/utils/error";
 
 import { Container, Typography } from "@mui/material";
-import AccomplishmentsGrid, {
-  AccomplishmentData,
-} from "~/components/challenge/grids/accomplishmentGrid";
-import { ValidateAccomplishmentFormData } from "~/components/challenge/grids/accomplishmentTile";
-import CreateChallengeForm, {
-  CreateChallengeFormData,
-} from "~/components/challenge/forms/createChallengeForm";
+import AccomplishmentsGrid from "~/components/challenge/grids/accomplishmentGrid";
+import CreateChallengeForm from "~/components/challenge/forms/createChallengeForm";
 import {
   getManyAccomplishment,
   updateAccomplishment,
 } from "~/services/accomplishment";
-import { APIError } from "~/utils/axios";
 import { createChallenge } from "~/services/challenges";
-import { Validation } from "~/models/Accomplishment";
+import {
+  Accomplishment,
+  ValidateAccomplishmentFormData,
+  Validation,
+} from "~/models/Accomplishment";
+import { CreateChallengeFormData } from "~/models/Challenge";
 
 type ActionData = {
-  createChallenge?: CreateChallengeFormData;
-  validateAccomplishment?: ValidateAccomplishmentFormData;
+  createChallengeResponse?: {
+    formData?: CreateChallengeFormData;
+    error?: string;
+    success?: string;
+  };
+  validateAccomplishmentResponse?: {
+    formData?: ValidateAccomplishmentFormData;
+    error?: string;
+    success?: string;
+  };
+};
+
+type LoaderData = {
+  accomplishmentResponse?: {
+    error?: string;
+    success?: string;
+    accomplishments?: Accomplishment[];
+  };
 };
 
 async function loadAccomplishments(token: string) {
-  //Try to get accomplishments
-  let accomplishments;
-  try {
-    accomplishments = (
-      await getManyAccomplishment(
-        token,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        "PENDING"
-      )
-    )?.accomplishments;
-  } catch (err) {
-    //We don't want to throw API errors, we will show the in the component instead
-    if (err instanceof APIError) {
-      return {
-        accomplishmenError: err.error.message,
-      };
-    }
-    throw err;
-  }
-  return { accomplishments };
+  const { code, ...accomplishmentResponse } = await getManyAccomplishment(
+    token,
+    100,
+    0,
+    undefined,
+    undefined,
+    "PENDING"
+  );
+
+  return json({ accomplishmentResponse } as LoaderData, code);
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
   //User need to be logged in
   const token = await requireAuth(request, `/challenges/admin`);
 
-  return { accomplishments: await loadAccomplishments(token) };
+  return await loadAccomplishments(token);
 };
-
-//Validator for validation input
-function validateValidation(validation: Validation) {
-  if (validation !== "PENDING") {
-    return "Validation has invalid value";
-  }
-}
 
 async function handleValidateAccomplishment(
   token: string,
   validation: Validation,
   accomplishmentId: number
 ) {
-  //Check for an error in the validation format
-  const formError = validateValidation(validation);
-
-  if (formError) {
-    return json(
-      {
-        validateAccomplishment: { formError: formError },
-      },
-      400
-    );
-  }
-
-  //Try to validate challenge
-  try {
+  const { code, ...validateAccomplishmentResponse } =
     await updateAccomplishment(token, accomplishmentId, undefined, validation);
-  } catch (err) {
-    //We don't want to throw API errors, we will show the in the form instead
-    if (err instanceof APIError) {
-      return json(
-        {
-          validateAccomplishment: { formError: err.error.message },
-        },
-        err.code
-      );
-    }
-    throw err;
-  }
 
-  return json({
-    validateAccomplishment: { formSuccess: "Challenge Validated" },
-  });
+  return json({ validateAccomplishmentResponse } as ActionData, code);
 }
 
 //Validator for field reward
@@ -127,31 +99,38 @@ export async function handleChallengeCreation(
   description?: string
 ) {
   //Check fields format errors
-  const fields = { name, description, reward: reward };
+  const fields = { name, description, reward };
   const fieldsError = {
     reward: validateReward(reward),
   };
 
   if (Object.values(fieldsError).some(Boolean)) {
-    return json({ createChallenge: { fields, fieldsError } }, 400);
+    return json(
+      {
+        createChallengeResponse: { formData: { fields, fieldsError } },
+      } as ActionData,
+      400
+    );
   }
 
-  //Try to create challenge
-  try {
-    await createChallenge(token, fields);
-  } catch (err) {
-    //We don't want to throw API errors, we will show the in the form instead
-    if (err instanceof APIError) {
-      return json(
-        {
-          createChallenge: { formError: err.error.message, fields },
+  const { code, ...createChallengeResponse } = await createChallenge(
+    token,
+    fields
+  );
+
+  if (createChallengeResponse.error) {
+    return json(
+      {
+        createChallengeResponse: {
+          ...createChallengeResponse,
+          formData: { fields, fieldsError },
         },
-        err.code
-      );
-    }
+      } as ActionData,
+      code
+    );
   }
 
-  return redirect(redirectTo);
+  return redirect("/challenges");
 }
 
 export const action: ActionFunction = async ({ request }) => {
@@ -176,17 +155,15 @@ export const action: ActionFunction = async ({ request }) => {
       //Should never happend
       if (
         typeof accomplishmentId !== "string" ||
-        (validation !== "ACCEPTED" &&
-          validation !== "PENDING" &&
-          validation !== "REFUSED")
+        (validation !== "ACCEPTED" && validation !== "REFUSED")
       ) {
         return json(
           {
-            validateAccomplishment: {
-              formError: "There was an error, please try again",
+            validateAccomplishmentResponse: {
+              error: "There was an error, please try again",
             },
-          },
-          400
+          } as ActionData,
+          500
         );
       }
 
@@ -201,11 +178,11 @@ export const action: ActionFunction = async ({ request }) => {
       if (typeof redirectTo !== "string") {
         return json(
           {
-            createChallenge: {
-              formError: "There was an error, please try again",
+            createChallengeResponse: {
+              error: "There was an error, please try again",
             },
-          },
-          400
+          } as ActionData,
+          500
         );
       }
 
@@ -215,9 +192,15 @@ export const action: ActionFunction = async ({ request }) => {
         (typeof description !== "string" && description !== null) ||
         typeof reward !== "string"
       ) {
-        return json({
-          createChallenge: { formError: "You must fill all the fields" },
-        });
+        return json(
+          {
+            createChallengeResponse: {
+              error:
+                "Invalid data provided, please check if you have fill all the requierd fields",
+            },
+          } as ActionData,
+          400
+        );
       }
 
       return await handleChallengeCreation(
@@ -235,32 +218,41 @@ export const action: ActionFunction = async ({ request }) => {
 export default function ChallengesAdmin() {
   const actionData = useActionData<ActionData>();
   const [searchParams] = useSearchParams();
-  const loaderData = useLoaderData<{ accomplishments: AccomplishmentData }>();
+  const loaderData = useLoaderData<LoaderData>();
 
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
       <Container maxWidth="xs">
         <Typography variant="h4">Create Challenge</Typography>
+        {generateAlert("error", actionData?.createChallengeResponse?.error)}
+        {generateAlert("success", actionData?.createChallengeResponse?.success)}
         <CreateChallengeForm
-          formData={actionData?.createChallenge}
+          formData={actionData?.createChallengeResponse?.formData}
           redirectTo={searchParams.get("redirectTo")}
         />
       </Container>
       {/* Display a list of accomplishments that need to be validated */}
-      {loaderData.accomplishments.accomplishments ? (
-        <Container style={{ marginTop: "50px" }}>
+      {loaderData.accomplishmentResponse?.accomplishments && (
+        <div style={{ marginTop: "50px" }}>
           <Typography textAlign="center" variant="h4">
             Pending Accomplishments
           </Typography>
+          {generateAlert(
+            "error",
+            actionData?.validateAccomplishmentResponse?.error
+          )}
+          {generateAlert(
+            "success",
+            actionData?.validateAccomplishmentResponse?.success
+          )}
           <AccomplishmentsGrid
-            accomplishments={loaderData.accomplishments}
+            accomplishments={loaderData.accomplishmentResponse?.accomplishments}
             formData={{
-              validateAccomplishment: actionData?.validateAccomplishment,
+              validateForm:
+                actionData?.validateAccomplishmentResponse?.formData,
             }}
           />
-        </Container>
-      ) : (
-        ""
+        </div>
       )}
     </Container>
   );

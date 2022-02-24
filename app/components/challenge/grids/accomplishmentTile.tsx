@@ -4,14 +4,11 @@ import {
   CardActions,
   Typography,
   Button,
-  Alert,
 } from "@mui/material";
-import { Accomplishment, Validation } from "~/models/Accomplishment";
-
-export type ValidateAccomplishmentFormData = {
-  formError?: string;
-  formSuccess?: string;
-};
+import {
+  Accomplishment,
+  ValidateAccomplishmentFormData,
+} from "~/models/Accomplishment";
 
 export default function AccomplishmentTile({
   accomplishment,
@@ -37,18 +34,8 @@ export default function AccomplishmentTile({
       </CardContent>
       {userPrivilege &&
       userPrivilege >= 1 &&
-      accomplishment.validation === "PENDING" ? (
+      accomplishment.validation === "PENDING" && (
         <CardActions>
-          {formData?.formError ? (
-            <Alert severity="error">{formData?.formError}</Alert>
-          ) : (
-            ""
-          )}
-          {formData?.formSuccess ? (
-            <Alert severity="success">{formData?.formSuccess}</Alert>
-          ) : (
-            ""
-          )}
           {/* Form to validate an accomplishment */}
           <form
             style={{ display: "flex", justifyContent: "space-between" }}
@@ -84,8 +71,6 @@ export default function AccomplishmentTile({
             </Button>
           </form>
         </CardActions>
-      ) : (
-        ""
       )}
     </Card>
   );

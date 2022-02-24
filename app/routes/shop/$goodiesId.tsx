@@ -10,10 +10,17 @@ import {
 
 import GoodiesDisplay from "~/components/shop/goodiesDisplay";
 
-import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
+import {
+  generateAlert,
+  generateExpectedError,
+  generateUnexpectedError,
+} from "~/utils/error";
 
-import { Goodies } from "~/models/Goodies";
-import { Purchase } from "~/models/Purchase";
+import {
+  CreateGoodiesFormData,
+  DeleteGoodiesFormData,
+  Goodies,
+} from "~/models/Goodies";
 
 import { requireAuth } from "~/services/authentication";
 import { deleteGoodies, getGoodies, updateGoodies } from "~/services/goodies";
@@ -26,88 +33,90 @@ import {
 import { Container, Typography } from "@mui/material";
 import { useContext } from "react";
 import { UserContext } from "~/components/userContext";
-import UpdateGoodiesForm, {
-  UpdateGoodiesFormData,
-} from "~/components/shop/forms/updateGoodiesForm";
-import PurchaseGoodiesForm, {
-  PurchaseGoodiesFormData,
-} from "~/components/shop/forms/purchaseGoodiesForm";
-import { APIError } from "~/utils/axios";
+import UpdateGoodiesForm from "~/components/shop/forms/updateGoodiesForm";
+import PurchaseGoodiesForm from "~/components/shop/forms/purchaseGoodiesForm";
 import { getSelft } from "~/services/user";
-import DeleteGoodiesForm, {
-  DeleteGoodiesFormData,
-} from "~/components/shop/forms/deleteGoodiesForm";
-import PurchasesGrid, {
-  PurchaseData,
-} from "~/components/shop/grids/purchaseGrid";
-import { RefundPurchaseFormData } from "~/components/shop/grids/purchaseTile";
+import DeleteGoodiesForm from "~/components/shop/forms/deleteGoodiesForm";
+import PurchasesGrid from "~/components/shop/grids/purchaseGrid";
+import {
+  Purchase,
+  PurchaseGoodiesFormData,
+  RefundGoodiesFormData,
+} from "~/models/Purchase";
 
 type LoaderData = {
-  goodies: Goodies;
-  purchases: PurchaseData;
+  goodiesResponse?: { error?: string; success?: string; goodies?: Goodies };
+  purchaseResponse?: {
+    error?: string;
+    success?: string;
+    purchases?: Purchase[];
+  };
 };
 
 type ActionData = {
-  purchaseGoodies?: PurchaseGoodiesFormData;
-  updateGoodies?: UpdateGoodiesFormData;
-  deleteGoodies?: DeleteGoodiesFormData;
-  refundGoodies?: RefundPurchaseFormData;
+  purchaseGoodiesResponse?: {
+    formData?: PurchaseGoodiesFormData;
+    success?: string;
+    error?: string;
+  };
+  updateGoodiesResponse?: {
+    formData?: CreateGoodiesFormData;
+    success?: string;
+    error?: string;
+  };
+  deleteGoodiesResponse?: {
+    formData?: DeleteGoodiesFormData;
+    success?: string;
+    error?: string;
+  };
+  refundGoodiesResponse?: {
+    formData?: RefundGoodiesFormData;
+    success?: string;
+    error?: string;
+  };
 };
+
+async function loadPurchase(
+  token: string,
+  goodiesResponse: { error?: string; success?: string; goodies?: Goodies },
+  goodiesCode: number,
+  userId?: number
+) {
+  const { code, ...purchaseResponse } = await getManyPurchase(
+    token,
+    100,
+    0,
+    goodiesResponse.goodies?.id,
+    userId
+  );
+
+  return json({ goodiesResponse, purchaseResponse } as LoaderData, goodiesCode);
+}
+
+async function loadGoodies(token: string, goodiesId: number, userId?: number) {
+  const { code, ...goodiesResponse } = await getGoodies(token, goodiesId);
+
+  return loadPurchase(token, goodiesResponse, code, userId);
+}
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   if (!params.goodiesId) {
-    throw json("Invalid goodies query", 400);
+    throw json("Invalid goodies query", 404);
   }
 
   const token = await requireAuth(request, `/shop/${params.goodiesId}`);
 
   const userInfo = (await getSelft(token))?.user;
 
-  const goodies = (await getGoodies(token, parseInt(params.goodiesId)))
-    ?.goodies;
-
-  //Load purchases, we don't want to throwAPI errors
-  let purchases;
-  try {
-    purchases = (
-      await getManyPurchase(
-        token,
-        undefined,
-        undefined,
-        goodies?.id,
-        userInfo?.id
-      )
-    )?.purchases;
-  } catch (err) {
-    if (err instanceof APIError) {
-      return { goodies, purchases: { purchasesError: err.error.message } };
-    }
-    throw err;
-  }
-
-  return {
-    goodies,
-    purchases: { purchases },
-  };
+  return await loadGoodies(token, parseInt(params.goodiesId), userInfo?.id);
 };
 
 async function handleCreatePurchase(token: string, goodiesId: number) {
-  try {
-    await createPurchase(token, {
-      goodiesId: goodiesId,
-    });
-  } catch (err) {
-    if (err instanceof APIError) {
-      return json(
-        {
-          purchaseGoodies: { formError: err.error.message },
-        },
-        err.code
-      );
-    }
-  }
+  const { code, ...purchaseGoodiesResponse } = await createPurchase(token, {
+    goodiesId: goodiesId,
+  });
 
-  return json({ purchaseGoodies: { formSuccess: "Goodies bought" } }, 201);
+  return json({ purchaseGoodiesResponse } as ActionData, code);
 }
 
 //Validator for price fiels
@@ -144,23 +153,49 @@ async function handleUpdateGoodies(
   };
 
   if (Object.values(fieldsError).some(Boolean)) {
-    return json({ updateGoodies: { fields, fieldsError } }, 400);
+    return json(
+      { updateGoodiesResponse: { fields, fieldsError } } as ActionData,
+      400
+    );
   }
 
-  try {
-    await updateGoodies(token, fields, goodiesId);
-  } catch (err) {
-    if (err instanceof APIError) {
-      return json(
-        {
-          updateGoodies: { formError: err.error.message, fields },
-        },
-        err.code
-      );
-    }
+  const { code, ...updateGoodiesResponse } = await updateGoodies(
+    token,
+    fields,
+    goodiesId
+  );
+
+  return json(
+    {
+      updateGoodiesResponse: {
+        ...updateGoodiesResponse,
+        formData: { fields, fieldsError },
+      },
+    } as ActionData,
+    code
+  );
+}
+
+async function handleDeleteGoodies(token: string, goodiesId: number) {
+  const { code, ...deleteGoodiesResponse } = await deleteGoodies(
+    token,
+    goodiesId
+  );
+
+  if (deleteGoodiesResponse.error) {
+    return json({ deleteGoodiesResponse } as ActionData, code);
   }
 
-  return json({ updateGoodies: { formSuccess: "Goodies updated" } }, 200);
+  return redirect("/shop");
+}
+
+async function handleRefundGoodies(token: string, purchaseId: number) {
+  const { code, ...refundGoodiesResponse } = await deletePurchase(
+    token,
+    purchaseId
+  );
+
+  return json({ refundGoodiesResponse } as ActionData, code);
 }
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -170,6 +205,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   const token = await requireAuth(request, `/shop/${params.challengeId}`);
 
+  //TODO : remove method & use REST routes
   //Initialize form fields
   const form = await request.formData();
   const method = form.get("method");
@@ -187,48 +223,12 @@ export const action: ActionFunction = async ({ request, params }) => {
   if (typeof method !== "string") {
     return json(
       {
-        purchaseGoodies: {
-          formError: "Something went wrong, please try again",
+        purchaseGoodiesResponse: {
+          error: "Something went wrong, please try again",
         },
-      },
+      } as ActionData,
       500
     );
-  }
-
-  async function handleDeleteGoodies(token: string, goodiesId: number) {
-    //Try to delete accomplishment
-    try {
-      await deleteGoodies(token, goodiesId);
-    } catch (err) {
-      //We don't want to throw API errors, we will show the in the form instead
-      if (err instanceof APIError) {
-        return json(
-          {
-            deleteGoodies: { formError: err.error.message },
-          },
-          err.code
-        );
-      }
-    }
-
-    return redirect("/shop");
-  }
-
-  async function handleDeletePurchase(token: string, purchaseId: number) {
-    try {
-      await deletePurchase(token, purchaseId);
-    } catch (err) {
-      if (err instanceof APIError) {
-        return json(
-          {
-            refundGoodies: { formError: err.error.message },
-          },
-          err.code
-        );
-      }
-    }
-
-    return json({ refundGoodies: { formSuccess: "Goodies refuned" } }, 200);
   }
 
   switch (method) {
@@ -236,10 +236,10 @@ export const action: ActionFunction = async ({ request, params }) => {
       if (button !== "purchase") {
         return json(
           {
-            purchaseGoodies: {
-              formError: "There was an error, please try again",
+            purchaseGoodiesResponse: {
+              error: "There was an error, please try again",
             },
-          },
+          } as ActionData,
           500
         );
       }
@@ -254,8 +254,11 @@ export const action: ActionFunction = async ({ request, params }) => {
       ) {
         return json(
           {
-            updateGoodies: { formError: "You must fill all the fields" },
-          },
+            updateGoodiesResponse: {
+              error:
+                "Invalid data provided, please check if you have fill all the requierd fields",
+            },
+          } as ActionData,
           400
         );
       }
@@ -274,13 +277,15 @@ export const action: ActionFunction = async ({ request, params }) => {
       if (typeof purchaseId !== "string") {
         return json(
           {
-            refundGoodies: { formError: "There was an error" },
-          },
-          400
+            refundGoodiesResponse: {
+              error: "There was an error, please try again",
+            },
+          } as ActionData,
+          500
         );
       }
 
-      return await handleDeletePurchase(token, parseInt(purchaseId));
+      return await handleRefundGoodies(token, parseInt(purchaseId));
     default:
       throw new Error("There was an error during form handling");
   }
@@ -289,24 +294,24 @@ export const action: ActionFunction = async ({ request, params }) => {
 // For the creator of the goodies, replace displays by inputs
 function displayGoodies(
   goodies: Goodies,
-  userId?: number,
-  formData?: {
-    updateForm?: UpdateGoodiesFormData;
+  formData: {
+    updateForm?: CreateGoodiesFormData;
     deleteForm?: DeleteGoodiesFormData;
-  }
+  },
+  userId?: number
 ) {
-  if (goodies.creatorId === userId) {
+  if (goodies?.creatorId === userId) {
     return (
-      <Container>
+      <div>
         <UpdateGoodiesForm goodies={goodies} formData={formData?.updateForm} />
         <DeleteGoodiesForm goodies={goodies} formData={formData?.deleteForm} />
-      </Container>
+      </div>
     );
   } else {
     return (
-      <Container>
+      <div>
         <GoodiesDisplay goodies={goodies} />
-      </Container>
+      </div>
     );
   }
 }
@@ -321,27 +326,46 @@ export default function Goodies() {
     <Container style={{ marginTop: "50px" }} component="main">
       <Container maxWidth="xs">
         <Typography variant="h4">Goodies</Typography>
-        {displayGoodies(loaderData.goodies, userInfo?.id, {
-          updateForm: actionData?.updateGoodies,
-          deleteForm: actionData?.deleteGoodies,
-        })}
+        {generateAlert("error", loaderData.goodiesResponse?.error)}
+        {generateAlert("error", actionData?.updateGoodiesResponse?.error)}
+        {generateAlert("success", actionData?.updateGoodiesResponse?.success)}
+        {generateAlert("error", actionData?.deleteGoodiesResponse?.error)}
+        {generateAlert("success", actionData?.deleteGoodiesResponse?.success)}
+        {loaderData.goodiesResponse?.goodies && (
+          <div>
+            {displayGoodies(
+              loaderData.goodiesResponse?.goodies,
+              {
+                updateForm: actionData?.updateGoodiesResponse?.formData,
+                deleteForm: actionData?.deleteGoodiesResponse?.formData,
+              },
+              userInfo?.id
+            )}
+            <PurchaseGoodiesForm
+              goodies={loaderData.goodiesResponse?.goodies}
+              formData={actionData?.purchaseGoodiesResponse?.formData}
+            />
+          </div>
+        )}
       </Container>
-      {/* Form to buy goodies */}
-      <Container style={{ marginTop: "10px" }} maxWidth="xs">
-        <PurchaseGoodiesForm formData={actionData?.purchaseGoodies} />
-      </Container>
-      {loaderData.purchases.purchases ? (
+      {loaderData.purchaseResponse?.purchases && (
         <div style={{ marginTop: "50px" }}>
           <Typography textAlign="center" variant="h4">
             Undelivered purchases
           </Typography>
+          {generateAlert("error", loaderData.purchaseResponse.error)}
+          {generateAlert("error", actionData?.purchaseGoodiesResponse?.error)}
+          {generateAlert(
+            "success",
+            actionData?.purchaseGoodiesResponse?.success
+          )}
+          {generateAlert("error", actionData?.refundGoodiesResponse?.error)}
+          {generateAlert("success", actionData?.refundGoodiesResponse?.success)}
           <PurchasesGrid
-            purchases={loaderData.purchases}
-            formData={actionData?.refundGoodies}
+            purchases={loaderData.purchaseResponse.purchases}
+            formData={actionData?.refundGoodiesResponse?.formData}
           />
         </div>
-      ) : (
-        ""
       )}
     </Container>
   );

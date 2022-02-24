@@ -1,11 +1,6 @@
 import axios from "axios";
 import { User } from "~/models/User";
-import {
-  buildAxiosHeaders,
-  buildSearchParams,
-  handleAPIError,
-} from "~/utils/axios";
-import { logout, requireAuth } from "./authentication";
+import { buildAxiosHeaders, buildSearchParams } from "~/utils/axios";
 
 type RegisterInfo = {
   email: string;
@@ -19,9 +14,15 @@ export async function registerUser(registerInfo: RegisterInfo) {
   try {
     const reply = await axios.put<{ message: string }>("/user", registerInfo);
 
-    return reply.data;
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -35,9 +36,15 @@ export async function updateSelf(token: string, registerInfo: RegisterInfo) {
       }
     );
 
-    return reply.data;
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -55,9 +62,15 @@ export async function updateUser(
       }
     );
 
-    return reply.data;
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -67,9 +80,15 @@ export async function deleteUser(token: string, userId: number) {
       headers: buildAxiosHeaders(token),
     });
 
-    return reply.data;
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -79,9 +98,19 @@ export async function getSelft(token: string) {
       headers: buildAxiosHeaders(token),
     });
 
-    return reply.data;
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      user: reply.data.user,
+    };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -94,9 +123,19 @@ export async function getUser(token: string, userId: number) {
       }
     );
 
-    return reply.data;
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      user: reply.data.user,
+    };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -107,7 +146,7 @@ export async function getManyUser(
 ) {
   const searchParams = buildSearchParams(
     { key: "limit", val: limit?.toString() },
-    { key: "offset", val: offset?.toString() },
+    { key: "offset", val: offset?.toString() }
   );
   try {
     const reply = await axios.get<{ message: string; users: User[] }>(
@@ -117,8 +156,18 @@ export async function getManyUser(
       }
     );
 
-    return reply.data;
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      users: reply.data.users,
+    };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }

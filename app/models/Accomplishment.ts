@@ -8,3 +8,16 @@ export type Accomplishment = {
 };
 
 export type Validation = "ACCEPTED" | "PENDING" | "REFUSED";
+
+export type CreateAccomplishmentFormData = {
+  fieldsError?: {
+    proof?: string;
+  };
+  fields?: {
+    proof: string;
+  };
+};
+
+export type DeleteAccomplishmentFormData = {};
+
+export type ValidateAccomplishmentFormData = {};

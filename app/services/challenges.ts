@@ -1,10 +1,6 @@
 import axios from "axios";
 import { Challenge } from "~/models/Challenge";
-import {
-  buildAxiosHeaders,
-  buildSearchParams,
-  handleAPIError,
-} from "~/utils/axios";
+import { buildAxiosHeaders, buildSearchParams } from "~/utils/axios";
 
 type ChallengeInfo = {
   name: string;
@@ -23,15 +19,27 @@ export async function getManyChallenge(
   );
   try {
     const reply = await axios.get<{ message: string; challenges: Challenge[] }>(
-      `/challenge/${searchParams.entries() ? "?" + searchParams.toString() : ""}`,
+      `/challenge/${
+        searchParams.entries() ? "?" + searchParams.toString() : ""
+      }`,
       {
         headers: buildAxiosHeaders(token),
       }
     );
 
-    return reply.data;
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      challenges: reply.data.challenges,
+    };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -44,9 +52,19 @@ export async function getChallenge(token: string, challengeId: number) {
       }
     );
 
-    return reply.data;
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      challenge: reply.data.challenge,
+    };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -63,9 +81,15 @@ export async function createChallenge(
       }
     );
 
-    return reply.data;
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -83,9 +107,15 @@ export async function updateChallenge(
       }
     );
 
-    return reply.data;
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -98,8 +128,14 @@ export async function deleteChallenge(token: string, challengeId: number) {
       }
     );
 
-    return reply.data;
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }

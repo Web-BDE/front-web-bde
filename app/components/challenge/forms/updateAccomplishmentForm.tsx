@@ -1,30 +1,21 @@
 import {
-  Alert,
   Button,
   Card,
   CardContent,
   TextField,
   Typography,
 } from "@mui/material";
-import { Accomplishment } from "~/models/Accomplishment";
-
-export type UpdateAccomplishmentFormData = {
-  formError?: string;
-  formSuccess?: string;
-  fieldsError?: {
-    proof?: string;
-  };
-  fields?: {
-    proof: string;
-  };
-};
+import {
+  Accomplishment,
+  CreateAccomplishmentFormData,
+} from "~/models/Accomplishment";
 
 export default function UpdateAccomplishmentForm({
   accomplishment,
   formData,
 }: {
   accomplishment: Accomplishment;
-  formData?: UpdateAccomplishmentFormData;
+  formData?: CreateAccomplishmentFormData;
 }) {
   return (
     <Card>
@@ -32,16 +23,6 @@ export default function UpdateAccomplishmentForm({
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           {new Date(accomplishment.createdAt).toLocaleDateString()}
         </Typography>
-        {formData?.formError ? (
-          <Alert severity="error">{formData?.formError}</Alert>
-        ) : (
-          ""
-        )}
-        {formData?.formSuccess ? (
-          <Alert severity="success">{formData?.formSuccess}</Alert>
-        ) : (
-          ""
-        )}
         <form method="post">
           {/* Method handled by the form */}
           <input type="hidden" name="method" value="update-accomplishment" />
@@ -57,13 +38,13 @@ export default function UpdateAccomplishmentForm({
             required
             fullWidth
             id="proof"
-            error={Boolean(formData?.fieldsError?.proof)}
-            helperText={formData?.fieldsError?.proof}
             label="Proof"
             name="proof"
             autoComplete="proof"
-            defaultValue={formData?.fields?.proof || accomplishment?.proof}
             autoFocus
+            defaultValue={formData?.fields?.proof || accomplishment?.proof}
+            error={Boolean(formData?.fieldsError?.proof)}
+            helperText={formData?.fieldsError?.proof}
           />
           <Button type="submit" fullWidth variant="contained" color="primary">
             Update

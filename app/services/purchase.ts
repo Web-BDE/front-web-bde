@@ -1,12 +1,7 @@
 import axios from "axios";
-import { Goodies } from "~/models/Goodies";
 import { Purchase } from "~/models/Purchase";
 
-import {
-  buildAxiosHeaders,
-  buildSearchParams,
-  handleAPIError,
-} from "~/utils/axios";
+import { buildAxiosHeaders, buildSearchParams } from "~/utils/axios";
 
 type PurchaseInfo = {
   goodiesId: number;
@@ -25,9 +20,15 @@ export async function createPurchase(
       }
     );
 
-    return reply.data;
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -40,9 +41,15 @@ export async function deletePurchase(token: string, purchaseId: number) {
       }
     );
 
-    return reply.data;
+    return { success: reply.data.message, code: reply.status };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -61,15 +68,27 @@ export async function getManyPurchase(
   );
   try {
     const reply = await axios.get<{ message: string; purchases: Purchase[] }>(
-      `/purchase/${searchParams.entries() ? "?" + searchParams.toString() : ""}`,
+      `/purchase/${
+        searchParams.entries() ? "?" + searchParams.toString() : ""
+      }`,
       {
         headers: buildAxiosHeaders(token),
       }
     );
 
-    return reply.data;
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      purchases: reply.data.purchases,
+    };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }
 
@@ -82,8 +101,18 @@ export async function getPurchase(token: string, purchaseId: number) {
       }
     );
 
-    return reply.data;
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      purchase: reply.data.purchase,
+    };
   } catch (err) {
-    handleAPIError(err);
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
   }
 }

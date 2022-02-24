@@ -8,18 +8,28 @@ import {
   useSearchParams,
 } from "remix";
 
-import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
-import { APIError } from "~/utils/axios";
+import {
+  generateAlert,
+  generateExpectedError,
+  generateUnexpectedError,
+} from "~/utils/error";
 
 import { requireAuth } from "~/services/authentication";
 
 import { Container, Typography } from "@mui/material";
 
-import CreateGoodiesForm, {
-  CreateGoodiesFormData,
-} from "~/components/shop/forms/createGoodiesForm";
+import CreateGoodiesForm from "~/components/shop/forms/createGoodiesForm";
 
 import { createGoodies } from "~/services/goodies";
+import { CreateGoodiesFormData } from "~/models/Goodies";
+
+type ActionData = {
+  createGoodiesResponse?: {
+    formData?: CreateGoodiesFormData;
+    error?: string;
+    success?: string;
+  };
+};
 
 export const loader: LoaderFunction = async ({ request }) => {
   return await requireAuth(request, "/shop/admin");
@@ -54,22 +64,34 @@ async function handleCreateGoodies(
     buyLimit,
   };
   const fieldsError = {
-    reward: validatePrice(price),
+    price: validatePrice(price),
     buyLimit: validateBuyLimit(buyLimit),
   };
 
   if (Object.values(fieldsError).some(Boolean)) {
-    return json({ fields, fieldsError }, 400);
+    return json(
+      {
+        createGoodiesResponse: { formData: { fields, fieldsError } },
+      } as ActionData,
+      400
+    );
   }
 
-  try {
-    await createGoodies(token, fields);
-    return redirect(redirectTo);
-  } catch (err) {
-    if (err instanceof APIError) {
-      return json({ formError: err.error.message, fields }, err.code);
-    }
+  const { code, ...createGoodiesResponse } = await createGoodies(token, fields);
+
+  if (createGoodiesResponse.error) {
+    return json(
+      {
+        createGoodiesResponse: {
+          ...createGoodiesResponse,
+          formData: { fields, fieldsError },
+        },
+      } as ActionData,
+      code
+    );
   }
+
+  return redirect("/shop");
 }
 
 export const action: ActionFunction = async ({ request }) => {
@@ -85,7 +107,14 @@ export const action: ActionFunction = async ({ request }) => {
 
   //Invalid rediractTo format, should never happen
   if (typeof redirectTo !== "string") {
-    return json({ formError: "There was an error, please try again" }, 500);
+    return json(
+      {
+        createGoodiesResponse: {
+          error: "There was an error, please try again",
+        },
+      } as ActionData,
+      500
+    );
   }
 
   //Check for field types
@@ -97,9 +126,11 @@ export const action: ActionFunction = async ({ request }) => {
   ) {
     return json(
       {
-        formError:
-          "Invalid data provided, please check if you have fill all the requierd fields",
-      },
+        createGoodiesResponse: {
+          error:
+            "Invalid data provided, please check if you have fill all the requierd fields",
+        },
+      } as ActionData,
       400
     );
   }
@@ -115,13 +146,15 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function ShopAdmin() {
-  const actionData = useActionData<CreateGoodiesFormData>();
+  const actionData = useActionData<ActionData>();
   const [searchParams] = useSearchParams();
   return (
     <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
       <Typography variant="h4">Create Goodies</Typography>
+      {generateAlert("error", actionData?.createGoodiesResponse?.error)}
+      {generateAlert("success", actionData?.createGoodiesResponse?.success)}
       <CreateGoodiesForm
-        formData={actionData}
+        formData={actionData?.createGoodiesResponse?.formData}
         redirectTo={searchParams.get("redirectTo")}
       />
     </Container>

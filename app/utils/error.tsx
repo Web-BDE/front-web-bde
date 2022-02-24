@@ -1,4 +1,4 @@
-import { Container, Grid, Typography } from "@mui/material";
+import { Alert, AlertColor, Container, Grid, Typography } from "@mui/material";
 import { Link, ThrownResponse } from "remix";
 
 export function generateExpectedError(caught: ThrownResponse) {
@@ -58,4 +58,9 @@ export function generateUnexpectedError(error: Error) {
       </Grid>
     </Container>
   );
+}
+export function generateAlert(severity: AlertColor, message?: string) {
+  if (message) {
+    return <Alert severity={severity}>{message}</Alert>;
+  }
 }
