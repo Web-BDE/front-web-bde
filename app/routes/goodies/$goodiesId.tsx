@@ -282,6 +282,14 @@ export const action: ActionFunction = async ({ request, params, context }) => {
           }
 
           return await handleRefundGoodies(token, parseInt(purchaseId));
+
+        default:
+          return json(
+            {
+              deleteGoodiesResponse: { error: "Bad request kind" },
+            } as ActionData,
+            404
+          );
       }
 
     default:

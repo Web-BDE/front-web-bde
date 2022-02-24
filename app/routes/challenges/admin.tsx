@@ -138,23 +138,29 @@ export const action: ActionFunction = async ({ request }) => {
 
   //Declare all fields
   const form = await request.formData();
-  const method = form.get("method");
-  //Validation fields
-  const validation = form.get("validation");
-  const accomplishmentId = form.get("accomplishmentId");
-  //Challenge creation fields
-  const name = form.get("name");
-  const description = form.get("description");
-  const reward = form.get("reward");
 
   //Validation request
-  switch (method) {
-    case "validate-accomplishment":
+  switch (request.method) {
+    case "PATCH":
+      //Validation fields
+      const validation = form.get("validation");
+      const accomplishmentId = new URL(request.url).searchParams.get(
+        "accomplishmentId"
+      );
+
+      if (!accomplishmentId) {
+        return json(
+          {
+            validateAccomplishmentResponse: {
+              error: "Invalid accomplishment query",
+            },
+          } as ActionData,
+          404
+        );
+      }
+
       //Should never happend
-      if (
-        typeof accomplishmentId !== "string" ||
-        (validation !== "ACCEPTED" && validation !== "REFUSED")
-      ) {
+      if (validation !== "ACCEPTED" && validation !== "REFUSED") {
         return json(
           {
             validateAccomplishmentResponse: {
@@ -171,7 +177,11 @@ export const action: ActionFunction = async ({ request }) => {
         parseInt(accomplishmentId)
       );
 
-    case "create-challenge":
+    case "PUT":
+      //Challenge creation fields
+      const name = form.get("name");
+      const description = form.get("description");
+      const reward = form.get("reward");
 
       //Check for undefined values
       if (
@@ -196,8 +206,9 @@ export const action: ActionFunction = async ({ request }) => {
         parseInt(reward),
         description ? description : undefined
       );
+
     default:
-      throw new Error("There was an error during form handling");
+      throw json("Bad request method", 404);
   }
 };
 

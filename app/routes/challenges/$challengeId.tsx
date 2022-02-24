@@ -257,25 +257,25 @@ async function handleDeleteChallenge(token: string, challengeId: number) {
 
 export const action: ActionFunction = async ({ request, params }) => {
   if (!params.challengeId) {
-    throw json("Invalid challenge query", 404);
+    return json(
+      {
+        updateChallengeResponse: { error: "Invalid challenge query" },
+      } as ActionData,
+      404
+    );
   }
 
   const token = await requireAuth(request, `/challenge/${params.challengeId}`);
 
   //Decalare all fields
   const form = await request.formData();
-  const method = form.get("method");
-  //Accomplishment creation
-  const proof = form.get("proof");
-  //Accomplishment update
-  const accomplishmentId = form.get("accomplishmentId");
-  //Challenge update
-  const name = form.get("name");
-  const description = form.get("description");
-  const reward = form.get("reward");
+  const kind = form.get("kind");
 
-  switch (method) {
-    case "create-accomplishment":
+  switch (request.method) {
+    case "PUT":
+      //Accomplishment creation
+      const proof = form.get("proof");
+
       if (typeof proof !== "string") {
         return json(
           {
@@ -292,80 +292,122 @@ export const action: ActionFunction = async ({ request, params }) => {
         proof,
         parseInt(params.challengeId)
       );
-    case "update-accomplishment":
-      if (typeof accomplishmentId !== "string") {
-        return json(
-          {
-            updateAccomplishmentResponse: {
-              error: "There was an error, Please try again",
-            },
-          } as ActionData,
-          500
-        );
+    case "PATCH":
+      switch (kind) {
+        case "accomplishment":
+          const proof = form.get("proof");
+          const accomplishmentId = new URL(request.url).searchParams.get(
+            "accomplishmentId"
+          );
+
+          if (!accomplishmentId) {
+            return json(
+              {
+                validateAccomplishmentResponse: {
+                  error: "Invalid accomplishment query",
+                },
+              } as ActionData,
+              404
+            );
+          }
+
+          if (typeof proof !== "string") {
+            return json(
+              {
+                updateAccomplishmentResponse: {
+                  error:
+                    "Invalid data provided, please check if you have fill all the requierd fields",
+                },
+              } as ActionData,
+              400
+            );
+          }
+
+          return await handleAccomplishmentUpdate(
+            token,
+            proof,
+            parseInt(accomplishmentId)
+          );
+
+        case "challenge":
+          //Challenge update
+          const name = form.get("name");
+          const description = form.get("description");
+          const reward = form.get("reward");
+
+          if (
+            typeof name !== "string" ||
+            (typeof description !== "string" &&
+              typeof description !== "undefined") ||
+            typeof reward !== "string"
+          ) {
+            return json(
+              {
+                updateChallengeResponse: {
+                  error:
+                    "Invalid data provided, please check if you have fill all the requierd fields",
+                },
+              } as ActionData,
+              400
+            );
+          }
+
+          return await handleChallengeUpdate(
+            token,
+            name,
+            description,
+            parseInt(reward),
+            parseInt(params.challengeId)
+          );
+
+        default:
+          return json(
+            {
+              updateChallengeResponse: { error: "Bad request kind" },
+            } as ActionData,
+            404
+          );
+      }
+    case "DELETE":
+      switch (kind) {
+        case "accomplishment":
+          const accomplishmentId = new URL(request.url).searchParams.get(
+            "accomplishmentId"
+          );
+
+          if (!accomplishmentId) {
+            return json(
+              {
+                validateAccomplishmentResponse: {
+                  error: "Invalid accomplishment query",
+                },
+              } as ActionData,
+              404
+            );
+          }
+
+          return await handleDeleteAccomplishment(
+            token,
+            parseInt(accomplishmentId)
+          );
+
+        case "challenge":
+          return await handleDeleteChallenge(
+            token,
+            parseInt(params.challengeId)
+          );
+
+        default:
+          return json(
+            {
+              deleteChallengeResponse: { error: "Bad request kind" },
+            } as ActionData,
+            404
+          );
       }
 
-      if (typeof proof !== "string") {
-        return json(
-          {
-            updateAccomplishmentResponse: {
-              error:
-                "Invalid data provided, please check if you have fill all the requierd fields",
-            },
-          } as ActionData,
-          400
-        );
-      }
-
-      return await handleAccomplishmentUpdate(
-        token,
-        proof,
-        parseInt(accomplishmentId)
-      );
-    case "update-challenge":
-      if (
-        typeof name !== "string" ||
-        (typeof description !== "string" &&
-          typeof description !== "undefined") ||
-        typeof reward !== "string"
-      ) {
-        return json(
-          {
-            updateChallengeResponse: {
-              error:
-                "Invalid data provided, please check if you have fill all the requierd fields",
-            },
-          } as ActionData,
-          400
-        );
-      }
-
-      return await handleChallengeUpdate(
-        token,
-        name,
-        description,
-        parseInt(reward),
-        parseInt(params.challengeId)
-      );
-    case "delete-accomplishment":
-      if (typeof accomplishmentId !== "string") {
-        return json(
-          {
-            updateAccomplishmentResponse: {
-              error: "There was an error, please try again",
-            },
-          } as ActionData,
-          400
-        );
-      }
-
-      return await handleDeleteAccomplishment(
-        token,
-        parseInt(accomplishmentId)
-      );
-    case "delete-challenge":
-      return await handleDeleteChallenge(token, parseInt(params.challengeId));
     default:
-      throw new Error("There was an error during form handling");
+      throw json("Bad request method", 404);
   }
 };
 
