@@ -9,15 +9,13 @@ export type Goodies = {
 };
 
 export type CreateGoodiesFormData = {
-  error?: string;
-  success?: string;
-  fieldsError?: {
+  fieldsError: {
     name?: string;
     description?: string;
     price?: string;
     buyLimit?: string;
   };
-  fields?: {
+  fields: {
     name: string;
     description?: string;
     price: number;
@@ -25,7 +23,4 @@ export type CreateGoodiesFormData = {
   };
 };
 
-export type DeleteGoodiesFormData = {
-  error?: string;
-  success?: string;
-};
+export type DeleteGoodiesFormData = {};

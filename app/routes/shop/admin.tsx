@@ -8,20 +8,27 @@ import {
   useSearchParams,
 } from "remix";
 
-import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
+import {
+  generateAlert,
+  generateExpectedError,
+  generateUnexpectedError,
+} from "~/utils/error";
 
 import { requireAuth } from "~/services/authentication";
 
 import { Container, Typography } from "@mui/material";
 
-import CreateGoodiesForm, {
-  CreateGoodiesFormData,
-} from "~/components/shop/forms/createGoodiesForm";
+import CreateGoodiesForm from "~/components/shop/forms/createGoodiesForm";
 
 import { createGoodies } from "~/services/goodies";
+import { CreateGoodiesFormData } from "~/models/Goodies";
 
 type ActionData = {
-  createGoodiesResponse: CreateGoodiesFormData;
+  createGoodiesResponse: {
+    formData?: CreateGoodiesFormData;
+    error?: string;
+    success?: string;
+  };
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -57,13 +64,15 @@ async function handleCreateGoodies(
     buyLimit,
   };
   const fieldsError = {
-    reward: validatePrice(price),
+    price: validatePrice(price),
     buyLimit: validateBuyLimit(buyLimit),
   };
 
   if (Object.values(fieldsError).some(Boolean)) {
     return json(
-      { createGoodiesResponse: { fields, fieldsError } } as ActionData,
+      {
+        createGoodiesResponse: { formData: { fields, fieldsError } },
+      } as ActionData,
       400
     );
   }
@@ -75,8 +84,7 @@ async function handleCreateGoodies(
       {
         createGoodiesResponse: {
           ...createGoodiesResponse,
-          fields,
-          fieldsError,
+          formData: { fields, fieldsError },
         },
       } as ActionData,
       code
@@ -143,8 +151,10 @@ export default function ShopAdmin() {
   return (
     <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
       <Typography variant="h4">Create Goodies</Typography>
+      {generateAlert("error", actionData?.createGoodiesResponse.error)}
+      {generateAlert("success", actionData?.createGoodiesResponse.success)}
       <CreateGoodiesForm
-        formData={actionData?.createGoodiesResponse}
+        formData={actionData?.createGoodiesResponse.formData}
         redirectTo={searchParams.get("redirectTo")}
       />
     </Container>

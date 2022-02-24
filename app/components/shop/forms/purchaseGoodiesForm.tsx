@@ -1,13 +1,18 @@
-import { Alert, Button } from "@mui/material";
+import { Button } from "@mui/material";
+import { Goodies } from "~/models/Goodies";
 import { PurchaseGoodiesFormData } from "~/models/Purchase";
-import { generateAlert } from "~/utils/error";
 
-export default function PurchaseGoodiesForm ({ formData }: { formData?: PurchaseGoodiesFormData }) {
+export default function PurchaseGoodiesForm({
+  formData,
+  goodies,
+}: {
+  goodies: Goodies;
+  formData?: PurchaseGoodiesFormData;
+}) {
   return (
     <form method="post">
-      {generateAlert("error", formData?.error)}
-      {generateAlert("success", formData?.success)}
       <input type="hidden" name="method" value="purchase-goodies" />
+      <input type="hidden" name="goodiesId" value={goodies.id} />
       <Button
         type="submit"
         fullWidth

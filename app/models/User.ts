@@ -8,21 +8,17 @@ export type User = {
 };
 
 export type LoginFormData = {
-  error?: string;
-  success?: string;
-  fieldsError?: {
+  fieldsError: {
     email?: string;
     password?: string;
   };
-  fields?: {
+  fields: {
     email: string;
   };
 };
 
 export type RegisterFormData = {
-  error?: string;
-  success?: string;
-  fieldsError?: {
+  fieldsError: {
     email?: string;
     password?: string;
     confirm?: string;
@@ -30,7 +26,7 @@ export type RegisterFormData = {
     name?: string;
     surname?: string;
   };
-  fields?: {
+  fields: {
     email: string;
     pseudo: string;
     name?: string;

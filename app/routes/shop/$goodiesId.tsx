@@ -10,9 +10,17 @@ import {
 
 import GoodiesDisplay from "~/components/shop/goodiesDisplay";
 
-import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
+import {
+  generateAlert,
+  generateExpectedError,
+  generateUnexpectedError,
+} from "~/utils/error";
 
-import { Goodies } from "~/models/Goodies";
+import {
+  CreateGoodiesFormData,
+  DeleteGoodiesFormData,
+  Goodies,
+} from "~/models/Goodies";
 
 import { requireAuth } from "~/services/authentication";
 import { deleteGoodies, getGoodies, updateGoodies } from "~/services/goodies";
@@ -25,39 +33,52 @@ import {
 import { Container, Typography } from "@mui/material";
 import { useContext } from "react";
 import { UserContext } from "~/components/userContext";
-import UpdateGoodiesForm, {
-  UpdateGoodiesFormData,
-} from "~/components/shop/forms/updateGoodiesForm";
-import PurchaseGoodiesForm, {
-  PurchaseGoodiesFormData,
-} from "~/components/shop/forms/purchaseGoodiesForm";
+import UpdateGoodiesForm from "~/components/shop/forms/updateGoodiesForm";
+import PurchaseGoodiesForm from "~/components/shop/forms/purchaseGoodiesForm";
 import { getSelft } from "~/services/user";
-import DeleteGoodiesForm, {
-  DeleteGoodiesFormData,
-} from "~/components/shop/forms/deleteGoodiesForm";
-import PurchasesGrid, {
-  PurchaseResponse,
-} from "~/components/shop/grids/purchaseGrid";
-import { RefundPurchaseFormData } from "~/components/shop/grids/purchaseTile";
-
-//TODO : move Response & FormDatas in /models
-type GoodiesResponse = { success?: string; goodies?: Goodies; error?: string };
+import DeleteGoodiesForm from "~/components/shop/forms/deleteGoodiesForm";
+import PurchasesGrid from "~/components/shop/grids/purchaseGrid";
+import {
+  Purchase,
+  PurchaseGoodiesFormData,
+  RefundGoodiesFormData,
+} from "~/models/Purchase";
 
 type LoaderData = {
-  goodiesResponse: GoodiesResponse;
-  purchaseResponse?: PurchaseResponse;
+  goodiesResponse: { error?: string; success?: string; goodies?: Goodies };
+  purchaseResponse?: {
+    error?: string;
+    success?: string;
+    purchases?: Purchase[];
+  };
 };
 
 type ActionData = {
-  purchaseGoodiesResponse?: PurchaseGoodiesFormData;
-  updateGoodiesResponse?: UpdateGoodiesFormData;
-  deleteGoodiesResponse?: DeleteGoodiesFormData;
-  refundGoodiesResponse?: RefundPurchaseFormData;
+  purchaseGoodiesResponse?: {
+    formData?: PurchaseGoodiesFormData;
+    success?: string;
+    error?: string;
+  };
+  updateGoodiesResponse?: {
+    formData?: CreateGoodiesFormData;
+    success?: string;
+    error?: string;
+  };
+  deleteGoodiesResponse?: {
+    formData?: DeleteGoodiesFormData;
+    success?: string;
+    error?: string;
+  };
+  refundGoodiesResponse?: {
+    formData?: RefundGoodiesFormData;
+    success?: string;
+    error?: string;
+  };
 };
 
 async function loadPurchase(
   token: string,
-  goodiesResponse: GoodiesResponse,
+  goodiesResponse: { error?: string; success?: string; goodies?: Goodies },
   goodiesCode: number,
   userId?: number
 ) {
@@ -74,11 +95,6 @@ async function loadPurchase(
 
 async function loadGoodies(token: string, goodiesId: number, userId?: number) {
   const { code, ...goodiesResponse } = await getGoodies(token, goodiesId);
-
-  //TODO : don't throw
-  if (goodiesResponse.error) {
-    throw json(goodiesResponse.error, code);
-  }
 
   return loadPurchase(token, goodiesResponse, code, userId);
 }
@@ -100,7 +116,10 @@ async function handleCreatePurchase(token: string, goodiesId: number) {
     goodiesId: goodiesId,
   });
 
-  return json({ purchaseGoodiesResponse } as ActionData, code);
+  return json(
+    { purchaseGoodiesResponse: { ...purchaseGoodiesResponse } } as ActionData,
+    code
+  );
 }
 
 //Validator for price fiels
@@ -151,7 +170,10 @@ async function handleUpdateGoodies(
 
   return json(
     {
-      updateGoodiesResponse: { ...updateGoodiesResponse, fields, fieldsError },
+      updateGoodiesResponse: {
+        ...updateGoodiesResponse,
+        formData: { fields, fieldsError },
+      },
     } as ActionData,
     code
   );
@@ -164,7 +186,10 @@ async function handleDeleteGoodies(token: string, goodiesId: number) {
   );
 
   if (deleteGoodiesResponse.error) {
-    return json({ deleteGoodiesResponse } as ActionData, code);
+    return json(
+      { deleteGoodiesResponse: { ...deleteGoodiesResponse } } as ActionData,
+      code
+    );
   }
 
   return redirect("/shop", code);
@@ -176,7 +201,10 @@ async function handleRefundGoodies(token: string, purchaseId: number) {
     purchaseId
   );
 
-  return json({ refundGoodiesResponse } as ActionData, code);
+  return json(
+    { refundGoodiesResponse: { ...refundGoodiesResponse } } as ActionData,
+    code
+  );
 }
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -275,26 +303,32 @@ export const action: ActionFunction = async ({ request, params }) => {
 // For the creator of the goodies, replace displays by inputs
 function displayGoodies(
   goodies: Goodies,
-  userId?: number,
-  formData?: {
-    updateForm?: UpdateGoodiesFormData;
+  formData: {
+    updateForm?: CreateGoodiesFormData;
     deleteForm?: DeleteGoodiesFormData;
     purchaseForm?: PurchaseGoodiesFormData;
-  }
+  },
+  userId?: number
 ) {
   if (goodies?.creatorId === userId) {
     return (
       <Container>
         <UpdateGoodiesForm goodies={goodies} formData={formData?.updateForm} />
         <DeleteGoodiesForm goodies={goodies} formData={formData?.deleteForm} />
-        <PurchaseGoodiesForm formData={formData?.purchaseForm} />
+        <PurchaseGoodiesForm
+          goodies={goodies}
+          formData={formData?.purchaseForm}
+        />
       </Container>
     );
   } else {
     return (
       <Container>
         <GoodiesDisplay goodies={goodies} />
-        <PurchaseGoodiesForm formData={formData?.purchaseForm} />
+        <PurchaseGoodiesForm
+          goodies={goodies}
+          formData={formData?.purchaseForm}
+        />
       </Container>
     );
   }
@@ -310,11 +344,17 @@ export default function Goodies() {
     <Container style={{ marginTop: "50px" }} component="main">
       <Container maxWidth="xs">
         <Typography variant="h4">Goodies</Typography>
+        {generateAlert("error", loaderData.goodiesResponse.error)}
         {loaderData.goodiesResponse.goodies
-          ? displayGoodies(loaderData.goodiesResponse.goodies, userInfo?.id, {
-              updateForm: actionData?.updateGoodiesResponse,
-              deleteForm: actionData?.deleteGoodiesResponse,
-            })
+          ? displayGoodies(
+              loaderData.goodiesResponse.goodies,
+              {
+                updateForm: actionData?.updateGoodiesResponse?.formData,
+                deleteForm: actionData?.deleteGoodiesResponse?.formData,
+                purchaseForm: actionData?.purchaseGoodiesResponse?.formData,
+              },
+              userInfo?.id
+            )
           : ""}
       </Container>
       {loaderData.purchaseResponse?.purchases ? (
@@ -323,8 +363,8 @@ export default function Goodies() {
             Undelivered purchases
           </Typography>
           <PurchasesGrid
-            purchases={loaderData.purchaseResponse}
-            formData={actionData?.refundGoodiesResponse}
+            purchases={loaderData.purchaseResponse.purchases}
+            formData={actionData?.refundGoodiesResponse?.formData}
           />
         </div>
       ) : (

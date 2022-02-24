@@ -14,12 +14,13 @@ import {
   generateUnexpectedError,
 } from "~/utils/error";
 
-import LoginForm, { LoginFormData } from "~/components/loginForm";
+import LoginForm from "~/components/loginForm";
 import { Container, Typography } from "@mui/material";
 import { loginUser } from "~/services/authentication";
+import { LoginFormData } from "~/models/User";
 
 type ActionData = {
-  loginUser: LoginFormData;
+  loginUser: { formData?: LoginFormData; error?: string; success?: string };
 };
 
 export async function handleLogin(
@@ -62,7 +63,7 @@ export const action: ActionFunction = async ({ request }) => {
   if (typeof redirectTo !== "string") {
     return json(
       {
-        loginUser: { formError: "Something went wrong, please try again" },
+        loginUser: { error: "Something went wrong, please try again" },
       } as ActionData,
       500
     );
@@ -72,7 +73,7 @@ export const action: ActionFunction = async ({ request }) => {
     return json(
       {
         loginUser: {
-          formError:
+          error:
             "Invalid data provided, please check if you have fill all the requierd fields",
         },
       } as ActionData,
@@ -95,7 +96,7 @@ export default function Login() {
       {generateAlert("error", actionData?.loginUser.error)}
       {generateAlert("success", actionData?.loginUser.success)}
       <LoginForm
-        formData={actionData?.loginUser}
+        formData={actionData?.loginUser.formData}
         redirectTo={searchparams.get("redirectTo")}
       />
     </Container>
