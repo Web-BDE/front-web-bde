@@ -345,6 +345,9 @@ export default function Goodies() {
       <Container maxWidth="xs">
         <Typography variant="h4">Goodies</Typography>
         {generateAlert("error", loaderData.goodiesResponse.error)}
+        {generateAlert("error", actionData?.updateGoodiesResponse?.error)}
+        {generateAlert("error", actionData?.deleteGoodiesResponse?.error)}
+        {generateAlert("success", actionData?.updateGoodiesResponse?.success)}
         {loaderData.goodiesResponse.goodies
           ? displayGoodies(
               loaderData.goodiesResponse.goodies,
@@ -362,6 +365,14 @@ export default function Goodies() {
           <Typography textAlign="center" variant="h4">
             Undelivered purchases
           </Typography>
+          {generateAlert("error", loaderData.purchaseResponse.error)}
+          {generateAlert("error", actionData?.purchaseGoodiesResponse?.error)}
+          {generateAlert("error", actionData?.refundGoodiesResponse?.error)}
+          {generateAlert(
+            "success",
+            actionData?.purchaseGoodiesResponse?.success
+          )}
+          {generateAlert("success", actionData?.refundGoodiesResponse?.success)}
           <PurchasesGrid
             purchases={loaderData.purchaseResponse.purchases}
             formData={actionData?.refundGoodiesResponse?.formData}
