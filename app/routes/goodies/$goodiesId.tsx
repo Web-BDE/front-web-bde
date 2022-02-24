@@ -41,7 +41,6 @@ import {
   PurchaseGoodiesFormData,
   RefundGoodiesFormData,
 } from "~/models/Purchase";
-import { Params } from "react-router";
 import { ContextData } from "~/root";
 import { User } from "~/models/User";
 import { getSelft, getUser } from "~/services/user";
@@ -83,7 +82,7 @@ type ActionData = {
   };
 };
 
-async function loadPurchase(
+async function loadPurchases(
   token: string,
   goodiesId?: number,
   userId?: number
@@ -114,9 +113,9 @@ async function loadGoodies(token: string, goodiesId: number, userId?: number) {
         ...goodiesResponse,
         creatorResponse:
           goodiesResponse.goodies?.creatorId &&
-          loadGoodiesCreator(token, goodiesResponse.goodies?.creatorId),
+          (await loadGoodiesCreator(token, goodiesResponse.goodies?.creatorId)),
       },
-      purchaseResponse: loadPurchase(
+      purchaseResponse: await loadPurchases(
         token,
         goodiesResponse.goodies?.id,
         userId
@@ -357,6 +356,8 @@ function displayGoodies(
 export default function Goodies() {
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
+
+  console.log(loaderData);
 
   const { userInfo } = useOutletContext<ContextData>();
 

@@ -1,7 +1,14 @@
 import { Typography } from "@mui/material";
 import { Challenge } from "~/models/Challenge";
+import { User } from "~/models/User";
 
-export default function ChallengeDisplay({ challenge }: { challenge: Challenge }) {
+export default function ChallengeDisplay({
+  challenge,
+  creator,
+}: {
+  challenge: Challenge;
+  creator?: User;
+}) {
   return (
     <div>
       <Typography variant="h3" style={{ marginTop: "10px" }}>
@@ -16,6 +23,11 @@ export default function ChallengeDisplay({ challenge }: { challenge: Challenge }
       <Typography variant="body1" style={{ marginTop: "10px" }}>
         Creation date : {new Date(challenge.createdAt).toLocaleDateString()}
       </Typography>
+      {creator && (
+        <Typography variant="body1" style={{ marginTop: "10px" }}>
+          Creator : {creator?.pseudo}
+        </Typography>
+      )}
     </div>
   );
 }
