@@ -54,7 +54,6 @@ async function handleCreateGoodies(
   name: string,
   price: number,
   buyLimit: number,
-  redirectTo: string,
   description?: string
 ) {
   const fields = {
@@ -98,24 +97,11 @@ export const action: ActionFunction = async ({ request }) => {
   //Initialise fiels
   const token = await requireAuth(request, "/goodies/admin");
   const form = await request.formData();
-  const redirectTo = form.get("redirectTo");
   //Goodies fields
   const name = form.get("name");
   const description = form.get("description");
   const price = form.get("price");
   const buyLimit = form.get("buy-limit");
-
-  //Invalid rediractTo format, should never happen
-  if (typeof redirectTo !== "string") {
-    return json(
-      {
-        createGoodiesResponse: {
-          error: "There was an error, please try again",
-        },
-      } as ActionData,
-      500
-    );
-  }
 
   //Check for field types
   if (
@@ -140,7 +126,6 @@ export const action: ActionFunction = async ({ request }) => {
     name,
     parseInt(price),
     parseInt(buyLimit),
-    redirectTo,
     description ? description : undefined
   );
 };

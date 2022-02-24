@@ -95,7 +95,6 @@ export async function handleChallengeCreation(
   token: string,
   name: string,
   reward: number,
-  redirectTo: string,
   description?: string
 ) {
   //Check fields format errors
@@ -139,7 +138,6 @@ export const action: ActionFunction = async ({ request }) => {
 
   //Declare all fields
   const form = await request.formData();
-  const redirectTo = form.get("redirectTo");
   const method = form.get("method");
   //Validation fields
   const validation = form.get("validation");
@@ -174,17 +172,6 @@ export const action: ActionFunction = async ({ request }) => {
       );
 
     case "create-challenge":
-      //Redirection undefined, should never happend
-      if (typeof redirectTo !== "string") {
-        return json(
-          {
-            createChallengeResponse: {
-              error: "There was an error, please try again",
-            },
-          } as ActionData,
-          500
-        );
-      }
 
       //Check for undefined values
       if (
@@ -207,7 +194,6 @@ export const action: ActionFunction = async ({ request }) => {
         token,
         name,
         parseInt(reward),
-        redirectTo,
         description ? description : undefined
       );
     default:
