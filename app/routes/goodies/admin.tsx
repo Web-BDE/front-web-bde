@@ -18,7 +18,7 @@ import { requireAuth } from "~/services/authentication";
 
 import { Container, Typography } from "@mui/material";
 
-import CreateGoodiesForm from "~/components/shop/forms/createGoodiesForm";
+import CreateGoodiesForm from "~/components/goodies/forms/createGoodiesForm";
 
 import { createGoodies } from "~/services/goodies";
 import { CreateGoodiesFormData } from "~/models/Goodies";
@@ -32,7 +32,7 @@ type ActionData = {
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
-  return await requireAuth(request, "/shop/admin");
+  return await requireAuth(request, "/goodies/admin");
 };
 
 //Validator for price fiels
@@ -91,12 +91,12 @@ async function handleCreateGoodies(
     );
   }
 
-  return redirect("/shop");
+  return redirect("/goodies");
 }
 
 export const action: ActionFunction = async ({ request }) => {
   //Initialise fiels
-  const token = await requireAuth(request, "/shop/admin");
+  const token = await requireAuth(request, "/goodies/admin");
   const form = await request.formData();
   const redirectTo = form.get("redirectTo");
   //Goodies fields

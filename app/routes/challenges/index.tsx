@@ -43,7 +43,9 @@ export default function Challenges() {
         Challenges
       </Typography>
       {generateAlert("error", loaderData.challengeResponse?.error)}
-      <ChallengeGrid challenges={loaderData.challengeResponse?.challenges} />
+      {loaderData.challengeResponse?.challenges && (
+        <ChallengeGrid challenges={loaderData.challengeResponse?.challenges} />
+      )}
     </Container>
   );
 }

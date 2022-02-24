@@ -28,10 +28,10 @@ export default function GoodiesTile({ goodies }: { goodies: Goodies }) {
         </Typography>
       </CardContent>
       <CardActions style={{ display: "flex", justifyContent: "space-between" }}>
-        <Link to={`/shop/${goodies.id}`}>
+        <Link to={`/goodies/${goodies.id}`}>
           <Button size="small">Details</Button>
         </Link>
-        <Link to={`/shop/${goodies.id}`}>
+        <Link to={`/goodies/${goodies.id}`}>
           <Button size="small">Buy</Button>
         </Link>
       </CardActions>

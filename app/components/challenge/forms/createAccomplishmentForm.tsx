@@ -8,7 +8,6 @@ export default function CreateAccomplishmentForm({
 }) {
   return (
     <form method="post">
-      <input type="hidden" name="method" value="create-accomplishment" />
       <TextField
         variant="outlined"
         margin="normal"

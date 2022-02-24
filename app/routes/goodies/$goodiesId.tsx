@@ -8,7 +8,7 @@ import {
   useLoaderData,
 } from "remix";
 
-import GoodiesDisplay from "~/components/shop/goodiesDisplay";
+import GoodiesDisplay from "~/components/goodies/goodiesDisplay";
 
 import {
   generateAlert,
@@ -33,11 +33,11 @@ import {
 import { Container, Typography } from "@mui/material";
 import { useContext } from "react";
 import { UserContext } from "~/components/userContext";
-import UpdateGoodiesForm from "~/components/shop/forms/updateGoodiesForm";
-import PurchaseGoodiesForm from "~/components/shop/forms/purchaseGoodiesForm";
+import UpdateGoodiesForm from "~/components/goodies/forms/updateGoodiesForm";
+import PurchaseGoodiesForm from "~/components/goodies/forms/purchaseGoodiesForm";
 import { getSelft } from "~/services/user";
-import DeleteGoodiesForm from "~/components/shop/forms/deleteGoodiesForm";
-import PurchasesGrid from "~/components/shop/grids/purchaseGrid";
+import DeleteGoodiesForm from "~/components/goodies/forms/deleteGoodiesForm";
+import PurchasesGrid from "~/components/goodies/grids/purchaseGrid";
 import {
   Purchase,
   PurchaseGoodiesFormData,
@@ -104,7 +104,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     throw json("Invalid goodies query", 404);
   }
 
-  const token = await requireAuth(request, `/shop/${params.goodiesId}`);
+  const token = await requireAuth(request, `/goodies/${params.goodiesId}`);
 
   const userInfo = (await getSelft(token))?.user;
 
@@ -186,7 +186,7 @@ async function handleDeleteGoodies(token: string, goodiesId: number) {
     return json({ deleteGoodiesResponse } as ActionData, code);
   }
 
-  return redirect("/shop");
+  return redirect("/goodies");
 }
 
 async function handleRefundGoodies(token: string, purchaseId: number) {
@@ -203,7 +203,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     throw json("Invalid goodies query", 404);
   }
 
-  const token = await requireAuth(request, `/shop/${params.challengeId}`);
+  const token = await requireAuth(request, `/goodies/${params.challengeId}`);
 
   //TODO : remove method & use REST routes
   //Initialize form fields
