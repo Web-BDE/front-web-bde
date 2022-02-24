@@ -11,10 +11,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import { Grid } from "@mui/material";
-
-import React, { useContext } from "react";
-
-import { UserContext } from "./userContext";
+import React from "react";
 
 function displayAuthMenu(userInfo?: User) {
   if (!userInfo) {
@@ -66,10 +63,8 @@ function displayAuthMenu(userInfo?: User) {
   }
 }
 
-export default function NavBar() {
+export default function NavBar({ userInfo }: { userInfo?: User }) {
   let leftLinks: { name: string; link: string }[] = [];
-
-  const userInfo = useContext(UserContext);
 
   if (userInfo) {
     leftLinks.push(

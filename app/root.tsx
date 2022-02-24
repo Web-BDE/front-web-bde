@@ -12,14 +12,10 @@ import {
 } from "remix";
 import type { MetaFunction } from "remix";
 import NavBar from "./components/navBar";
-import { UserContext } from "./components/userContext";
 import { User } from "./models/User";
 import { getSelft } from "./services/user";
 
-import {
-  generateExpectedError,
-  generateUnexpectedError,
-} from "./utils/error";
+import { generateExpectedError, generateUnexpectedError } from "./utils/error";
 import { tryGetToken } from "./services/authentication";
 
 export const meta: MetaFunction = () => {
@@ -44,6 +40,10 @@ type LoaderData = {
   userInfo?: User;
 };
 
+export type ContextData = {
+  userInfo?: User;
+};
+
 export const loader: LoaderFunction = async ({ request }) => {
   const token = await tryGetToken(request);
 
@@ -56,6 +56,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function App() {
   const loaderData = useLoaderData<LoaderData>();
+  const context: ContextData = { userInfo: loaderData.userInfo };
   return (
     <html lang="en">
       <head>
@@ -65,13 +66,11 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <UserContext.Provider value={loaderData.userInfo}>
-          <NavBar />
-          <Outlet />
-          <ScrollRestoration />
-          <Scripts />
-          {process.env.NODE_ENV === "development" && <LiveReload />}
-        </UserContext.Provider>
+        <NavBar userInfo={loaderData.userInfo} />
+        <Outlet context={context} />
+        <ScrollRestoration />
+        <Scripts />
+        {process.env.NODE_ENV === "development" && <LiveReload />}
       </body>
     </html>
   );

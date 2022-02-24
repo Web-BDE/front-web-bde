@@ -6,6 +6,7 @@ import {
   useActionData,
   useCatch,
   useLoaderData,
+  useOutletContext,
 } from "remix";
 
 import GoodiesDisplay from "~/components/goodies/goodiesDisplay";
@@ -32,10 +33,8 @@ import {
 
 import { Container, Typography } from "@mui/material";
 import { useContext } from "react";
-import { UserContext } from "~/components/userContext";
 import UpdateGoodiesForm from "~/components/goodies/forms/updateGoodiesForm";
 import PurchaseGoodiesForm from "~/components/goodies/forms/purchaseGoodiesForm";
-import { getSelft } from "~/services/user";
 import DeleteGoodiesForm from "~/components/goodies/forms/deleteGoodiesForm";
 import PurchasesGrid from "~/components/goodies/grids/purchaseGrid";
 import {
@@ -43,6 +42,8 @@ import {
   PurchaseGoodiesFormData,
   RefundGoodiesFormData,
 } from "~/models/Purchase";
+import { Params } from "react-router";
+import { ContextData } from "~/root";
 
 type LoaderData = {
   goodiesResponse?: { error?: string; success?: string; goodies?: Goodies };
@@ -99,14 +100,22 @@ async function loadGoodies(token: string, goodiesId: number, userId?: number) {
   return loadPurchase(token, goodiesResponse, code, userId);
 }
 
-export const loader: LoaderFunction = async ({ request, params }) => {
+export const loader: LoaderFunction = async ({
+  request,
+  params,
+  context,
+}: {
+  request: Request;
+  params: Params<string>;
+  context: ContextData;
+}) => {
   if (!params.goodiesId) {
     throw json("Invalid goodies query", 404);
   }
 
   const token = await requireAuth(request, `/goodies/${params.goodiesId}`);
 
-  const userInfo = (await getSelft(token))?.user;
+  const userInfo = context.userInfo;
 
   return await loadGoodies(token, parseInt(params.goodiesId), userInfo?.id);
 };
@@ -326,7 +335,7 @@ export default function Goodies() {
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
 
-  const userInfo = useContext(UserContext);
+  const userInfo = useOutletContext<ContextData>().userInfo;
 
   return (
     <Container style={{ marginTop: "50px" }} component="main">

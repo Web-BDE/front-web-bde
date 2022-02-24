@@ -6,6 +6,7 @@ import {
   useActionData,
   useCatch,
   useLoaderData,
+  useOutletContext
 } from "remix";
 
 import {
@@ -35,18 +36,18 @@ import {
 
 import { Container, Typography } from "@mui/material";
 import { useContext } from "react";
-import { UserContext } from "~/components/userContext";
 import UpdateChallengeForm from "~/components/challenge/forms/updateChallengeForm";
 import ChallengeDisplay from "~/components/challenge/challengeDisplay";
 import AccomplishmentsGrid from "~/components/challenge/grids/accomplishmentGrid";
 import CreateAccomplishmentForm from "~/components/challenge/forms/createAccomplishmentForm";
-import { getSelft } from "~/services/user";
 import DeleteChallengeForm from "~/components/challenge/forms/deleteChallengeForm";
 import {
   Accomplishment,
   CreateAccomplishmentFormData,
   DeleteAccomplishmentFormData,
 } from "~/models/Accomplishment";
+import { ContextData } from "~/root";
+import { Params } from "react-router";
 
 type LoaderData = {
   challengeResponse?: {
@@ -123,7 +124,15 @@ async function loadChallenge(
   return loadAccomplishment(token, challengeResponse, code, userId);
 }
 
-export const loader: LoaderFunction = async ({ request, params }) => {
+export const loader: LoaderFunction = async ({
+  request,
+  params,
+  context,
+}: {
+  request: Request;
+  params: Params<string>;
+  context: ContextData;
+}) => {
   if (!params.challengeId) {
     throw json("Invalid challenge query", 400);
   }
@@ -131,7 +140,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   //Need to provide userId to filter in jsx
   const token = await requireAuth(request, `/challenge/${params.challengeId}`);
 
-  const userInfo = (await getSelft(token))?.user;
+  const userInfo = context.userInfo;
 
   return await loadChallenge(token, parseInt(params.challengeId), userInfo?.id);
 };
@@ -446,7 +455,7 @@ export default function Challenge() {
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
 
-  const userInfo = useContext(UserContext);
+  const userInfo = useOutletContext<ContextData>().userInfo;
 
   return (
     <Container style={{ marginTop: "50px" }}>
