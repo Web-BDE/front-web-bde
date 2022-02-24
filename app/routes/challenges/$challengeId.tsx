@@ -408,8 +408,9 @@ export default function Challenge() {
         <Typography variant="h4">Challenge</Typography>
         {generateAlert("error", loaderData.challengeResponse?.error)}
         {generateAlert("error", actionData?.updateChallengeResponse?.error)}
-        {generateAlert("error", actionData?.deleteChallengeResponse?.error)}
         {generateAlert("success", actionData?.updateChallengeResponse?.success)}
+        {generateAlert("error", actionData?.deleteChallengeResponse?.error)}
+        {generateAlert("success", actionData?.deleteChallengeResponse?.success)}
         {loaderData.challengeResponse.challenge && (
           <div>
             {displayChallenge(
@@ -446,12 +447,16 @@ export default function Challenge() {
             actionData?.updateAccomplishmentResponse?.error
           )}
           {generateAlert(
+            "success",
+            actionData?.updateAccomplishmentResponse?.success
+          )}
+          {generateAlert(
             "error",
             actionData?.deleteAccomplishmentResponse?.error
           )}
           {generateAlert(
             "success",
-            actionData?.updateAccomplishmentResponse?.success
+            actionData?.deleteAccomplishmentResponse?.success
           )}
           <AccomplishmentsGrid
             accomplishments={loaderData.accomplishmentResponse.accomplishments}

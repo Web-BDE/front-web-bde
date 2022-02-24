@@ -60,7 +60,7 @@ export function generateUnexpectedError(error: Error) {
   );
 }
 export function generateAlert(severity: AlertColor, message?: string) {
-  {
-    message && <Alert severity={severity}>{message}</Alert>;
+  if (message) {
+    return <Alert severity={severity}>{message}</Alert>;
   }
 }

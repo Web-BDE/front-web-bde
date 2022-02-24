@@ -328,8 +328,9 @@ export default function Goodies() {
         <Typography variant="h4">Goodies</Typography>
         {generateAlert("error", loaderData.goodiesResponse.error)}
         {generateAlert("error", actionData?.updateGoodiesResponse?.error)}
-        {generateAlert("error", actionData?.deleteGoodiesResponse?.error)}
         {generateAlert("success", actionData?.updateGoodiesResponse?.success)}
+        {generateAlert("error", actionData?.deleteGoodiesResponse?.error)}
+        {generateAlert("success", actionData?.deleteGoodiesResponse?.success)}
         {loaderData.goodiesResponse.goodies && (
           <div>
             {displayGoodies(
@@ -354,11 +355,11 @@ export default function Goodies() {
           </Typography>
           {generateAlert("error", loaderData.purchaseResponse.error)}
           {generateAlert("error", actionData?.purchaseGoodiesResponse?.error)}
-          {generateAlert("error", actionData?.refundGoodiesResponse?.error)}
           {generateAlert(
             "success",
             actionData?.purchaseGoodiesResponse?.success
           )}
+          {generateAlert("error", actionData?.refundGoodiesResponse?.error)}
           {generateAlert("success", actionData?.refundGoodiesResponse?.success)}
           <PurchasesGrid
             purchases={loaderData.purchaseResponse.purchases}
