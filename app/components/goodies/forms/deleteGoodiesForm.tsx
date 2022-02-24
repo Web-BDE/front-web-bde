@@ -11,7 +11,6 @@ export default function DeleteGoodiesForm({
   return (
     <form method="post" action={`/goodies/${goodies.id}`}>
       <input type="hidden" name="method" value="delete-goodies" />
-      <input type="hidden" name="goodiesId" value={goodies.id} />
       <Button
         type="submit"
         fullWidth

@@ -12,7 +12,6 @@ export default function PurchaseGoodiesForm({
   return (
     <form method="post" action={`/goodies/${goodies.id}`}>
       <input type="hidden" name="method" value="purchase-goodies" />
-      <input type="hidden" name="goodiesId" value={goodies.id} />
       <Button
         type="submit"
         fullWidth

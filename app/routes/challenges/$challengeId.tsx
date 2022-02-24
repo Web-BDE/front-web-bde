@@ -49,7 +49,11 @@ import {
 } from "~/models/Accomplishment";
 
 type LoaderData = {
-  challengeResponse?: { challenge?: Challenge; error?: string; success?: string };
+  challengeResponse?: {
+    challenge?: Challenge;
+    error?: string;
+    success?: string;
+  };
   accomplishmentResponse?: {
     accomplishments?: Accomplishment[];
     error?: string;
@@ -432,6 +436,7 @@ export default function Challenge() {
             )}
             <CreateAccomplishmentForm
               formData={actionData?.createAccomplishmentResponse?.formData}
+              challenge={loaderData.challengeResponse.challenge}
             />
           </div>
         )}

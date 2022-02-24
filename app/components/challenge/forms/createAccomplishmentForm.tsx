@@ -1,14 +1,17 @@
 import { TextField, Button } from "@mui/material";
 import { CreateAccomplishmentFormData } from "~/models/Accomplishment";
+import { Challenge } from "~/models/Challenge";
 
 export default function CreateAccomplishmentForm({
   formData,
+  challenge,
 }: {
+  challenge: Challenge;
   formData?: CreateAccomplishmentFormData;
 }) {
   return (
     //TODO : no challenge id
-    <form method="post">
+    <form method="post" action={`/challenges/${challenge.id}`}>
       <TextField
         variant="outlined"
         margin="normal"

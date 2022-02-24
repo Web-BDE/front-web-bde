@@ -10,11 +10,6 @@ export default function CreateChallengeForm({
 }) {
   return (
     <form method="post" action="/challenges/admin">
-      <input
-        type="hidden"
-        name="redirectTo"
-        value={redirectTo || "/challenges"}
-      />
       <input type="hidden" name="method" value="create-challenge" />
       <TextField
         variant="outlined"
