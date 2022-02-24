@@ -467,7 +467,9 @@ export default function Challenge() {
               },
               userInfo?.id
             )}
-            <Typography variant="h4">Submit Proof</Typography>
+            <Typography marginTop="50px" variant="h4">
+              Submit Proof
+            </Typography>
             {generateAlert(
               "error",
               actionData?.createAccomplishmentResponse?.error
