@@ -116,10 +116,7 @@ async function handleCreatePurchase(token: string, goodiesId: number) {
     goodiesId: goodiesId,
   });
 
-  return json(
-    { purchaseGoodiesResponse: { ...purchaseGoodiesResponse } } as ActionData,
-    code
-  );
+  return json({ purchaseGoodiesResponse } as ActionData, code);
 }
 
 //Validator for price fiels
@@ -186,10 +183,7 @@ async function handleDeleteGoodies(token: string, goodiesId: number) {
   );
 
   if (deleteGoodiesResponse.error) {
-    return json(
-      { deleteGoodiesResponse: { ...deleteGoodiesResponse } } as ActionData,
-      code
-    );
+    return json({ deleteGoodiesResponse } as ActionData, code);
   }
 
   return redirect("/shop", code);
@@ -201,10 +195,7 @@ async function handleRefundGoodies(token: string, purchaseId: number) {
     purchaseId
   );
 
-  return json(
-    { refundGoodiesResponse: { ...refundGoodiesResponse } } as ActionData,
-    code
-  );
+  return json({ refundGoodiesResponse } as ActionData, code);
 }
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -306,30 +297,21 @@ function displayGoodies(
   formData: {
     updateForm?: CreateGoodiesFormData;
     deleteForm?: DeleteGoodiesFormData;
-    purchaseForm?: PurchaseGoodiesFormData;
   },
   userId?: number
 ) {
   if (goodies?.creatorId === userId) {
     return (
-      <Container>
+      <div>
         <UpdateGoodiesForm goodies={goodies} formData={formData?.updateForm} />
         <DeleteGoodiesForm goodies={goodies} formData={formData?.deleteForm} />
-        <PurchaseGoodiesForm
-          goodies={goodies}
-          formData={formData?.purchaseForm}
-        />
-      </Container>
+      </div>
     );
   } else {
     return (
-      <Container>
+      <div>
         <GoodiesDisplay goodies={goodies} />
-        <PurchaseGoodiesForm
-          goodies={goodies}
-          formData={formData?.purchaseForm}
-        />
-      </Container>
+      </div>
     );
   }
 }
@@ -348,19 +330,24 @@ export default function Goodies() {
         {generateAlert("error", actionData?.updateGoodiesResponse?.error)}
         {generateAlert("error", actionData?.deleteGoodiesResponse?.error)}
         {generateAlert("success", actionData?.updateGoodiesResponse?.success)}
-        {loaderData.goodiesResponse.goodies
-          ? displayGoodies(
+        {loaderData.goodiesResponse.goodies && (
+          <div>
+            {displayGoodies(
               loaderData.goodiesResponse.goodies,
               {
                 updateForm: actionData?.updateGoodiesResponse?.formData,
                 deleteForm: actionData?.deleteGoodiesResponse?.formData,
-                purchaseForm: actionData?.purchaseGoodiesResponse?.formData,
               },
               userInfo?.id
-            )
-          : ""}
+            )}
+            <PurchaseGoodiesForm
+              goodies={loaderData.goodiesResponse.goodies}
+              formData={actionData?.purchaseGoodiesResponse?.formData}
+            />
+          </div>
+        )}
       </Container>
-      {loaderData.purchaseResponse?.purchases ? (
+      {loaderData.purchaseResponse?.purchases && (
         <div style={{ marginTop: "50px" }}>
           <Typography textAlign="center" variant="h4">
             Undelivered purchases
@@ -378,8 +365,6 @@ export default function Goodies() {
             formData={actionData?.refundGoodiesResponse?.formData}
           />
         </div>
-      ) : (
-        ""
       )}
     </Container>
   );

@@ -8,7 +8,11 @@ import {
   useLoaderData,
 } from "remix";
 
-import { Challenge } from "~/models/Challenge";
+import {
+  Challenge,
+  CreateChallengeFormData,
+  DeleteChallengeFormData,
+} from "~/models/Challenge";
 
 import {
   createAccomplishment,
@@ -22,7 +26,6 @@ import {
   getChallenge,
   updateChallenge,
 } from "~/services/challenges";
-import { APIError } from "~/utils/axios";
 
 import {
   generateUnexpectedError,
@@ -32,35 +35,88 @@ import {
 import { Container, Typography } from "@mui/material";
 import { useContext } from "react";
 import { UserContext } from "~/components/userContext";
-import UpdateChallengeForm, {
-  UpdateChallengeFormData,
-} from "~/components/challenge/forms/updateChallengeForm";
+import UpdateChallengeForm from "~/components/challenge/forms/updateChallengeForm";
 import ChallengeDisplay from "~/components/challenge/challengeDisplay";
-import AccomplishmentsGrid, {
-  AccomplishmentData,
-} from "~/components/challenge/grids/accomplishmentGrid";
-import { UpdateAccomplishmentFormData } from "~/components/challenge/forms/updateAccomplishmentForm";
-import { DeleteAccomplishmentFormData } from "~/components/challenge/forms/deleteAccomplishmentForm";
-import CreateAccomplishmentForm, {
-  CreateAccomplishmentFormData,
-} from "~/components/challenge/forms/createAccomplishmentForm";
+import AccomplishmentsGrid from "~/components/challenge/grids/accomplishmentGrid";
+import CreateAccomplishmentForm from "~/components/challenge/forms/createAccomplishmentForm";
 import { getSelft } from "~/services/user";
-import DeleteChallengeForm, {
-  DeleteChallengeFormData,
-} from "~/components/challenge/forms/deleteChallengeForm";
+import DeleteChallengeForm from "~/components/challenge/forms/deleteChallengeForm";
+import {
+  Accomplishment,
+  CreateAccomplishmentFormData,
+  DeleteAccomplishmentFormData,
+} from "~/models/Accomplishment";
 
 type LoaderData = {
-  challenge: Challenge;
-  accomplishments: AccomplishmentData;
+  challengeResponse: { challenge: Challenge; error?: string; success?: string };
+  accomplishmentResponse: {
+    accomplishments: Accomplishment[];
+    error?: string;
+    success?: string;
+  };
 };
 
 type ActionData = {
-  createAccomplishment?: CreateAccomplishmentFormData;
-  updateAccomplishment?: UpdateAccomplishmentFormData;
-  updateChallenge?: UpdateChallengeFormData;
-  deleteAccomplishment?: DeleteAccomplishmentFormData;
-  deleteChallenge?: DeleteChallengeFormData;
+  createAccomplishmentResponse?: {
+    formData: CreateAccomplishmentFormData;
+    error?: string;
+    success?: string;
+  };
+  updateAccomplishmentResponse?: {
+    formData: CreateAccomplishmentFormData;
+    error?: string;
+    success?: string;
+  };
+  updateChallengeResponse?: {
+    formData: CreateChallengeFormData;
+    error?: string;
+    success?: string;
+  };
+  deleteAccomplishmentResponse?: {
+    formData: DeleteAccomplishmentFormData;
+    error?: string;
+    success?: string;
+  };
+  deleteChallengeResponse?: {
+    formData: DeleteChallengeFormData;
+    error?: string;
+    success?: string;
+  };
 };
+
+async function loadAccomplishment(
+  token: string,
+  challengeResponse: {
+    error?: string;
+    success?: string;
+    challenge?: Challenge;
+  },
+  challengeCode: number,
+  userId?: number
+) {
+  const { code, ...accomplishmentResponse } = await getManyAccomplishment(
+    token,
+    100,
+    0,
+    challengeResponse.challenge?.id,
+    userId
+  );
+
+  return json(
+    { challengeResponse, accomplishmentResponse } as LoaderData,
+    challengeCode
+  );
+}
+
+async function loadChallenge(
+  token: string,
+  challengeId: number,
+  userId?: number
+) {
+  const { code, ...challengeResponse } = await getChallenge(token, challengeId);
+
+  return loadAccomplishment(token, challengeResponse, code, userId);
+}
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   if (!params.challengeId) {
@@ -72,39 +128,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   const userInfo = (await getSelft(token))?.user;
 
-  const challenge = (await getChallenge(token, parseInt(params.challengeId)))
-    ?.challenge;
-
-  //Get Accomplishments, we don't throw API Errors because we will display them
-  let accomplishments;
-  try {
-    accomplishments = (
-      await getManyAccomplishment(
-        token,
-        undefined,
-        undefined,
-        parseInt(params.challengeId),
-        userInfo?.id
-      )
-    )?.accomplishments;
-  } catch (error) {
-    if (error instanceof APIError) {
-      return {
-        challenge,
-        accomplishments: {
-          error: error.error.message,
-        },
-      };
-    }
-    throw error;
-  }
-
-  return {
-    challenge,
-    accomplishments: {
-      accomplishments,
-    },
-  };
+  return await loadChallenge(token, parseInt(params.challengeId), userInfo?.id);
 };
 
 async function handleAccomplishmentCreation(
@@ -112,29 +136,22 @@ async function handleAccomplishmentCreation(
   proof: string,
   challengeId: number
 ) {
-  try {
-    await createAccomplishment(
-      token,
-      {
-        proof,
-      },
-      challengeId
-    );
-  } catch (err) {
-    if (err instanceof APIError) {
-      return json(
-        {
-          createAccomplishment: { formError: err.error.message },
-        },
-        err.code
-      );
-    }
-    throw err;
-  }
+  const fields = { proof };
+
+  const { code, ...createAccomplishmentResponse } = await createAccomplishment(
+    token,
+    fields,
+    challengeId
+  );
 
   return json(
-    { createAccomplishment: { formSuccess: "Accomplishment created" } },
-    201
+    {
+      createAccomplishmentResponse: {
+        ...createAccomplishmentResponse,
+        formData: { fields },
+      },
+    } as ActionData,
+    code
   );
 }
 
@@ -143,23 +160,22 @@ async function handleAccomplishmentUpdate(
   proof: string,
   accomplishmentId: number
 ) {
-  try {
-    await updateAccomplishment(token, accomplishmentId, { proof });
-  } catch (err) {
-    if (err instanceof APIError) {
-      return json(
-        {
-          updateAccomplishment: { formError: err.error.message },
-        },
-        err.code
-      );
-    }
-    throw err;
-  }
+  const fields = { proof };
+
+  const { code, ...updateAccomplishmentResponse } = await updateAccomplishment(
+    token,
+    accomplishmentId,
+    fields
+  );
 
   return json(
-    { updateAccomplishment: { formSuccess: "Accomplishment updated" } },
-    201
+    {
+      updateAccomplishmentResponse: {
+        ...updateAccomplishmentResponse,
+        formData: { fields },
+      },
+    } as ActionData,
+    code
   );
 }
 
@@ -184,66 +200,51 @@ async function handleChallengeUpdate(
   };
 
   if (Object.values(fieldsError).some(Boolean)) {
-    return json({ updateChallenge: { fields, fieldsError } }, 400);
+    return json(
+      {
+        updateChallengeResponse: { formData: { fields, fieldsError } },
+      } as ActionData,
+      400
+    );
   }
 
-  //Try to update challenge
-  try {
-    await updateChallenge(token, fields, challengeId);
-  } catch (err) {
-    //We don't want to throw API errors, we will show the in the form instead
-    if (err instanceof APIError) {
-      return json(
-        {
-          updateChallenge: { formError: err.error.message, fields },
-        },
-        err.code
-      );
-    }
-  }
+  const { code, ...updateChallengeResponse } = await updateChallenge(
+    token,
+    fields,
+    challengeId
+  );
 
-  return json({ updateChallenge: { formSuccess: "Challenge updated" } }, 201);
+  return json(
+    {
+      updateChallengeResponse: {
+        ...updateChallengeResponse,
+        formData: { fields, fieldsError },
+      },
+    } as ActionData,
+    code
+  );
 }
 
 async function handleDeleteAccomplishment(
   token: string,
   accomplishmentId: number
 ) {
-  //Try to delete accomplishment
-  try {
-    await deleteAccomplishment(token, accomplishmentId);
-  } catch (err) {
-    //We don't want to throw API errors, we will show the in the form instead
-    if (err instanceof APIError) {
-      return json(
-        {
-          deleteAccomplishment: { formError: err.error.message },
-        },
-        err.code
-      );
-    }
-  }
-
-  return json(
-    { createAccomplishment: { formSuccess: "Accomplishment deleted" } },
-    201
+  const { code, ...deleteAccomplishmentResponse } = await deleteAccomplishment(
+    token,
+    accomplishmentId
   );
+
+  return json({ deleteAccomplishmentResponse } as ActionData, code);
 }
 
 async function handleDeleteChallenge(token: string, challengeId: number) {
-  //Try to delete accomplishment
-  try {
-    await deleteChallenge(token, challengeId);
-  } catch (err) {
-    //We don't want to throw API errors, we will show the in the form instead
-    if (err instanceof APIError) {
-      return json(
-        {
-          updateChallenge: { formError: err.error.message },
-        },
-        err.code
-      );
-    }
+  const { code, ...deleteChallengeResponse } = await deleteChallenge(
+    token,
+    challengeId
+  );
+
+  if (deleteChallengeResponse.error) {
+    return json({ deleteChallengeResponse } as ActionData, code);
   }
 
   return redirect("/challenges");
@@ -273,10 +274,10 @@ export const action: ActionFunction = async ({ request, params }) => {
       if (typeof proof !== "string") {
         return json(
           {
-            creacteAccomplishment: {
-              formError: "Something went wrong, please try again",
+            createAccomplishmentResponse: {
+              error: "Something went wrong, please try again",
             },
-          },
+          } as ActionData,
           500
         );
       }
@@ -290,19 +291,22 @@ export const action: ActionFunction = async ({ request, params }) => {
       if (typeof accomplishmentId !== "string") {
         return json(
           {
-            updateAccomplishment: {
-              formError: "There was an error, Please try again",
+            updateAccomplishmentResponse: {
+              error: "There was an error, Please try again",
             },
-          },
-          400
+          } as ActionData,
+          500
         );
       }
 
       if (typeof proof !== "string") {
         return json(
           {
-            updateAccomplishment: { formError: "You must fill all fields" },
-          },
+            updateAccomplishmentResponse: {
+              error:
+                "Invalid data provided, please check if you have fill all the requierd fields",
+            },
+          } as ActionData,
           400
         );
       }
@@ -321,8 +325,11 @@ export const action: ActionFunction = async ({ request, params }) => {
       ) {
         return json(
           {
-            updateChallenge: { formError: "You must fill all the fields" },
-          },
+            updateChallengeResponse: {
+              error:
+                "Invalid data provided, please check if you have fill all the requierd fields",
+            },
+          } as ActionData,
           400
         );
       }
@@ -338,8 +345,10 @@ export const action: ActionFunction = async ({ request, params }) => {
       if (typeof accomplishmentId !== "string") {
         return json(
           {
-            updateAccomplishment: { formError: "There was an error" },
-          },
+            updateAccomplishmentResponse: {
+              error: "There was an error, please try again",
+            },
+          } as ActionData,
           400
         );
       }
@@ -349,9 +358,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         parseInt(accomplishmentId)
       );
     case "delete-challenge":
-      await handleDeleteChallenge(token, parseInt(params.challengeId));
-
-      return redirect("/challenges");
+      return await handleDeleteChallenge(token, parseInt(params.challengeId));
     default:
       throw new Error("There was an error during form handling");
   }
@@ -360,11 +367,11 @@ export const action: ActionFunction = async ({ request, params }) => {
 //If challenge creator is self transform normal inputs into a form to update it
 function displayChallenge(
   challenge: Challenge,
-  userId?: number,
-  formData?: {
-    updateForm?: UpdateChallengeFormData;
+  formData: {
+    updateForm?: CreateChallengeFormData;
     deleteForm?: DeleteChallengeFormData;
-  }
+  },
+  userId?: number
 ) {
   if (userId === challenge.creatorId) {
     return (
@@ -397,30 +404,38 @@ export default function Challenge() {
 
   return (
     <Container style={{ marginTop: "50px" }}>
-      {displayChallenge(loaderData.challenge, userInfo?.id, {
-        updateForm: actionData?.updateChallenge,
-        deleteForm: actionData?.deleteChallenge,
-      })}
       <Container maxWidth="xs" style={{ marginTop: "50px" }}>
-        <Typography variant="h4">Submit Proof</Typography>
-        <CreateAccomplishmentForm formData={actionData?.createAccomplishment} />
+        {loaderData.challengeResponse.challenge && (
+          <div>
+            {displayChallenge(
+              loaderData.challengeResponse.challenge,
+              {
+                updateForm: actionData?.updateChallengeResponse?.formData,
+                deleteForm: actionData?.deleteChallengeResponse?.formData,
+              },
+              userInfo?.id
+            )}
+            <Typography variant="h4">Submit Proof</Typography>
+            <CreateAccomplishmentForm
+              formData={actionData?.createAccomplishmentResponse?.formData}
+            />
+          </div>
+        )}
       </Container>
       {/* Display all user's accomplishment for this challenge */}
-      {loaderData.accomplishments.accomplishments ? (
+      {loaderData.accomplishmentResponse.accomplishments && (
         <div style={{ marginTop: "50px" }}>
           <Typography textAlign="center" variant="h4">
             Your accomplishments
           </Typography>
           <AccomplishmentsGrid
-            accomplishments={loaderData.accomplishments}
+            accomplishments={loaderData.accomplishmentResponse.accomplishments}
             formData={{
-              updateAccomplishment: actionData?.updateAccomplishment,
-              deleteAccomplishment: actionData?.deleteAccomplishment,
+              updateForm: actionData?.updateAccomplishmentResponse?.formData,
+              deleteForm: actionData?.deleteAccomplishmentResponse?.formData,
             }}
           />
         </div>
-      ) : (
-        ""
       )}
     </Container>
   );

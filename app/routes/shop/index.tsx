@@ -20,7 +20,7 @@ type LoaderData = {
 async function loadGoodies(token: string) {
   const { code, ...goodiesResponse } = await getManyGoodies(token, 100, 0);
 
-  return json({ goodiesResponse: { goodiesResponse } } as LoaderData, code);
+  return json({ goodiesResponse } as LoaderData, code);
 }
 
 //Function that handle GET resuests
@@ -38,10 +38,8 @@ export default function Shop() {
         Shop
       </Typography>
       {generateAlert("error", loaderData.goodiesResponse.error)}
-      {loaderData.goodiesResponse.goodies ? (
+      {loaderData.goodiesResponse.goodies && (
         <GoodiesGrid goodies={loaderData.goodiesResponse.goodies} />
-      ) : (
-        ""
       )}
     </Container>
   );

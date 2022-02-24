@@ -1,28 +1,31 @@
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 
 import { json, LoaderFunction, useCatch, useLoaderData } from "remix";
 
-import { generateExpectedError, generateUnexpectedError } from "~/utils/error";
+import {
+  generateAlert,
+  generateExpectedError,
+  generateUnexpectedError,
+} from "~/utils/error";
 
 import { Challenge } from "~/models/Challenge";
 
 import { requireAuth } from "~/services/authentication";
 import ChallengeGrid from "~/components/challenge/grids/challengeGrid";
 import { getManyChallenge } from "~/services/challenges";
-import { APIError } from "~/utils/axios";
+
+type LoaderData = {
+  challengeResponse: {
+    error?: string;
+    success?: string;
+    challenges?: Challenge[];
+  };
+};
 
 async function loadChallenges(token: string) {
-  //Get challenges, if it throw an error we will cath it with Boundaries below
-  let challenges;
-  try {
-    challenges = (await getManyChallenge(token, 100))?.challenges;
-  } catch (err) {
-    if (err instanceof APIError) {
-      throw json(err.error.message, err.code);
-    }
-    throw err;
-  }
-  return { challenges };
+  const { code, ...challengeResponse } = await getManyChallenge(token, 100, 0);
+
+  return json({ challengeResponse } as LoaderData, code);
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -33,13 +36,14 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function Challenges() {
-  const loaderData = useLoaderData<{ challenges: Challenge[] }>();
+  const loaderData = useLoaderData<LoaderData>();
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
       <Typography style={{ textAlign: "center" }} variant="h2">
         Challenges
       </Typography>
-      <ChallengeGrid challenges={loaderData.challenges} />
+      {generateAlert("error", loaderData.challengeResponse.error)}
+      <ChallengeGrid challenges={loaderData.challengeResponse.challenges} />
     </Container>
   );
 }

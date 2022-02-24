@@ -34,7 +34,7 @@ export default function AccomplishmentTile({
       </CardContent>
       {userPrivilege &&
       userPrivilege >= 1 &&
-      accomplishment.validation === "PENDING" ? (
+      accomplishment.validation === "PENDING" && (
         <CardActions>
           {/* Form to validate an accomplishment */}
           <form
@@ -71,8 +71,6 @@ export default function AccomplishmentTile({
             </Button>
           </form>
         </CardActions>
-      ) : (
-        ""
       )}
     </Card>
   );
