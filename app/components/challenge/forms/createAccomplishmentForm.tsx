@@ -1,13 +1,17 @@
 import { TextField, Button } from "@mui/material";
+import { Form } from "remix";
 import { CreateAccomplishmentFormData } from "~/models/Accomplishment";
+import { Challenge } from "~/models/Challenge";
 
 export default function CreateAccomplishmentForm({
   formData,
+  challenge,
 }: {
+  challenge: Challenge;
   formData?: CreateAccomplishmentFormData;
 }) {
   return (
-    <form method="post">
+    <Form method="put" action={`/challenges/${challenge.id}`}>
       <TextField
         variant="outlined"
         margin="normal"
@@ -25,6 +29,6 @@ export default function CreateAccomplishmentForm({
       <Button type="submit" fullWidth variant="contained" color="primary">
         Submit Proof
       </Button>
-    </form>
+    </Form>
   );
 }

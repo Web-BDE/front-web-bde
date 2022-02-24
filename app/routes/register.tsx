@@ -104,56 +104,62 @@ async function handleRegister(
 
 //Function that handle POST requests
 export const action: ActionFunction = async ({ request }) => {
-  //Intitialize all fields
-  const form = await request.formData();
-  const redirectTo = form.get("redirectTo");
-  //Register data
-  const email = form.get("email");
-  const password = form.get("password");
-  const confirm = form.get("confirm-password");
-  const pseudo = form.get("pseudo");
-  const name = form.get("name");
-  const surname = form.get("surname");
+  switch (request.method) {
+    case "PUT":
+      //Intitialize all fields
+      const form = await request.formData();
+      const redirectTo = form.get("redirectTo");
+      //Register data
+      const email = form.get("email");
+      const password = form.get("password");
+      const confirm = form.get("confirm-password");
+      const pseudo = form.get("pseudo");
+      const name = form.get("name");
+      const surname = form.get("surname");
 
-  //Check if redirection is here, should always be
-  if (typeof redirectTo !== "string") {
-    return json(
-      {
-        registerUser: { error: "There was an error, please try again" },
-      } as ActionData,
-      500
-    );
+      //Check if redirection is here, should always be
+      if (typeof redirectTo !== "string") {
+        return json(
+          {
+            registerUser: { error: "There was an error, please try again" },
+          } as ActionData,
+          500
+        );
+      }
+
+      //Check for fields type
+      if (
+        typeof email !== "string" ||
+        typeof password !== "string" ||
+        typeof confirm !== "string" ||
+        typeof pseudo !== "string" ||
+        (typeof name !== "string" && name !== null) ||
+        (typeof surname !== "string" && surname !== null)
+      ) {
+        return json(
+          {
+            registerUser: {
+              error:
+                "Invalid data provided, please check if you have fill all the requierd fields",
+            },
+          } as ActionData,
+          400
+        );
+      }
+
+      return await handleRegister(
+        email,
+        password,
+        confirm,
+        pseudo,
+        redirectTo,
+        name ? name : undefined,
+        surname ? surname : undefined
+      );
+
+    default:
+      throw json("Bad request method", 404);
   }
-
-  //Check for fields type
-  if (
-    typeof email !== "string" ||
-    typeof password !== "string" ||
-    typeof confirm !== "string" ||
-    typeof pseudo !== "string" ||
-    (typeof name !== "string" && name !== null) ||
-    (typeof surname !== "string" && surname !== null)
-  ) {
-    return json(
-      {
-        registerUser: {
-          error:
-            "Invalid data provided, please check if you have fill all the requierd fields",
-        },
-      } as ActionData,
-      400
-    );
-  }
-
-  return await handleRegister(
-    email,
-    password,
-    confirm,
-    pseudo,
-    redirectTo,
-    name ? name : undefined,
-    surname ? surname : undefined
-  );
 };
 
 export default function Register() {

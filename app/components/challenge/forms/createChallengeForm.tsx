@@ -1,21 +1,15 @@
 import { TextField, Button } from "@mui/material";
+import { Form } from "remix";
 import { CreateChallengeFormData } from "~/models/Challenge";
 
 export default function CreateChallengeForm({
   formData,
-  redirectTo,
 }: {
   formData?: CreateChallengeFormData;
   redirectTo: string | null;
 }) {
   return (
-    <form method="post">
-      <input
-        type="hidden"
-        name="redirectTo"
-        value={redirectTo || "/challenges"}
-      />
-      <input type="hidden" name="method" value="create-challenge" />
+    <Form method="put" action="/challenges/admin">
       <TextField
         variant="outlined"
         margin="normal"
@@ -57,6 +51,6 @@ export default function CreateChallengeForm({
       <Button type="submit" fullWidth variant="contained" color="primary">
         Create Challenge
       </Button>
-    </form>
+    </Form>
   );
 }

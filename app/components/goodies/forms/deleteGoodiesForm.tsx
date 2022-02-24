@@ -1,4 +1,5 @@
 import { Button } from "@mui/material";
+import { Form } from "remix";
 import { DeleteGoodiesFormData, Goodies } from "~/models/Goodies";
 
 export default function DeleteGoodiesForm({
@@ -9,9 +10,8 @@ export default function DeleteGoodiesForm({
   formData?: DeleteGoodiesFormData;
 }) {
   return (
-    <form method="post">
-      <input type="hidden" name="method" value="delete-goodies" />
-      <input type="hidden" name="goodiesId" value={goodies.id} />
+    <Form method="delete" action={`/goodies/${goodies.id}`}>
+      <input type="hidden" name="kind" value="goodies" />
       <Button
         type="submit"
         fullWidth
@@ -19,8 +19,8 @@ export default function DeleteGoodiesForm({
         color="primary"
         style={{ marginTop: "10px" }}
       >
-        Delete
+        Delete Goodies
       </Button>
-    </form>
+    </Form>
   );
 }

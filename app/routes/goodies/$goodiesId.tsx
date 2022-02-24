@@ -198,9 +198,14 @@ async function handleRefundGoodies(token: string, purchaseId: number) {
   return json({ refundGoodiesResponse } as ActionData, code);
 }
 
-export const action: ActionFunction = async ({ request, params }) => {
+export const action: ActionFunction = async ({ request, params, context }) => {
   if (!params.goodiesId) {
-    throw json("Invalid goodies query", 404);
+    return json(
+      {
+        updateGoodiesResponse: { error: "Invalid goodies query" },
+      } as ActionData,
+      404
+    );
   }
 
   const token = await requireAuth(request, `/goodies/${params.challengeId}`);
@@ -208,44 +213,17 @@ export const action: ActionFunction = async ({ request, params }) => {
   //TODO : remove method & use REST routes
   //Initialize form fields
   const form = await request.formData();
-  const method = form.get("method");
-  //Button to buy goodies
-  const button = form.get("purchase");
-  //Goodies update fields
-  const name = form.get("name");
-  const description = form.get("description");
-  const price = form.get("price");
-  const buyLimit = form.get("buy-limit");
-  //Refund goodies fields
-  const purchaseId = form.get("purchaseId");
 
-  //Should never happend, check if method is present
-  if (typeof method !== "string") {
-    return json(
-      {
-        purchaseGoodiesResponse: {
-          error: "Something went wrong, please try again",
-        },
-      } as ActionData,
-      500
-    );
-  }
-
-  switch (method) {
-    case "purchase-goodies":
-      if (button !== "purchase") {
-        return json(
-          {
-            purchaseGoodiesResponse: {
-              error: "There was an error, please try again",
-            },
-          } as ActionData,
-          500
-        );
-      }
-
+  switch (request.method) {
+    case "PUT":
       return await handleCreatePurchase(token, parseInt(params.goodiesId));
-    case "update-goodies":
+    case "PATCH":
+      //Goodies update fields
+      const name = form.get("name");
+      const description = form.get("description");
+      const price = form.get("price");
+      const buyLimit = form.get("buy-limit");
+
       if (
         typeof name !== "string" ||
         typeof description !== "string" ||
@@ -271,13 +249,13 @@ export const action: ActionFunction = async ({ request, params }) => {
         parseInt(buyLimit),
         parseInt(params.goodiesId)
       );
-    case "delete-goodies":
-      return await handleDeleteGoodies(token, parseInt(params.goodiesId));
-    case "refund-goodies":
-      if (typeof purchaseId !== "string") {
+    case "DELETE":
+      const kind = form.get("kind");
+
+      if (typeof kind !== "string") {
         return json(
           {
-            refundGoodiesResponse: {
+            deleteGoodiesResponse: {
               error: "There was an error, please try again",
             },
           } as ActionData,
@@ -285,9 +263,37 @@ export const action: ActionFunction = async ({ request, params }) => {
         );
       }
 
-      return await handleRefundGoodies(token, parseInt(purchaseId));
+      switch (kind) {
+        case "goodies":
+          return await handleDeleteGoodies(token, parseInt(params.goodiesId));
+
+        case "purchase":
+          const purchaseId = new URL(request.url).searchParams.get(
+            "purchaseId"
+          );
+
+          if (!purchaseId) {
+            return json(
+              {
+                purchaseGoodiesResponse: { error: "Invalid purchase query" },
+              } as ActionData,
+              404
+            );
+          }
+
+          return await handleRefundGoodies(token, parseInt(purchaseId));
+
+        default:
+          return json(
+            {
+              deleteGoodiesResponse: { error: "Bad request kind" },
+            } as ActionData,
+            404
+          );
+      }
+
     default:
-      throw new Error("There was an error during form handling");
+      throw json("Bad request method", 404);
   }
 };
 
@@ -348,25 +354,22 @@ export default function Goodies() {
           </div>
         )}
       </Container>
-      {loaderData.purchaseResponse?.purchases && (
-        <div style={{ marginTop: "50px" }}>
-          <Typography textAlign="center" variant="h4">
-            Undelivered purchases
-          </Typography>
-          {generateAlert("error", loaderData.purchaseResponse.error)}
-          {generateAlert("error", actionData?.purchaseGoodiesResponse?.error)}
-          {generateAlert(
-            "success",
-            actionData?.purchaseGoodiesResponse?.success
-          )}
-          {generateAlert("error", actionData?.refundGoodiesResponse?.error)}
-          {generateAlert("success", actionData?.refundGoodiesResponse?.success)}
+      <div style={{ marginTop: "50px" }}>
+        <Typography textAlign="center" variant="h4">
+          Undelivered purchases
+        </Typography>
+        {generateAlert("error", loaderData.purchaseResponse?.error)}
+        {generateAlert("error", actionData?.purchaseGoodiesResponse?.error)}
+        {generateAlert("success", actionData?.purchaseGoodiesResponse?.success)}
+        {generateAlert("error", actionData?.refundGoodiesResponse?.error)}
+        {generateAlert("success", actionData?.refundGoodiesResponse?.success)}
+        {loaderData.purchaseResponse?.purchases && (
           <PurchasesGrid
             purchases={loaderData.purchaseResponse.purchases}
             formData={actionData?.refundGoodiesResponse?.formData}
           />
-        </div>
-      )}
+        )}
+      </div>
     </Container>
   );
 }

@@ -1,4 +1,5 @@
 import { Button } from "@mui/material";
+import { Form } from "remix";
 import {
   Accomplishment,
   DeleteAccomplishmentFormData,
@@ -12,9 +13,11 @@ export default function DeleteAccomplishmentForm({
   formData?: DeleteAccomplishmentFormData;
 }) {
   return (
-    <form method="post">
-      <input type="hidden" name="method" value="delete-accomplishment" />
-      <input type="hidden" name="accomplishmentId" value={accomplishment?.id} />
+    <Form
+      method="delete"
+      action={`/challenges/${accomplishment.challengeId}?accomplishmentId=${accomplishment.id}`}
+    >
+      <input type="hidden" name="kind" value="accomplishment" />
       <Button
         type="submit"
         fullWidth
@@ -24,6 +27,6 @@ export default function DeleteAccomplishmentForm({
       >
         Delete
       </Button>
-    </form>
+    </Form>
   );
 }

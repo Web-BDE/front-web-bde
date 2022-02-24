@@ -9,6 +9,7 @@ import {
   Accomplishment,
   ValidateAccomplishmentFormData,
 } from "~/models/Accomplishment";
+import ValidateAccomplishmentForm from "../forms/validateAccomplishmentForm";
 
 export default function AccomplishmentTile({
   accomplishment,
@@ -33,45 +34,12 @@ export default function AccomplishmentTile({
         </Typography>
       </CardContent>
       {userPrivilege &&
-      userPrivilege >= 1 &&
-      accomplishment.validation === "PENDING" && (
-        <CardActions>
-          {/* Form to validate an accomplishment */}
-          <form
-            style={{ display: "flex", justifyContent: "space-between" }}
-            method="post"
-          >
-            <input
-              type="hidden"
-              name="accomplishmentId"
-              value={accomplishment.id}
-            />
-            <input
-              type="hidden"
-              name="method"
-              value="validate-accomplishment"
-            />
-            <Button
-              size="small"
-              type="submit"
-              name="validation"
-              id="validation"
-              value="1"
-            >
-              Validate
-            </Button>
-            <Button
-              size="small"
-              type="submit"
-              name="validation"
-              value="-1"
-              id="validation"
-            >
-              Refuse
-            </Button>
-          </form>
-        </CardActions>
-      )}
+        userPrivilege >= 1 &&
+        accomplishment.validation === "PENDING" && (
+          <CardActions>
+            <ValidateAccomplishmentForm accomplishment={accomplishment} />
+          </CardActions>
+        )}
     </Card>
   );
 }

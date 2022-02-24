@@ -1,4 +1,4 @@
-import { Link } from "remix";
+import { Form, Link } from "remix";
 import { User } from "~/models/User";
 
 import AppBar from "@mui/material/AppBar";
@@ -55,11 +55,11 @@ function displayAuthMenu(userInfo?: User) {
           >
             Wallet : <b>{userInfo.wallet}</b>
           </Typography>
-          <form method="post" action="/logout">
+          <Form method="post" action="/logout">
             <Button type="submit" color="inherit" variant="text">
               Logout
             </Button>
-          </form>
+          </Form>
         </Grid>
       </div>
     );
