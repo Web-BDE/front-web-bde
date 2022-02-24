@@ -12,7 +12,7 @@ export default function PurchasesGrid({
   purchases: Purchase[];
   formData?: RefundGoodiesFormData;
 }) {
-  const userInfo = useOutletContext<ContextData>().userInfo;
+  const {userInfo} = useOutletContext<ContextData>();
 
   return (
     <Grid

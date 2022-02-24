@@ -44,7 +44,7 @@ import {
 import { Params } from "react-router";
 import { ContextData } from "~/root";
 import { User } from "~/models/User";
-import { getUser } from "~/services/user";
+import { getSelft, getUser } from "~/services/user";
 
 type LoaderData = {
   goodiesResponse?: {
@@ -126,24 +126,16 @@ async function loadGoodies(token: string, goodiesId: number, userId?: number) {
   );
 }
 
-export const loader: LoaderFunction = async ({
-  request,
-  params,
-  context,
-}: {
-  request: Request;
-  params: Params<string>;
-  context: ContextData;
-}) => {
+export const loader: LoaderFunction = async ({ request, params }) => {
   if (!params.goodiesId) {
     throw json("Invalid goodies query", 404);
   }
 
   const token = await requireAuth(request, `/goodies/${params.goodiesId}`);
 
-  const userInfo = context.userInfo;
+  const { user } = await getSelft(token);
 
-  return await loadGoodies(token, parseInt(params.goodiesId), userInfo?.id);
+  return await loadGoodies(token, parseInt(params.goodiesId), user?.id);
 };
 
 async function handleCreatePurchase(token: string, goodiesId: number) {
@@ -233,7 +225,7 @@ async function handleRefundGoodies(token: string, purchaseId: number) {
   return json({ refundGoodiesResponse } as ActionData, code);
 }
 
-export const action: ActionFunction = async ({ request, params, context }) => {
+export const action: ActionFunction = async ({ request, params }) => {
   if (!params.goodiesId) {
     return json(
       {
@@ -366,7 +358,7 @@ export default function Goodies() {
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
 
-  const userInfo = useOutletContext<ContextData>().userInfo;
+  const { userInfo } = useOutletContext<ContextData>();
 
   return (
     <Container style={{ marginTop: "50px" }} component="main">
