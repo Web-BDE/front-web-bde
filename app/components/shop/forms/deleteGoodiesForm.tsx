@@ -1,5 +1,6 @@
 import { Alert, Button } from "@mui/material";
 import { Goodies } from "~/models/Goodies";
+import { generateAlert } from "~/utils/error";
 
 export type DeleteGoodiesFormData = {
   error?: string;
@@ -15,23 +16,11 @@ export default function DeleteGoodiesForm({
 }) {
   return (
     <div>
-      {formData?.error ? (
-        <Alert severity="error">{formData?.error}</Alert>
-      ) : (
-        ""
-      )}
-      {formData?.success ? (
-        <Alert severity="success">{formData?.success}</Alert>
-      ) : (
-        ""
-      )}
+      {generateAlert("error", formData?.error)}
+      {generateAlert("success", formData?.success)}
       <form method="post">
         <input type="hidden" name="method" value="delete-goodies" />
-        <input
-          type="hidden"
-          name="goodiesId"
-          value={goodies?.id}
-        />
+        <input type="hidden" name="goodiesId" value={goodies?.id} />
         <Button
           type="submit"
           fullWidth

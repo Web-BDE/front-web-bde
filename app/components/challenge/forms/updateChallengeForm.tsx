@@ -1,5 +1,6 @@
 import { TextField, Button, Typography, Alert } from "@mui/material";
 import { Challenge } from "~/models/Challenge";
+import { generateAlert } from "~/utils/error";
 
 export type UpdateChallengeFormData = {
   formError?: string;
@@ -25,16 +26,8 @@ export default function UpdateChallengeForm({
 }) {
   return (
     <div>
-      {formData?.formError ? (
-        <Alert severity="error">{formData?.formError}</Alert>
-      ) : (
-        ""
-      )}
-      {formData?.formSuccess ? (
-        <Alert severity="success">{formData?.formSuccess}</Alert>
-      ) : (
-        ""
-      )}
+      {generateAlert("error", formData?.error)}
+      {generateAlert("success", formData?.success)}
       <form method="post">
         {/* Hiddent input with the method that the Action function will have to handle */}
         <input type="hidden" name="method" value="update-challenge" />

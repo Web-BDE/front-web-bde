@@ -1,4 +1,5 @@
 import { TextField, Button, Typography, Alert } from "@mui/material";
+import { generateAlert } from "~/utils/error";
 
 export type CreateChallengeFormData = {
   formError?: string;
@@ -24,16 +25,8 @@ export default function CreateChallengeForm({
 }) {
   return (
     <div>
-      {formData?.formError ? (
-        <Alert severity="error">{formData?.formError}</Alert>
-      ) : (
-        ""
-      )}
-      {formData?.formSuccess ? (
-        <Alert severity="success">{formData?.formSuccess}</Alert>
-      ) : (
-        ""
-      )}
+      {generateAlert("error", formData?.error)}
+      {generateAlert("success", formData?.success)}
       <form method="post">
         {/* Hidden input with the redirection URL in it */}
         <input

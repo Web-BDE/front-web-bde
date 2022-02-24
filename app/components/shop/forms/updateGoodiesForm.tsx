@@ -1,5 +1,6 @@
 import { TextField, Button, Typography, Alert } from "@mui/material";
 import { Goodies } from "~/models/Goodies";
+import { generateAlert } from "~/utils/error";
 
 export type UpdateGoodiesFormData = {
   error?: string;
@@ -27,16 +28,8 @@ export default function UpdateGoodiesForm({
 }) {
   return (
     <div>
-      {formData?.error ? (
-        <Alert severity="error">{formData?.error}</Alert>
-      ) : (
-        ""
-      )}
-      {formData?.success ? (
-        <Alert severity="success">{formData?.success}</Alert>
-      ) : (
-        ""
-      )}
+      {generateAlert("error", formData?.error)}
+      {generateAlert("success", formData?.success)}
       <form method="post">
         {/* Hiddent input with the method that the Action function will have to handle */}
         <input type="hidden" name="method" value="update-goodies" />

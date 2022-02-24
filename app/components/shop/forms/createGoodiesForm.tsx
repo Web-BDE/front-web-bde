@@ -1,4 +1,5 @@
 import { TextField, Button, Alert } from "@mui/material";
+import { generateAlert } from "~/utils/error";
 
 export type CreateGoodiesFormData = {
   error?: string;
@@ -26,12 +27,8 @@ export default function CreateGoodiesForm({
 }) {
   return (
     <div>
-      {formData?.error ? <Alert severity="error">{formData?.error}</Alert> : ""}
-      {formData?.success ? (
-        <Alert severity="success">{formData?.success}</Alert>
-      ) : (
-        ""
-      )}
+      {generateAlert("error", formData?.error)}
+      {generateAlert("success", formData?.success)}
       <form method="post">
         {/* Hidden input with the redirection URL in it */}
         <input type="hidden" name="redirectTo" value={redirectTo || "/shop"} />

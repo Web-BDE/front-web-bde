@@ -7,6 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Accomplishment } from "~/models/Accomplishment";
+import { generateAlert } from "~/utils/error";
 
 export type UpdateAccomplishmentFormData = {
   formError?: string;
@@ -32,16 +33,8 @@ export default function UpdateAccomplishmentForm({
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           {new Date(accomplishment.createdAt).toLocaleDateString()}
         </Typography>
-        {formData?.formError ? (
-          <Alert severity="error">{formData?.formError}</Alert>
-        ) : (
-          ""
-        )}
-        {formData?.formSuccess ? (
-          <Alert severity="success">{formData?.formSuccess}</Alert>
-        ) : (
-          ""
-        )}
+        {generateAlert("error", formData?.error)}
+        {generateAlert("success", formData?.success)}
         <form method="post">
           {/* Method handled by the form */}
           <input type="hidden" name="method" value="update-accomplishment" />

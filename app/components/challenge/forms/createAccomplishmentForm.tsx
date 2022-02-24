@@ -1,4 +1,5 @@
 import { TextField, Button, Typography, Alert } from "@mui/material";
+import { generateAlert } from "~/utils/error";
 
 export type CreateAccomplishmentFormData = {
   formError?: string;
@@ -18,16 +19,8 @@ export default function CreateAccomplishmentForm({
 }) {
   return (
     <div>
-      {formData?.formError ? (
-        <Alert severity="error">{formData?.formError}</Alert>
-      ) : (
-        ""
-      )}
-      {formData?.formSuccess ? (
-        <Alert severity="success">{formData?.formSuccess}</Alert>
-      ) : (
-        ""
-      )}
+      {generateAlert("error", formData?.error)}
+      {generateAlert("success", formData?.success)}
       <form method="post">
         <input type="hidden" name="method" value="create-accomplishment" />
         <TextField

@@ -1,5 +1,6 @@
 import { Alert, Button } from "@mui/material";
 import { Challenge } from "~/models/Challenge";
+import { generateAlert } from "~/utils/error";
 
 export type DeleteChallengeFormData = {
   formError?: string;
@@ -15,16 +16,8 @@ export default function DeleteChallengeForm({
 }) {
   return (
     <div>
-      {formData?.formError ? (
-        <Alert severity="error">{formData?.formError}</Alert>
-      ) : (
-        ""
-      )}
-      {formData?.formSuccess ? (
-        <Alert severity="success">{formData?.formSuccess}</Alert>
-      ) : (
-        ""
-      )}
+      {generateAlert("error", formData?.error)}
+      {generateAlert("success", formData?.success)}
       <form method="post">
         <input type="hidden" name="method" value="delete-challenge" />
         <input
