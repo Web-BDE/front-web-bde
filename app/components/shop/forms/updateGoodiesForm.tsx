@@ -1,30 +1,13 @@
 import { TextField, Button, Typography, Alert } from "@mui/material";
-import { Goodies } from "~/models/Goodies";
+import { CreateGoodiesFormData, Goodies } from "~/models/Goodies";
 import { generateAlert } from "~/utils/error";
-
-export type UpdateGoodiesFormData = {
-  error?: string;
-  success?: string;
-  fieldsError?: {
-    name?: string;
-    description?: string;
-    price?: string;
-    buyLimit?: string;
-  };
-  fields?: {
-    name: string;
-    description: string;
-    price: number;
-    buyLimit: number;
-  };
-};
 
 export default function UpdateGoodiesForm({
   goodies,
   formData,
 }: {
   goodies: Goodies;
-  formData?: UpdateGoodiesFormData;
+  formData?: CreateGoodiesFormData;
 }) {
   return (
     <div>

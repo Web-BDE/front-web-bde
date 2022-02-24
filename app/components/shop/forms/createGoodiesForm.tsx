@@ -1,22 +1,6 @@
 import { TextField, Button, Alert } from "@mui/material";
+import { CreateGoodiesFormData } from "~/models/Goodies";
 import { generateAlert } from "~/utils/error";
-
-export type CreateGoodiesFormData = {
-  error?: string;
-  success?: string;
-  fieldsError?: {
-    name?: string;
-    description?: string;
-    price?: string;
-    buyLimit?: string;
-  };
-  fields?: {
-    name: string;
-    description: string;
-    price: number;
-    buyLimit: number;
-  };
-};
 
 export default function CreateGoodiesForm({
   formData,

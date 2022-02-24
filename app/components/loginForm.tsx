@@ -1,17 +1,6 @@
 import { Grid, TextField, Button } from "@mui/material";
 import { Link } from "remix";
-
-export type LoginFormData = {
-  error?: string;
-  success?: string;
-  fieldsError?: {
-    email?: string;
-    password?: string;
-  };
-  fields?: {
-    email: string;
-  };
-};
+import { LoginFormData } from "~/models/User";
 
 export default function LoginForm({
   formData,

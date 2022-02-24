@@ -1,20 +1,6 @@
 import { TextField, Button, Typography, Alert } from "@mui/material";
+import { CreateChallengeFormData } from "~/models/Challenge";
 import { generateAlert } from "~/utils/error";
-
-export type CreateChallengeFormData = {
-  formError?: string;
-  formSuccess?: string;
-  fieldsError?: {
-    name?: string;
-    description?: string;
-    reward?: string;
-  };
-  fields?: {
-    name: string;
-    description: string;
-    reward: number;
-  };
-};
 
 export default function CreateChallengeForm({
   formData,

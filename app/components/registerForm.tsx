@@ -1,25 +1,7 @@
 //MUI Components
-import { Grid, TextField, Button, Typography, Alert } from "@mui/material";
+import { Grid, TextField, Button } from "@mui/material";
 import { Link } from "remix";
-
-export type RegisterFormData = {
-  error?: string;
-  success?: string;
-  fieldsError?: {
-    email?: string;
-    password?: string;
-    confirm?: string;
-    pseudo?: string;
-    name?: string;
-    surname?: string;
-  };
-  fields?: {
-    email: string;
-    pseudo: string;
-    name?: string;
-    surname?: string;
-  };
-};
+import { RegisterFormData } from "~/models/User";
 
 export default function RegisterForm({
   formData,

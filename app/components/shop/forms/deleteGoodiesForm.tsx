@@ -1,11 +1,6 @@
 import { Alert, Button } from "@mui/material";
-import { Goodies } from "~/models/Goodies";
+import { DeleteGoodiesFormData, Goodies } from "~/models/Goodies";
 import { generateAlert } from "~/utils/error";
-
-export type DeleteGoodiesFormData = {
-  error?: string;
-  success?: string;
-};
 
 export default function DeleteGoodiesForm({
   goodies,

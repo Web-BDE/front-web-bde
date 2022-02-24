@@ -6,26 +6,15 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Accomplishment } from "~/models/Accomplishment";
+import { Accomplishment, CreateAccomplishmentFormData } from "~/models/Accomplishment";
 import { generateAlert } from "~/utils/error";
-
-export type UpdateAccomplishmentFormData = {
-  formError?: string;
-  formSuccess?: string;
-  fieldsError?: {
-    proof?: string;
-  };
-  fields?: {
-    proof: string;
-  };
-};
 
 export default function UpdateAccomplishmentForm({
   accomplishment,
   formData,
 }: {
   accomplishment: Accomplishment;
-  formData?: UpdateAccomplishmentFormData;
+  formData?: CreateAccomplishmentFormData;
 }) {
   return (
     <Card>

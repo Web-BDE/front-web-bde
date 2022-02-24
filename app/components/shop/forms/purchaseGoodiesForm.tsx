@@ -1,10 +1,6 @@
 import { Alert, Button } from "@mui/material";
+import { PurchaseGoodiesFormData } from "~/models/Purchase";
 import { generateAlert } from "~/utils/error";
-
-export type PurchaseGoodiesFormData = {
-  error?: string;
-  success?: string;
-};
 
 export default function PurchaseGoodiesForm ({ formData }: { formData?: PurchaseGoodiesFormData }) {
   return (

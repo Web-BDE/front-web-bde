@@ -1,11 +1,6 @@
 import { Alert, Button } from "@mui/material";
-import { Accomplishment } from "~/models/Accomplishment";
+import { Accomplishment, DeleteAccomplishmentFormData } from "~/models/Accomplishment";
 import { generateAlert } from "~/utils/error";
-
-export type DeleteAccomplishmentFormData = {
-  formError?: string;
-  formSuccess?: string;
-};
 
 export default function DeleteAccomplishmentForm({
   accomplishment,

@@ -1,11 +1,6 @@
 import { Alert, Button } from "@mui/material";
-import { Challenge } from "~/models/Challenge";
+import { Challenge, DeleteChallengeFormData } from "~/models/Challenge";
 import { generateAlert } from "~/utils/error";
-
-export type DeleteChallengeFormData = {
-  formError?: string;
-  formSuccess?: string;
-};
 
 export default function DeleteChallengeForm({
   challenge,

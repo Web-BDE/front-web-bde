@@ -1,16 +1,6 @@
 import { TextField, Button, Typography, Alert } from "@mui/material";
+import { CreateAccomplishmentFormData } from "~/models/Accomplishment";
 import { generateAlert } from "~/utils/error";
-
-export type CreateAccomplishmentFormData = {
-  formError?: string;
-  formSuccess?: string;
-  fieldsError?: {
-    proof?: string;
-  };
-  fields?: {
-    proof: string;
-  };
-};
 
 export default function CreateAccomplishmentForm({
   formData,
