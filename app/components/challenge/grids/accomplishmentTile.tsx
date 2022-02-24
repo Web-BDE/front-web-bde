@@ -40,6 +40,7 @@ export default function AccomplishmentTile({
           <form
             style={{ display: "flex", justifyContent: "space-between" }}
             method="post"
+            action="/challenges/admin"
           >
             <input
               type="hidden"

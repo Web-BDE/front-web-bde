@@ -29,7 +29,7 @@ export default function PurchaseTile({
       {userPrivilege && userPrivilege >= 2 ? (
         <CardActions>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <form method="post">
+            <form method="post" action={`/goodies/${purchase.goodiesId}`}>
               <input type="hidden" name="purchaseId" value={purchase.id} />
               <input type="hidden" name="method" value="refund-purchase" />
               <Button
