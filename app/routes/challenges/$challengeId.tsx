@@ -6,7 +6,7 @@ import {
   useActionData,
   useCatch,
   useLoaderData,
-  useOutletContext
+  useOutletContext,
 } from "remix";
 
 import {
@@ -48,6 +48,7 @@ import {
 } from "~/models/Accomplishment";
 import { ContextData } from "~/root";
 import { Params } from "react-router";
+import { getSelft } from "~/services/user";
 
 type LoaderData = {
   challengeResponse?: {
@@ -124,15 +125,7 @@ async function loadChallenge(
   return loadAccomplishment(token, challengeResponse, code, userId);
 }
 
-export const loader: LoaderFunction = async ({
-  request,
-  params,
-  context,
-}: {
-  request: Request;
-  params: Params<string>;
-  context: ContextData;
-}) => {
+export const loader: LoaderFunction = async ({ request, params }) => {
   if (!params.challengeId) {
     throw json("Invalid challenge query", 400);
   }
@@ -140,9 +133,9 @@ export const loader: LoaderFunction = async ({
   //Need to provide userId to filter in jsx
   const token = await requireAuth(request, `/challenge/${params.challengeId}`);
 
-  const userInfo = context.userInfo;
+  const { user } = await getSelft(token);
 
-  return await loadChallenge(token, parseInt(params.challengeId), userInfo?.id);
+  return await loadChallenge(token, parseInt(params.challengeId), user?.id);
 };
 
 async function handleAccomplishmentCreation(
@@ -455,7 +448,7 @@ export default function Challenge() {
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
 
-  const userInfo = useOutletContext<ContextData>().userInfo;
+  const { userInfo } = useOutletContext<ContextData>();
 
   return (
     <Container style={{ marginTop: "50px" }}>

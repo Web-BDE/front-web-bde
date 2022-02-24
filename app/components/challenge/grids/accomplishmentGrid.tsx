@@ -56,7 +56,7 @@ export default function AccomplishmentsGrid({
     validateForm?: ValidateAccomplishmentFormData;
   };
 }) {
-  const userInfo = useOutletContext<ContextData>().userInfo;
+  const {userInfo} = useOutletContext<ContextData>();
 
   return (
     <Grid
