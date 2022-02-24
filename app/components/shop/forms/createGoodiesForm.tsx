@@ -10,7 +10,6 @@ export default function CreateGoodiesForm({
 }) {
   return (
     <form method="post">
-      <input type="hidden" name="redirectTo" value={redirectTo || "/shop"} />
       <TextField
         variant="outlined"
         margin="normal"

@@ -10,6 +10,7 @@ export default function LoginForm({
   redirectTo: string | null;
 }) {
   return (
+    //TODO : add action on forms to redirect on apropriate routes
     <form method="post">
       <input type="hidden" name="redirectTo" value={redirectTo || "/"} />
       <TextField
