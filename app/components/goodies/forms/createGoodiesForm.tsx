@@ -1,4 +1,5 @@
 import { TextField, Button } from "@mui/material";
+import { Form } from "remix";
 import { CreateGoodiesFormData } from "~/models/Goodies";
 
 export default function CreateGoodiesForm({
@@ -9,7 +10,7 @@ export default function CreateGoodiesForm({
   redirectTo: string | null;
 }) {
   return (
-    <form method="post" action="/goodies/admin">
+    <Form method="put" action="/goodies/admin">
       <TextField
         variant="outlined"
         margin="normal"
@@ -64,6 +65,6 @@ export default function CreateGoodiesForm({
       <Button type="submit" fullWidth variant="contained" color="primary">
         Create Goodies
       </Button>
-    </form>
+    </Form>
   );
 }

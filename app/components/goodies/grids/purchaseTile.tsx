@@ -6,6 +6,8 @@ import {
   Button,
 } from "@mui/material";
 import { Purchase, RefundGoodiesFormData } from "~/models/Purchase";
+import DeliverGoodiesForm from "../forms/deliverGoodiesForm";
+import RefundGoodiesForm from "../forms/refundGoodiesForm";
 
 export default function PurchaseTile({
   purchase,
@@ -29,33 +31,8 @@ export default function PurchaseTile({
       {userPrivilege && userPrivilege >= 2 ? (
         <CardActions>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <form method="post" action={`/goodies/${purchase.goodiesId}`}>
-              <input type="hidden" name="purchaseId" value={purchase.id} />
-              <input type="hidden" name="method" value="refund-purchase" />
-              <Button
-                size="small"
-                type="submit"
-                name="refund"
-                id="refund"
-                value="1"
-              >
-                Refund
-              </Button>
-            </form>
-            {/* //TODO mark as delivered */}
-            <form method="get">
-              <input type="hidden" name="purchaseId" value={purchase.id} />
-              <input type="hidden" name="method" value="refund-purchase" />
-              <Button
-                size="small"
-                type="submit"
-                name="refund"
-                id="refund"
-                value="1"
-              >
-                Mark as delivered
-              </Button>
-            </form>
+            <RefundGoodiesForm purchase={purchase} />
+            <DeliverGoodiesForm purchase={purchase} />
           </div>
         </CardActions>
       ) : (

@@ -1,4 +1,5 @@
 import { TextField, Button, Typography } from "@mui/material";
+import { Form } from "remix";
 import { CreateGoodiesFormData, Goodies } from "~/models/Goodies";
 
 export default function UpdateGoodiesForm({
@@ -9,9 +10,8 @@ export default function UpdateGoodiesForm({
   formData?: CreateGoodiesFormData;
 }) {
   return (
-    <form method="post" action={`/goodies/${goodies.id}`}>
+    <Form method="patch" action={`/goodies/${goodies.id}`}>
       {/* Hiddent input with the method that the Action function will have to handle */}
-      <input type="hidden" name="method" value="update-goodies" />
       <TextField
         variant="outlined"
         margin="normal"
@@ -76,6 +76,6 @@ export default function UpdateGoodiesForm({
       >
         Update Goodies
       </Button>
-    </form>
+    </Form>
   );
 }

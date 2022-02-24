@@ -1,15 +1,15 @@
 import { Grid } from "@mui/material";
 import { useContext } from "react";
-import { Purchase } from "~/models/Purchase";
+import { Purchase, RefundGoodiesFormData } from "~/models/Purchase";
 import { UserContext } from "../../userContext";
-import PurchaseTile, { RefundPurchaseFormData } from "./purchaseTile";
+import PurchaseTile from "./purchaseTile";
 
 export default function PurchasesGrid({
   purchases,
   formData,
 }: {
   purchases: Purchase[];
-  formData?: RefundPurchaseFormData;
+  formData?: RefundGoodiesFormData;
 }) {
   const userInfo = useContext(UserContext);
 

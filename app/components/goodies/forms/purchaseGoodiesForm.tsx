@@ -1,4 +1,5 @@
 import { Button } from "@mui/material";
+import { Form } from "remix";
 import { Goodies } from "~/models/Goodies";
 import { PurchaseGoodiesFormData } from "~/models/Purchase";
 
@@ -10,8 +11,8 @@ export default function PurchaseGoodiesForm({
   formData?: PurchaseGoodiesFormData;
 }) {
   return (
-    <form method="post" action={`/goodies/${goodies.id}`}>
-      <input type="hidden" name="method" value="purchase-goodies" />
+    <Form method="put" action={`/goodies/${goodies.id}`}>
+      <input type="hidden" name="method" value="purchase" />
       <Button
         type="submit"
         fullWidth
@@ -23,6 +24,6 @@ export default function PurchaseGoodiesForm({
       >
         Purchase
       </Button>
-    </form>
+    </Form>
   );
 }
