@@ -20,7 +20,7 @@ import { loginUser } from "~/services/authentication";
 import { LoginFormData } from "~/models/User";
 
 type ActionData = {
-  loginUser: { formData?: LoginFormData; error?: string; success?: string };
+  loginUser?: { formData?: LoginFormData; error?: string; success?: string };
 };
 
 export async function handleLogin(
@@ -93,10 +93,10 @@ export default function Login() {
       <Typography component="h1" variant="h5">
         Log in
       </Typography>
-      {generateAlert("error", actionData?.loginUser.error)}
-      {generateAlert("success", actionData?.loginUser.success)}
+      {generateAlert("error", actionData?.loginUser?.error)}
+      {generateAlert("success", actionData?.loginUser?.success)}
       <LoginForm
-        formData={actionData?.loginUser.formData}
+        formData={actionData?.loginUser?.formData}
         redirectTo={searchparams.get("redirectTo")}
       />
     </Container>

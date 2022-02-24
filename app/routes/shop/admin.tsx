@@ -24,7 +24,7 @@ import { createGoodies } from "~/services/goodies";
 import { CreateGoodiesFormData } from "~/models/Goodies";
 
 type ActionData = {
-  createGoodiesResponse: {
+  createGoodiesResponse?: {
     formData?: CreateGoodiesFormData;
     error?: string;
     success?: string;
@@ -151,10 +151,10 @@ export default function ShopAdmin() {
   return (
     <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
       <Typography variant="h4">Create Goodies</Typography>
-      {generateAlert("error", actionData?.createGoodiesResponse.error)}
-      {generateAlert("success", actionData?.createGoodiesResponse.success)}
+      {generateAlert("error", actionData?.createGoodiesResponse?.error)}
+      {generateAlert("success", actionData?.createGoodiesResponse?.success)}
       <CreateGoodiesForm
-        formData={actionData?.createGoodiesResponse.formData}
+        formData={actionData?.createGoodiesResponse?.formData}
         redirectTo={searchParams.get("redirectTo")}
       />
     </Container>

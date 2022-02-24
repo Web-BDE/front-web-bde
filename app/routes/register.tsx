@@ -21,7 +21,7 @@ import { handleLogin } from "./login";
 import { RegisterFormData } from "~/models/User";
 
 type ActionData = {
-  registerUser: {
+  registerUser?: {
     formData?: RegisterFormData;
     error?: string;
     success?: string;
@@ -164,10 +164,10 @@ export default function Register() {
       <Typography component="h1" variant="h5">
         Register
       </Typography>
-      {generateAlert("error", actionData?.registerUser.error)}
-      {generateAlert("success", actionData?.registerUser.success)}
+      {generateAlert("error", actionData?.registerUser?.error)}
+      {generateAlert("success", actionData?.registerUser?.success)}
       <RegisterForm
-        formData={actionData?.registerUser.formData}
+        formData={actionData?.registerUser?.formData}
         redirectTo={searchparams.get("redirectTo")}
       />
     </Container>

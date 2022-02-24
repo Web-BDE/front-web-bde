@@ -15,7 +15,7 @@ import ChallengeGrid from "~/components/challenge/grids/challengeGrid";
 import { getManyChallenge } from "~/services/challenges";
 
 type LoaderData = {
-  challengeResponse: {
+  challengeResponse?: {
     error?: string;
     success?: string;
     challenges?: Challenge[];
@@ -42,8 +42,8 @@ export default function Challenges() {
       <Typography style={{ textAlign: "center" }} variant="h2">
         Challenges
       </Typography>
-      {generateAlert("error", loaderData.challengeResponse.error)}
-      <ChallengeGrid challenges={loaderData.challengeResponse.challenges} />
+      {generateAlert("error", loaderData.challengeResponse?.error)}
+      <ChallengeGrid challenges={loaderData.challengeResponse?.challenges} />
     </Container>
   );
 }

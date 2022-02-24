@@ -14,7 +14,7 @@ import GoodiesGrid from "~/components/shop/grids/goodiesGrid";
 import { Goodies } from "~/models/Goodies";
 
 type LoaderData = {
-  goodiesResponse: { error?: string; goodies?: Goodies[]; success?: string };
+  goodiesResponse?: { error?: string; goodies?: Goodies[]; success?: string };
 };
 
 async function loadGoodies(token: string) {

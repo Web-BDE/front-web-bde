@@ -46,7 +46,7 @@ type ActionData = {
 };
 
 type LoaderData = {
-  accomplishmentResponse: {
+  accomplishmentResponse?: {
     error?: string;
     success?: string;
     accomplishments?: Accomplishment[];
@@ -233,7 +233,7 @@ export default function ChallengesAdmin() {
         />
       </Container>
       {/* Display a list of accomplishments that need to be validated */}
-      {loaderData.accomplishmentResponse.accomplishments && (
+      {loaderData.accomplishmentResponse?.accomplishments && (
         <div style={{ marginTop: "50px" }}>
           <Typography textAlign="center" variant="h4">
             Pending Accomplishments
@@ -247,7 +247,7 @@ export default function ChallengesAdmin() {
             actionData?.validateAccomplishmentResponse?.success
           )}
           <AccomplishmentsGrid
-            accomplishments={loaderData.accomplishmentResponse.accomplishments}
+            accomplishments={loaderData.accomplishmentResponse?.accomplishments}
             formData={{
               validateForm:
                 actionData?.validateAccomplishmentResponse?.formData,

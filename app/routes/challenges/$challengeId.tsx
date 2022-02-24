@@ -49,9 +49,9 @@ import {
 } from "~/models/Accomplishment";
 
 type LoaderData = {
-  challengeResponse: { challenge: Challenge; error?: string; success?: string };
-  accomplishmentResponse: {
-    accomplishments: Accomplishment[];
+  challengeResponse?: { challenge?: Challenge; error?: string; success?: string };
+  accomplishmentResponse?: {
+    accomplishments?: Accomplishment[];
     error?: string;
     success?: string;
   };
@@ -59,27 +59,27 @@ type LoaderData = {
 
 type ActionData = {
   createAccomplishmentResponse?: {
-    formData: CreateAccomplishmentFormData;
+    formData?: CreateAccomplishmentFormData;
     error?: string;
     success?: string;
   };
   updateAccomplishmentResponse?: {
-    formData: CreateAccomplishmentFormData;
+    formData?: CreateAccomplishmentFormData;
     error?: string;
     success?: string;
   };
   updateChallengeResponse?: {
-    formData: CreateChallengeFormData;
+    formData?: CreateChallengeFormData;
     error?: string;
     success?: string;
   };
   deleteAccomplishmentResponse?: {
-    formData: DeleteAccomplishmentFormData;
+    formData?: DeleteAccomplishmentFormData;
     error?: string;
     success?: string;
   };
   deleteChallengeResponse?: {
-    formData: DeleteChallengeFormData;
+    formData?: DeleteChallengeFormData;
     error?: string;
     success?: string;
   };
@@ -411,7 +411,7 @@ export default function Challenge() {
         {generateAlert("success", actionData?.updateChallengeResponse?.success)}
         {generateAlert("error", actionData?.deleteChallengeResponse?.error)}
         {generateAlert("success", actionData?.deleteChallengeResponse?.success)}
-        {loaderData.challengeResponse.challenge && (
+        {loaderData.challengeResponse?.challenge && (
           <div>
             {displayChallenge(
               loaderData.challengeResponse.challenge,
@@ -437,7 +437,7 @@ export default function Challenge() {
         )}
       </Container>
       {/* Display all user's accomplishment for this challenge */}
-      {loaderData.accomplishmentResponse.accomplishments && (
+      {loaderData.accomplishmentResponse?.accomplishments && (
         <div style={{ marginTop: "50px" }}>
           <Typography textAlign="center" variant="h4">
             Your accomplishments

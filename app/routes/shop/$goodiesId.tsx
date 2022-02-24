@@ -45,7 +45,7 @@ import {
 } from "~/models/Purchase";
 
 type LoaderData = {
-  goodiesResponse: { error?: string; success?: string; goodies?: Goodies };
+  goodiesResponse?: { error?: string; success?: string; goodies?: Goodies };
   purchaseResponse?: {
     error?: string;
     success?: string;
@@ -326,15 +326,15 @@ export default function Goodies() {
     <Container style={{ marginTop: "50px" }} component="main">
       <Container maxWidth="xs">
         <Typography variant="h4">Goodies</Typography>
-        {generateAlert("error", loaderData.goodiesResponse.error)}
+        {generateAlert("error", loaderData.goodiesResponse?.error)}
         {generateAlert("error", actionData?.updateGoodiesResponse?.error)}
         {generateAlert("success", actionData?.updateGoodiesResponse?.success)}
         {generateAlert("error", actionData?.deleteGoodiesResponse?.error)}
         {generateAlert("success", actionData?.deleteGoodiesResponse?.success)}
-        {loaderData.goodiesResponse.goodies && (
+        {loaderData.goodiesResponse?.goodies && (
           <div>
             {displayGoodies(
-              loaderData.goodiesResponse.goodies,
+              loaderData.goodiesResponse?.goodies,
               {
                 updateForm: actionData?.updateGoodiesResponse?.formData,
                 deleteForm: actionData?.deleteGoodiesResponse?.formData,
@@ -342,7 +342,7 @@ export default function Goodies() {
               userInfo?.id
             )}
             <PurchaseGoodiesForm
-              goodies={loaderData.goodiesResponse.goodies}
+              goodies={loaderData.goodiesResponse?.goodies}
               formData={actionData?.purchaseGoodiesResponse?.formData}
             />
           </div>
