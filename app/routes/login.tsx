@@ -86,7 +86,7 @@ export const action: ActionFunction = async ({ request }) => {
       return await handleLogin(email, password, redirectTo);
 
     default:
-      throw new Error("Bad request method");
+      throw json("Bad request method", 404);
   }
 };
 

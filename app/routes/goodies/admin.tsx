@@ -94,40 +94,46 @@ async function handleCreateGoodies(
 }
 
 export const action: ActionFunction = async ({ request }) => {
-  //Initialise fiels
-  const token = await requireAuth(request, "/goodies/admin");
-  const form = await request.formData();
-  //Goodies fields
-  const name = form.get("name");
-  const description = form.get("description");
-  const price = form.get("price");
-  const buyLimit = form.get("buy-limit");
+  switch (request.method) {
+    case "PUT":
+      //Initialise fiels
+      const token = await requireAuth(request, "/goodies/admin");
+      const form = await request.formData();
+      //Goodies fields
+      const name = form.get("name");
+      const description = form.get("description");
+      const price = form.get("price");
+      const buyLimit = form.get("buy-limit");
 
-  //Check for field types
-  if (
-    typeof name !== "string" ||
-    (typeof description !== "string" && description !== null) ||
-    typeof price !== "string" ||
-    typeof buyLimit !== "string"
-  ) {
-    return json(
-      {
-        createGoodiesResponse: {
-          error:
-            "Invalid data provided, please check if you have fill all the requierd fields",
-        },
-      } as ActionData,
-      400
-    );
+      //Check for field types
+      if (
+        typeof name !== "string" ||
+        (typeof description !== "string" && description !== null) ||
+        typeof price !== "string" ||
+        typeof buyLimit !== "string"
+      ) {
+        return json(
+          {
+            createGoodiesResponse: {
+              error:
+                "Invalid data provided, please check if you have fill all the requierd fields",
+            },
+          } as ActionData,
+          400
+        );
+      }
+
+      return await handleCreateGoodies(
+        token,
+        name,
+        parseInt(price),
+        parseInt(buyLimit),
+        description ? description : undefined
+      );
+
+    default:
+      throw json("Bad request method", 404);
   }
-
-  return await handleCreateGoodies(
-    token,
-    name,
-    parseInt(price),
-    parseInt(buyLimit),
-    description ? description : undefined
-  );
 };
 
 export default function ShopAdmin() {

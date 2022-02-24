@@ -156,6 +156,9 @@ export const action: ActionFunction = async ({ request }) => {
         name ? name : undefined,
         surname ? surname : undefined
       );
+
+    default:
+      throw json("Bad request method", 404);
   }
 };
 
