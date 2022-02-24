@@ -10,7 +10,7 @@ export default function PurchaseGoodiesForm({
   formData?: PurchaseGoodiesFormData;
 }) {
   return (
-    <form method="post">
+    <form method="post" action={`/goodies/${goodies.id}`}>
       <input type="hidden" name="method" value="purchase-goodies" />
       <input type="hidden" name="goodiesId" value={goodies.id} />
       <Button

@@ -9,7 +9,7 @@ export default function DeleteChallengeForm({
   formData?: DeleteChallengeFormData;
 }) {
   return (
-    <form method="post">
+    <form method="post" action={`/challenges/${challenge.id}`}>
       <input type="hidden" name="method" value="delete-challenge" />
       <input type="hidden" name="challengeId" value={challenge?.id} />
       <Button

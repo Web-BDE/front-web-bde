@@ -9,7 +9,7 @@ export default function CreateChallengeForm({
   redirectTo: string | null;
 }) {
   return (
-    <form method="post">
+    <form method="post" action="/challenges/admin">
       <input
         type="hidden"
         name="redirectTo"

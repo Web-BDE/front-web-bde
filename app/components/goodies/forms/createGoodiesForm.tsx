@@ -9,7 +9,7 @@ export default function CreateGoodiesForm({
   redirectTo: string | null;
 }) {
   return (
-    <form method="post">
+    <form method="post" action="/goodies/admin">
       <TextField
         variant="outlined"
         margin="normal"

@@ -23,7 +23,7 @@ export default function UpdateAccomplishmentForm({
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           {new Date(accomplishment.createdAt).toLocaleDateString()}
         </Typography>
-        <form method="post">
+        <form method="post" action={`/challenges/${accomplishment.challengeId}`}>
           {/* Method handled by the form */}
           <input type="hidden" name="method" value="update-accomplishment" />
           {/* Id of the accomplishment to handle */}

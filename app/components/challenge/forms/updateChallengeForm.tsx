@@ -10,7 +10,7 @@ export default function UpdateChallengeForm({
   formData?: CreateChallengeFormData;
 }) {
   return (
-    <form method="post">
+    <form method="post" action={`/challenges/${challenge.id}`}>
       {/* Hiddent input with the method that the Action function will have to handle */}
       <input type="hidden" name="method" value="update-challenge" />
       <TextField

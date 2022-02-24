@@ -9,7 +9,7 @@ export default function DeleteGoodiesForm({
   formData?: DeleteGoodiesFormData;
 }) {
   return (
-    <form method="post">
+    <form method="post" action={`/goodies/${goodies.id}`}>
       <input type="hidden" name="method" value="delete-goodies" />
       <input type="hidden" name="goodiesId" value={goodies.id} />
       <Button

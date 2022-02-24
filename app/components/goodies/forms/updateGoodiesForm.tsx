@@ -9,7 +9,7 @@ export default function UpdateGoodiesForm({
   formData?: CreateGoodiesFormData;
 }) {
   return (
-    <form method="post">
+    <form method="post" action={`/goodies/${goodies.id}`}>
       {/* Hiddent input with the method that the Action function will have to handle */}
       <input type="hidden" name="method" value="update-goodies" />
       <input type="hidden" name="goodiesId" value={goodies.id} />
