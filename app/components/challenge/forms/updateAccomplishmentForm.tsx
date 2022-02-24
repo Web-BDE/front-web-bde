@@ -5,6 +5,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { Form } from "remix";
 import {
   Accomplishment,
   CreateAccomplishmentFormData,
@@ -23,15 +24,11 @@ export default function UpdateAccomplishmentForm({
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           {new Date(accomplishment.createdAt).toLocaleDateString()}
         </Typography>
-        <form method="post" action={`/challenges/${accomplishment.challengeId}`}>
-          {/* Method handled by the form */}
-          <input type="hidden" name="method" value="update-accomplishment" />
-          {/* Id of the accomplishment to handle */}
-          <input
-            type="hidden"
-            name="accomplishmentId"
-            value={accomplishment?.id}
-          />
+        <Form
+          method="patch"
+          action={`/challenges/${accomplishment.challengeId}?accomplishmentId=${accomplishment.id}`}
+        >
+          <input type="hidden" name="kind" value="accomplishment" />
           <TextField
             variant="outlined"
             margin="normal"
@@ -49,7 +46,7 @@ export default function UpdateAccomplishmentForm({
           <Button type="submit" fullWidth variant="contained" color="primary">
             Update
           </Button>
-        </form>
+        </Form>
       </CardContent>
     </Card>
   );

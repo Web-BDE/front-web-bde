@@ -1,4 +1,5 @@
 import { Button } from "@mui/material";
+import { Form } from "remix";
 import { Challenge, DeleteChallengeFormData } from "~/models/Challenge";
 
 export default function DeleteChallengeForm({
@@ -9,8 +10,8 @@ export default function DeleteChallengeForm({
   formData?: DeleteChallengeFormData;
 }) {
   return (
-    <form method="post" action={`/challenges/${challenge.id}`}>
-      <input type="hidden" name="method" value="delete-challenge" />
+    <Form method="delete" action={`/challenges/${challenge.id}`}>
+      <input type="hidden" name="kind" value="challenge" />
       <Button
         type="submit"
         fullWidth
@@ -20,6 +21,6 @@ export default function DeleteChallengeForm({
       >
         Delete
       </Button>
-    </form>
+    </Form>
   );
 }

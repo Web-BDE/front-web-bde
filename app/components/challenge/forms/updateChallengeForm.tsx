@@ -1,6 +1,6 @@
-import { TextField, Button, Typography, Alert } from "@mui/material";
+import { TextField, Button, Typography } from "@mui/material";
+import { Form } from "remix";
 import { Challenge, CreateChallengeFormData } from "~/models/Challenge";
-import { generateAlert } from "~/utils/error";
 
 export default function UpdateChallengeForm({
   challenge,
@@ -10,9 +10,9 @@ export default function UpdateChallengeForm({
   formData?: CreateChallengeFormData;
 }) {
   return (
-    <form method="post" action={`/challenges/${challenge.id}`}>
+    <Form method="patch" action={`/challenges/${challenge.id}`}>
       {/* Hiddent input with the method that the Action function will have to handle */}
-      <input type="hidden" name="method" value="update-challenge" />
+      <input type="hidden" name="kind" value="challenge" />
       <TextField
         variant="outlined"
         margin="normal"
@@ -64,6 +64,6 @@ export default function UpdateChallengeForm({
       >
         Update Challenge
       </Button>
-    </form>
+    </Form>
   );
 }
