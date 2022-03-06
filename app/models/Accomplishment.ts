@@ -3,18 +3,24 @@ export type Accomplishment = {
   userId: number;
   challengeId: number;
   createdAt: string; //But should be converted as Date
-  proof: string;
+  comment: string;
   validation: Validation;
+};
+
+export type AccomplishmentInfo = {
+  comment?: string;
 };
 
 export type Validation = "ACCEPTED" | "PENDING" | "REFUSED";
 
 export type CreateAccomplishmentFormData = {
   fieldsError?: {
+    comment?: string;
     proof?: string;
   };
   fields?: {
-    proof: string;
+    comment?: string;
+    proof: Buffer;
   };
 };
 

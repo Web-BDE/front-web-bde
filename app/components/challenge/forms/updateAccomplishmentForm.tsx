@@ -2,8 +2,10 @@ import {
   Button,
   Card,
   CardContent,
+  Input,
   TextField,
   Typography,
+  FormHelperText,
 } from "@mui/material";
 import { Form } from "remix";
 import {
@@ -29,19 +31,31 @@ export default function UpdateAccomplishmentForm({
           action={`/challenges/${accomplishment.challengeId}?accomplishmentId=${accomplishment.id}`}
         >
           <input type="hidden" name="kind" value="accomplishment" />
+          <Input
+            margin="dense"
+            required
+            fullWidth
+            autoComplete="proof"
+            autoFocus
+            defaultValue={formData?.fields?.proof}
+            error={Boolean(formData?.fieldsError?.proof)}
+            type="file"
+            name="proof"
+            id="proof"
+          />
+          <FormHelperText error>{formData?.fieldsError?.proof}</FormHelperText>
           <TextField
             variant="outlined"
             margin="normal"
-            required
             fullWidth
-            id="proof"
-            label="Proof"
-            name="proof"
-            autoComplete="proof"
+            id="comment"
+            label="comment"
+            name="comment"
+            autoComplete="comment"
             autoFocus
-            defaultValue={formData?.fields?.proof || accomplishment?.proof}
-            error={Boolean(formData?.fieldsError?.proof)}
-            helperText={formData?.fieldsError?.proof}
+            defaultValue={formData?.fields?.comment}
+            error={Boolean(formData?.fieldsError?.comment)}
+            helperText={formData?.fieldsError?.comment}
           />
           <Button type="submit" fullWidth variant="contained" color="primary">
             Update

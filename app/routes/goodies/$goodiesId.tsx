@@ -155,7 +155,14 @@ function validatePrice(price: number) {
 //Validator for buy limit field
 function validateBuyLimit(buyLimit: number) {
   if (buyLimit < 1) {
-    return "Buy limit must be more than 1";
+    return "Buy limit must be more than 0";
+  }
+}
+
+//Validator for buy limit field
+function validateStock(stock: number) {
+  if (stock < 1) {
+    return "Stock must be more than 0";
   }
 }
 
@@ -165,6 +172,7 @@ async function handleUpdateGoodies(
   description: string,
   price: number,
   buyLimit: number,
+  stock: number,
   goodiesId: number
 ) {
   const fields = {
@@ -172,10 +180,12 @@ async function handleUpdateGoodies(
     description,
     price: price,
     buyLimit: buyLimit,
+    stock,
   };
   const fieldsError = {
     reward: validatePrice(price),
     buyLimit: validateBuyLimit(buyLimit),
+    stock: validateStock(stock),
   };
 
   if (Object.values(fieldsError).some(Boolean)) {
@@ -249,12 +259,14 @@ export const action: ActionFunction = async ({ request, params }) => {
       const description = form.get("description");
       const price = form.get("price");
       const buyLimit = form.get("buy-limit");
+      const stock = form.get("stock");
 
       if (
         typeof name !== "string" ||
         typeof description !== "string" ||
         typeof price !== "string" ||
-        typeof buyLimit !== "string"
+        typeof buyLimit !== "string" ||
+        typeof stock !== "string"
       ) {
         return json(
           {
@@ -273,6 +285,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         description,
         parseInt(price),
         parseInt(buyLimit),
+        parseInt(stock),
         parseInt(params.goodiesId)
       );
     case "DELETE":

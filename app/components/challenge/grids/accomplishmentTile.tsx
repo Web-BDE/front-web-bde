@@ -30,7 +30,7 @@ export default function AccomplishmentTile({
           {accomplishment.validation}
         </Typography>
         <Typography sx={{ mb: 1.5 }} color="text.secondary">
-          {accomplishment?.proof}
+          {accomplishment?.comment}
         </Typography>
       </CardContent>
       {userPrivilege &&

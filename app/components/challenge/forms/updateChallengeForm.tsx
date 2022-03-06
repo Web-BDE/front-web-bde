@@ -42,19 +42,34 @@ export default function UpdateChallengeForm({
         label="description"
         id="description"
       />
-      <TextField
-        variant="outlined"
-        margin="normal"
-        required
-        fullWidth
-        error={Boolean(formData?.fieldsError?.reward)}
-        helperText={formData?.fieldsError?.reward}
-        name="reward"
-        defaultValue={formData?.fields?.reward || challenge.reward}
-        label="reward"
-        type="number"
-        id="reward"
-      />
+      <div style={{ display: "flex" }}>
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          name="reward"
+          label="Reward"
+          type="number"
+          id="reward"
+          defaultValue={formData?.fields?.reward || 0}
+          error={Boolean(formData?.fieldsError?.reward)}
+          helperText={formData?.fieldsError?.reward}
+        />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          name="max-atempts"
+          label="Max atempts"
+          type="number"
+          id="max-atempts"
+          defaultValue={formData?.fields?.maxAtempts || 3}
+          error={Boolean(formData?.fieldsError?.maxAtempts)}
+          helperText={formData?.fieldsError?.maxAtempts}
+        />
+      </div>
       <Typography variant="h6" align="center" style={{ marginTop: "10px" }}>
         Creation date : {new Date(challenge.createdAt).toLocaleDateString()}
       </Typography>

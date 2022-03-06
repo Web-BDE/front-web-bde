@@ -1,12 +1,6 @@
 import axios from "axios";
-import { Challenge } from "~/models/Challenge";
+import { Challenge, ChallengeInfo } from "~/models/Challenge";
 import { buildAxiosHeaders, buildSearchParams } from "~/utils/axios";
-
-type ChallengeInfo = {
-  name: string;
-  description?: string;
-  reward?: number;
-};
 
 export async function getManyChallenge(
   token: string,

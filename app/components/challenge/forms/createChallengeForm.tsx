@@ -35,19 +35,34 @@ export default function CreateChallengeForm({
         error={Boolean(formData?.fieldsError?.description)}
         helperText={formData?.fieldsError?.description}
       />
-      <TextField
-        variant="outlined"
-        margin="normal"
-        required
-        fullWidth
-        name="reward"
-        label="reward"
-        type="number"
-        id="reward"
-        defaultValue={formData?.fields?.reward || 0}
-        error={Boolean(formData?.fieldsError?.reward)}
-        helperText={formData?.fieldsError?.reward}
-      />
+      <div style={{ display: "flex" }}>
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          name="reward"
+          label="Reward"
+          type="number"
+          id="reward"
+          defaultValue={formData?.fields?.reward || 0}
+          error={Boolean(formData?.fieldsError?.reward)}
+          helperText={formData?.fieldsError?.reward}
+        />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          name="max-atempts"
+          label="Max atempts"
+          type="number"
+          id="max-atempts"
+          defaultValue={formData?.fields?.maxAtempts || 3}
+          error={Boolean(formData?.fieldsError?.maxAtempts)}
+          helperText={formData?.fieldsError?.maxAtempts}
+        />
+      </div>
       <Button type="submit" fullWidth variant="contained" color="primary">
         Create Challenge
       </Button>
