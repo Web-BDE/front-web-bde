@@ -67,7 +67,7 @@ export async function createChallenge(
   challengeInfo: ChallengeInfo
 ) {
   try {
-    const reply = await axios.put<{ message: string }>(
+    const reply = await axios.put<{ message: string; challengeId: number }>(
       "/challenge",
       challengeInfo,
       {
@@ -75,7 +75,11 @@ export async function createChallenge(
       }
     );
 
-    return { success: reply.data.message, code: reply.status };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      challengeId: reply.data.challengeId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -93,7 +97,7 @@ export async function updateChallenge(
   challengeId: number
 ) {
   try {
-    const reply = await axios.patch<{ message: string }>(
+    const reply = await axios.patch<{ message: string; challengeId: number }>(
       `/challenge/${challengeId}`,
       challengeInfo,
       {
@@ -101,7 +105,11 @@ export async function updateChallenge(
       }
     );
 
-    return { success: reply.data.message, code: reply.status };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      challengeId: reply.data.challengeId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -115,14 +123,18 @@ export async function updateChallenge(
 
 export async function deleteChallenge(token: string, challengeId: number) {
   try {
-    const reply = await axios.delete<{ message: string }>(
+    const reply = await axios.delete<{ message: string; challengeId: number }>(
       `/challenge/${challengeId}`,
       {
         headers: buildAxiosHeaders(token),
       }
     );
 
-    return { success: reply.data.message, code: reply.status };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      challengeId: reply.data.challengeId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&

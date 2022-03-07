@@ -12,7 +12,7 @@ export async function createPurchase(
   purchaseInfo: PurchaseInfo
 ) {
   try {
-    const reply = await axios.put<{ message: string }>(
+    const reply = await axios.put<{ message: string, purchaseId: number }>(
       "/purchase",
       purchaseInfo,
       {
@@ -20,7 +20,7 @@ export async function createPurchase(
       }
     );
 
-    return { success: reply.data.message, code: reply.status };
+    return { success: reply.data.message, code: reply.status, purchaseId: reply.data.purchaseId };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -34,14 +34,14 @@ export async function createPurchase(
 
 export async function deletePurchase(token: string, purchaseId: number) {
   try {
-    const reply = await axios.delete<{ message: string }>(
+    const reply = await axios.delete<{ message: string, purchaseId: number }>(
       `/purchase/${purchaseId}`,
       {
         headers: buildAxiosHeaders(token),
       }
     );
 
-    return { success: reply.data.message, code: reply.status };
+    return { success: reply.data.message, code: reply.status, purchaseId: reply.data.purchaseId };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&

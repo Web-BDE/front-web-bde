@@ -14,7 +14,7 @@ export async function createAccomplishment(
   challengeId: number
 ) {
   try {
-    const reply = await axios.put<{ message: string }>(
+    const reply = await axios.put<{ message: string, accomplishmentId: number }>(
       "/accomplishment",
       { info: accomplishmentInfo, challengeId },
       {
@@ -22,7 +22,7 @@ export async function createAccomplishment(
       }
     );
 
-    return { success: reply.data.message, code: reply.status };
+    return { success: reply.data.message, code: reply.status, accomplishmentId: reply.data.accomplishmentId };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -41,7 +41,7 @@ export async function updateAccomplishment(
   validation?: Validation
 ) {
   try {
-    const reply = await axios.patch<{ message: string }>(
+    const reply = await axios.patch<{ message: string, accomplishmentId: number }>(
       `/accomplishment/${accomplishmentId}`,
       { info: accomplishmentInfo, status: validation },
       {
@@ -49,7 +49,7 @@ export async function updateAccomplishment(
       }
     );
 
-    return { success: reply.data.message, code: reply.status };
+    return { success: reply.data.message, code: reply.status, accomplishmentId: reply.data.accomplishmentId };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -66,14 +66,14 @@ export async function deleteAccomplishment(
   accomplishmentId: number
 ) {
   try {
-    const reply = await axios.delete<{ message: string }>(
+    const reply = await axios.delete<{ message: string, accomplishmentId: number }>(
       `/accomplishment/${accomplishmentId}`,
       {
         headers: buildAxiosHeaders(token),
       }
     );
 
-    return { success: reply.data.message, code: reply.status };
+    return { success: reply.data.message, code: reply.status, accomplishmentId: reply.data.accomplishmentId };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&

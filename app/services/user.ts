@@ -12,9 +12,16 @@ type RegisterInfo = {
 
 export async function registerUser(registerInfo: RegisterInfo) {
   try {
-    const reply = await axios.put<{ message: string }>("/user", registerInfo);
+    const reply = await axios.put<{ message: string; userId: number }>(
+      "/user",
+      registerInfo
+    );
 
-    return { success: reply.data.message, code: reply.status };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      userId: reply.data.userId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -28,7 +35,7 @@ export async function registerUser(registerInfo: RegisterInfo) {
 
 export async function updateSelf(token: string, registerInfo: RegisterInfo) {
   try {
-    const reply = await axios.patch<{ message: string }>(
+    const reply = await axios.patch<{ message: string; userId: number }>(
       "/user",
       registerInfo,
       {
@@ -36,7 +43,11 @@ export async function updateSelf(token: string, registerInfo: RegisterInfo) {
       }
     );
 
-    return { success: reply.data.message, code: reply.status };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      userId: reply.data.userId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -54,7 +65,7 @@ export async function updateUser(
   userId: string
 ) {
   try {
-    const reply = await axios.patch<{ message: string }>(
+    const reply = await axios.patch<{ message: string; userId: number }>(
       `/user/${userId}`,
       registerInfo,
       {
@@ -62,7 +73,11 @@ export async function updateUser(
       }
     );
 
-    return { success: reply.data.message, code: reply.status };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      userId: reply.data.userId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -76,11 +91,18 @@ export async function updateUser(
 
 export async function deleteUser(token: string, userId: number) {
   try {
-    const reply = await axios.delete<{ message: string }>(`/user/${userId}`, {
-      headers: buildAxiosHeaders(token),
-    });
+    const reply = await axios.delete<{ message: string; userId: number }>(
+      `/user/${userId}`,
+      {
+        headers: buildAxiosHeaders(token),
+      }
+    );
 
-    return { success: reply.data.message, code: reply.status };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      userId: reply.data.userId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&

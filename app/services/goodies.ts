@@ -62,7 +62,7 @@ export async function getGoodies(token: string, goodiesId: number) {
 
 export async function createGoodies(token: string, goodiesInfo: GoodiesInfo) {
   try {
-    const reply = await axios.put<{ message: string }>(
+    const reply = await axios.put<{ message: string; goodiesId: number }>(
       "/goodies",
       goodiesInfo,
       {
@@ -70,7 +70,11 @@ export async function createGoodies(token: string, goodiesInfo: GoodiesInfo) {
       }
     );
 
-    return { success: reply.data.message, code: reply.status };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      goodiesId: reply.data.goodiesId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -88,7 +92,7 @@ export async function updateGoodies(
   goodiesId: number
 ) {
   try {
-    const reply = await axios.patch<{ message: string }>(
+    const reply = await axios.patch<{ message: string; goodiesId: number }>(
       `/goodies/${goodiesId}`,
       goodiesInfo,
       {
@@ -96,7 +100,11 @@ export async function updateGoodies(
       }
     );
 
-    return { success: reply.data.message, code: reply.status };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      goodiesId: reply.data.goodiesId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -110,14 +118,18 @@ export async function updateGoodies(
 
 export async function deleteGoodies(token: string, goodiesId: number) {
   try {
-    const reply = await axios.delete<{ message: string }>(
+    const reply = await axios.delete<{ message: string; goodiesId: number }>(
       `/goodies/${goodiesId}`,
       {
         headers: buildAxiosHeaders(token),
       }
     );
 
-    return { success: reply.data.message, code: reply.status };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      goodiesId: reply.data.goodiesId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
