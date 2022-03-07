@@ -23,7 +23,7 @@ type ActionData = {
   loginUser?: { formData?: LoginFormData; error?: string; success?: string };
 };
 
-export async function handleLogin(
+async function handleLogin(
   email: string,
   password: string,
   redirectTo: string

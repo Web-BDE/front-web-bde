@@ -1,13 +1,6 @@
 import axios from "axios";
-import { Goodies } from "~/models/Goodies";
+import { Goodies, GoodiesInfo } from "~/models/Goodies";
 import { buildAxiosHeaders, buildSearchParams } from "~/utils/axios";
-
-type GoodiesInfo = {
-  name: string;
-  description?: string;
-  price: number;
-  buyLimit: number;
-};
 
 export async function getManyGoodies(
   token: string,

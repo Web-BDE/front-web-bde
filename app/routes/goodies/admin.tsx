@@ -45,7 +45,14 @@ function validatePrice(price: number) {
 //Validator for buy limit field
 function validateBuyLimit(buyLimit: number) {
   if (buyLimit < 1) {
-    return "Buy limit must be more than 1";
+    return "Buy limit must be more than 0";
+  }
+}
+
+//Validator for buy limit field
+function validateStock(stock: number) {
+  if (stock < 1) {
+    return "Stock must be more than 0";
   }
 }
 
@@ -54,6 +61,7 @@ async function handleCreateGoodies(
   name: string,
   price: number,
   buyLimit: number,
+  stock: number,
   description?: string
 ) {
   const fields = {
@@ -61,10 +69,12 @@ async function handleCreateGoodies(
     description,
     price,
     buyLimit,
+    stock,
   };
   const fieldsError = {
     price: validatePrice(price),
     buyLimit: validateBuyLimit(buyLimit),
+    stock: validateStock(stock),
   };
 
   if (Object.values(fieldsError).some(Boolean)) {
@@ -104,13 +114,15 @@ export const action: ActionFunction = async ({ request }) => {
       const description = form.get("description");
       const price = form.get("price");
       const buyLimit = form.get("buy-limit");
+      const stock = form.get("stock");
 
       //Check for field types
       if (
         typeof name !== "string" ||
         (typeof description !== "string" && description !== null) ||
         typeof price !== "string" ||
-        typeof buyLimit !== "string"
+        typeof buyLimit !== "string" ||
+        typeof stock !== "string"
       ) {
         return json(
           {
@@ -128,6 +140,7 @@ export const action: ActionFunction = async ({ request }) => {
         name,
         parseInt(price),
         parseInt(buyLimit),
+        parseInt(stock),
         description ? description : undefined
       );
 

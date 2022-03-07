@@ -49,19 +49,34 @@ export default function CreateGoodiesForm({
         error={Boolean(formData?.fieldsError?.price)}
         helperText={formData?.fieldsError?.price}
       />
-      <TextField
-        variant="outlined"
-        margin="normal"
-        required
-        fullWidth
-        name="buy-limit"
-        label="Buy Limit"
-        type="number"
-        id="buy-limit"
-        defaultValue={formData?.fields?.buyLimit || 1}
-        error={Boolean(formData?.fieldsError?.buyLimit)}
-        helperText={formData?.fieldsError?.buyLimit}
-      />
+      <div style={{ display: "flex" }}>
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          name="buy-limit"
+          label="Buy Limit"
+          type="number"
+          id="buy-limit"
+          defaultValue={formData?.fields?.buyLimit || 1}
+          error={Boolean(formData?.fieldsError?.buyLimit)}
+          helperText={formData?.fieldsError?.buyLimit}
+        />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          name="stock"
+          label="Stock"
+          type="number"
+          id="stock"
+          defaultValue={formData?.fields?.stock || 1}
+          error={Boolean(formData?.fieldsError?.stock)}
+          helperText={formData?.fieldsError?.stock}
+        />
+      </div>
       <Button type="submit" fullWidth variant="contained" color="primary">
         Create Goodies
       </Button>

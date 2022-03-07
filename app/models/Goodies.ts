@@ -4,8 +4,17 @@ export type Goodies = {
   description?: string;
   price: number;
   buyLimit: number;
+  stock: number;
   createdAt: string; //But should be converted as Date
   creatorId: number;
+};
+
+export type GoodiesInfo = {
+  name: string;
+  description?: string;
+  price: number;
+  buyLimit: number;
+  stock: number;
 };
 
 export type CreateGoodiesFormData = {
@@ -14,12 +23,14 @@ export type CreateGoodiesFormData = {
     description?: string;
     price?: string;
     buyLimit?: string;
+    stock?: string;
   };
   fields: {
     name: string;
     description?: string;
     price: number;
     buyLimit: number;
+    stock: number;
   };
 };
 

@@ -3,6 +3,8 @@ import {
   json,
   LoaderFunction,
   redirect,
+  unstable_createFileUploadHandler,
+  unstable_parseMultipartFormData,
   useActionData,
   useCatch,
   useLoaderData,
@@ -157,10 +159,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 async function handleAccomplishmentCreation(
   token: string,
-  proof: string,
-  challengeId: number
+  challengeId: number,
+  comment?: string
 ) {
-  const fields = { proof };
+  const fields = { comment };
 
   const { code, ...createAccomplishmentResponse } = await createAccomplishment(
     token,
@@ -181,10 +183,10 @@ async function handleAccomplishmentCreation(
 
 async function handleAccomplishmentUpdate(
   token: string,
-  proof: string,
+  comment: string,
   accomplishmentId: number
 ) {
-  const fields = { proof };
+  const fields = { comment };
 
   const { code, ...updateAccomplishmentResponse } = await updateAccomplishment(
     token,
@@ -210,17 +212,26 @@ function validateReward(reward: number) {
   }
 }
 
+//Validator for buy limit field
+function validateMaxAtempts(maxAtempts: number) {
+  if (maxAtempts < 1) {
+    return "Max Atempts must be more than 0";
+  }
+}
+
 async function handleChallengeUpdate(
   token: string,
   name: string,
   description: string,
   reward: number,
+  maxAtempts: number,
   challengeId: number
 ) {
   //Check fields format errors
-  const fields = { name, description, reward: reward };
+  const fields = { name, description, reward, maxAtempts };
   const fieldsError = {
     reward: validateReward(reward),
+    maxAtempts: validateMaxAtempts(maxAtempts),
   };
 
   if (Object.values(fieldsError).some(Boolean)) {
@@ -293,9 +304,9 @@ export const action: ActionFunction = async ({ request, params }) => {
   switch (request.method) {
     case "PUT":
       //Accomplishment creation
-      const proof = form.get("proof");
+      const comment = form.get("comment");
 
-      if (typeof proof !== "string") {
+      if (typeof comment !== "string") {
         return json(
           {
             createAccomplishmentResponse: {
@@ -308,8 +319,8 @@ export const action: ActionFunction = async ({ request, params }) => {
 
       return await handleAccomplishmentCreation(
         token,
-        proof,
-        parseInt(params.challengeId)
+        parseInt(params.challengeId),
+        comment
       );
     case "PATCH":
       switch (kind) {
@@ -353,12 +364,14 @@ export const action: ActionFunction = async ({ request, params }) => {
           const name = form.get("name");
           const description = form.get("description");
           const reward = form.get("reward");
+          const maxAtempts = form.get("max-atempts");
 
           if (
             typeof name !== "string" ||
             (typeof description !== "string" &&
               typeof description !== "undefined") ||
-            typeof reward !== "string"
+            typeof reward !== "string" ||
+            typeof maxAtempts !== "string"
           ) {
             return json(
               {
@@ -376,6 +389,7 @@ export const action: ActionFunction = async ({ request, params }) => {
             name,
             description,
             parseInt(reward),
+            parseInt(maxAtempts),
             parseInt(params.challengeId)
           );
 

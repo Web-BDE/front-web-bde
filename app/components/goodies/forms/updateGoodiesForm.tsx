@@ -54,19 +54,34 @@ export default function UpdateGoodiesForm({
         type="number"
         id="price"
       />
-      <TextField
-        variant="outlined"
-        margin="normal"
-        required
-        fullWidth
-        error={Boolean(formData?.fieldsError?.buyLimit)}
-        helperText={formData?.fieldsError?.buyLimit}
-        name="buy-limit"
-        defaultValue={formData?.fields?.buyLimit || goodies.buyLimit}
-        label="buy-limit"
-        type="number"
-        id="buy-limit"
-      />
+      <div style={{ display: "flex" }}>
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          name="buy-limit"
+          label="Buy Limit"
+          type="number"
+          id="buy-limit"
+          defaultValue={formData?.fields?.buyLimit || 1}
+          error={Boolean(formData?.fieldsError?.buyLimit)}
+          helperText={formData?.fieldsError?.buyLimit}
+        />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          name="stock"
+          label="Stock"
+          type="number"
+          id="stock"
+          defaultValue={formData?.fields?.stock || 1}
+          error={Boolean(formData?.fieldsError?.stock)}
+          helperText={formData?.fieldsError?.stock}
+        />
+      </div>
       <Typography variant="h6" align="center" style={{ marginTop: "10px" }}>
         Creation date : {new Date(goodies.createdAt).toLocaleDateString()}
       </Typography>

@@ -1,12 +1,12 @@
 import axios from "axios";
 
-import { Accomplishment, Validation } from "~/models/Accomplishment";
+import {
+  Accomplishment,
+  AccomplishmentInfo,
+  Validation,
+} from "~/models/Accomplishment";
 
 import { buildAxiosHeaders, buildSearchParams } from "~/utils/axios";
-
-type AccomplishmentInfo = {
-  proof?: string;
-};
 
 export async function createAccomplishment(
   token: string,
@@ -145,6 +145,40 @@ export async function getManyAccomplishment(
       success: reply.data.message,
       code: reply.status,
       accomplishments: reply.data.accomplishments,
+    };
+  } catch (err) {
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
+  }
+}
+
+export async function putProof(
+  token: string,
+  accomplishmentId: number,
+  proof: Blob
+) {
+  try {
+    const formData = new FormData();
+    formData.append("proof", proof);
+
+    const reply = await axios.put<{
+      message: string;
+      accomplishment: Accomplishment;
+    }>(`/accomplishment/proof?accomplishmentId=${accomplishmentId}`, formData, {
+      headers: {
+        ...buildAxiosHeaders(token),
+        "content-type": "multipart/form-data",
+      },
+    });
+
+    return {
+      success: reply.data.message,
+      code: reply.status,
     };
   } catch (err) {
     if (

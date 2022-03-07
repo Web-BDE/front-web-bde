@@ -91,16 +91,25 @@ function validateReward(reward: number) {
   }
 }
 
+//Validator for field reward
+function validateMaxAtempts(maxAtempts: number) {
+  if (maxAtempts < 1) {
+    return "Max Atempts must be more than 0";
+  }
+}
+
 export async function handleChallengeCreation(
   token: string,
   name: string,
   reward: number,
+  maxAtempts: number,
   description?: string
 ) {
   //Check fields format errors
-  const fields = { name, description, reward };
+  const fields = { name, description, reward, maxAtempts };
   const fieldsError = {
     reward: validateReward(reward),
+    maxAtempts: validateMaxAtempts(maxAtempts),
   };
 
   if (Object.values(fieldsError).some(Boolean)) {
@@ -182,12 +191,14 @@ export const action: ActionFunction = async ({ request }) => {
       const name = form.get("name");
       const description = form.get("description");
       const reward = form.get("reward");
+      const maxAtempts = form.get("max-atempts");
 
       //Check for undefined values
       if (
         typeof name !== "string" ||
         (typeof description !== "string" && description !== null) ||
-        typeof reward !== "string"
+        typeof reward !== "string" ||
+        typeof maxAtempts !== "string"
       ) {
         return json(
           {
@@ -204,6 +215,7 @@ export const action: ActionFunction = async ({ request }) => {
         token,
         name,
         parseInt(reward),
+        parseInt(maxAtempts),
         description ? description : undefined
       );
 
