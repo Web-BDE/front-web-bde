@@ -1,6 +1,7 @@
 import {
   ActionFunction,
   json,
+  redirect,
   useActionData,
   useCatch,
   useSearchParams,
@@ -17,8 +18,8 @@ import {
   generateExpectedError,
   generateUnexpectedError,
 } from "~/utils/error";
-import { handleLogin } from "./login";
 import { RegisterFormData } from "~/models/User";
+import { loginUser } from "~/services/authentication";
 
 type ActionData = {
   registerUser?: {
@@ -54,6 +55,26 @@ function validatePseudo(pseudo: string) {
   if (pseudo.length < 3) {
     return "Pseudo is too small";
   }
+}
+
+async function handleLogin(
+  email: string,
+  password: string,
+  redirectTo: string
+) {
+  const fields = { email };
+
+  const { code, ...loginResult } = await loginUser({ ...fields, password });
+
+  if (loginResult.error || !loginResult.cookie) {
+    return redirect("/login", code || 500);
+  }
+
+  return redirect(redirectTo, {
+    headers: {
+      "Set-Cookie": loginResult.cookie,
+    },
+  });
 }
 
 async function handleRegister(
