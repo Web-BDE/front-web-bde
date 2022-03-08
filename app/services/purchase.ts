@@ -11,16 +11,24 @@ export async function createPurchase(
   token: string,
   purchaseInfo: PurchaseInfo
 ) {
+  const searchParams = buildSearchParams({
+    key: "goodiesId",
+    val: purchaseInfo.goodiesId.toString(),
+  });
   try {
-    const reply = await axios.put<{ message: string, purchaseId: number }>(
-      "/purchase",
+    const reply = await axios.put<{ message: string; purchaseId: number }>(
+      `/purchase${searchParams}`,
       purchaseInfo,
       {
         headers: buildAxiosHeaders(token),
       }
     );
 
-    return { success: reply.data.message, code: reply.status, purchaseId: reply.data.purchaseId };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      purchaseId: reply.data.purchaseId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -34,14 +42,18 @@ export async function createPurchase(
 
 export async function deletePurchase(token: string, purchaseId: number) {
   try {
-    const reply = await axios.delete<{ message: string, purchaseId: number }>(
+    const reply = await axios.delete<{ message: string; purchaseId: number }>(
       `/purchase/${purchaseId}`,
       {
         headers: buildAxiosHeaders(token),
       }
     );
 
-    return { success: reply.data.message, code: reply.status, purchaseId: reply.data.purchaseId };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      purchaseId: reply.data.purchaseId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -69,7 +81,7 @@ export async function getManyPurchase(
   try {
     const reply = await axios.get<{ message: string; purchases: Purchase[] }>(
       `/purchase/${
-        searchParams.entries() ? "?" + searchParams.toString() : ""
+        searchParams
       }`,
       {
         headers: buildAxiosHeaders(token),

@@ -172,7 +172,7 @@ export async function getManyUser(
   );
   try {
     const reply = await axios.get<{ message: string; users: User[] }>(
-      `/user/${searchParams.entries() ? "?" + searchParams.toString() : ""}`,
+      `/user/${searchParams}`,
       {
         headers: buildAxiosHeaders(token),
       }

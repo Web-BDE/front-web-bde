@@ -13,16 +13,29 @@ export async function createAccomplishment(
   accomplishmentInfo: AccomplishmentInfo,
   challengeId: number
 ) {
+  const searchParams = buildSearchParams({
+    key: "challengeId",
+    val: challengeId.toString(),
+  });
   try {
-    const reply = await axios.put<{ message: string, accomplishmentId: number }>(
-      "/accomplishment",
+    const reply = await axios.put<{
+      message: string;
+      accomplishmentId: number;
+    }>(
+      `/accomplishment${
+        searchParams
+      }`,
       { info: accomplishmentInfo, challengeId },
       {
         headers: buildAxiosHeaders(token),
       }
     );
 
-    return { success: reply.data.message, code: reply.status, accomplishmentId: reply.data.accomplishmentId };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      accomplishmentId: reply.data.accomplishmentId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -41,7 +54,10 @@ export async function updateAccomplishment(
   validation?: Validation
 ) {
   try {
-    const reply = await axios.patch<{ message: string, accomplishmentId: number }>(
+    const reply = await axios.patch<{
+      message: string;
+      accomplishmentId: number;
+    }>(
       `/accomplishment/${accomplishmentId}`,
       { info: accomplishmentInfo, status: validation },
       {
@@ -49,7 +65,11 @@ export async function updateAccomplishment(
       }
     );
 
-    return { success: reply.data.message, code: reply.status, accomplishmentId: reply.data.accomplishmentId };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      accomplishmentId: reply.data.accomplishmentId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -66,14 +86,18 @@ export async function deleteAccomplishment(
   accomplishmentId: number
 ) {
   try {
-    const reply = await axios.delete<{ message: string, accomplishmentId: number }>(
-      `/accomplishment/${accomplishmentId}`,
-      {
-        headers: buildAxiosHeaders(token),
-      }
-    );
+    const reply = await axios.delete<{
+      message: string;
+      accomplishmentId: number;
+    }>(`/accomplishment/${accomplishmentId}`, {
+      headers: buildAxiosHeaders(token),
+    });
 
-    return { success: reply.data.message, code: reply.status, accomplishmentId: reply.data.accomplishmentId };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      accomplishmentId: reply.data.accomplishmentId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -134,7 +158,7 @@ export async function getManyAccomplishment(
       accomplishments: Accomplishment[];
     }>(
       `/accomplishment/${
-        searchParams.entries() ? "?" + searchParams.toString() : ""
+        searchParams
       }`,
       {
         headers: buildAxiosHeaders(token),
@@ -160,7 +184,7 @@ export async function getManyAccomplishment(
 export async function putProof(
   token: string,
   accomplishmentId: number,
-  proof: Blob
+  proof: any
 ) {
   try {
     const formData = new FormData();
