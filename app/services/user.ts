@@ -1,6 +1,7 @@
 import axios from "axios";
 import { User } from "~/models/User";
 import { buildAxiosHeaders, buildSearchParams } from "~/utils/axios";
+import FormData from "form-data";
 
 type RegisterInfo = {
   email: string;
@@ -12,9 +13,16 @@ type RegisterInfo = {
 
 export async function registerUser(registerInfo: RegisterInfo) {
   try {
-    const reply = await axios.put<{ message: string }>("/user", registerInfo);
+    const reply = await axios.put<{ message: string; userId: number }>(
+      "/user",
+      registerInfo
+    );
 
-    return { success: reply.data.message, code: reply.status };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      userId: reply.data.userId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -28,7 +36,7 @@ export async function registerUser(registerInfo: RegisterInfo) {
 
 export async function updateSelf(token: string, registerInfo: RegisterInfo) {
   try {
-    const reply = await axios.patch<{ message: string }>(
+    const reply = await axios.patch<{ message: string; userId: number }>(
       "/user",
       registerInfo,
       {
@@ -36,7 +44,11 @@ export async function updateSelf(token: string, registerInfo: RegisterInfo) {
       }
     );
 
-    return { success: reply.data.message, code: reply.status };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      userId: reply.data.userId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -54,7 +66,7 @@ export async function updateUser(
   userId: string
 ) {
   try {
-    const reply = await axios.patch<{ message: string }>(
+    const reply = await axios.patch<{ message: string; userId: number }>(
       `/user/${userId}`,
       registerInfo,
       {
@@ -62,7 +74,11 @@ export async function updateUser(
       }
     );
 
-    return { success: reply.data.message, code: reply.status };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      userId: reply.data.userId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -76,11 +92,18 @@ export async function updateUser(
 
 export async function deleteUser(token: string, userId: number) {
   try {
-    const reply = await axios.delete<{ message: string }>(`/user/${userId}`, {
-      headers: buildAxiosHeaders(token),
-    });
+    const reply = await axios.delete<{ message: string; userId: number }>(
+      `/user/${userId}`,
+      {
+        headers: buildAxiosHeaders(token),
+      }
+    );
 
-    return { success: reply.data.message, code: reply.status };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      userId: reply.data.userId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -150,7 +173,7 @@ export async function getManyUser(
   );
   try {
     const reply = await axios.get<{ message: string; users: User[] }>(
-      `/user/${searchParams.entries() ? "?" + searchParams.toString() : ""}`,
+      `/user${searchParams}`,
       {
         headers: buildAxiosHeaders(token),
       }
@@ -160,6 +183,95 @@ export async function getManyUser(
       success: reply.data.message,
       code: reply.status,
       users: reply.data.users,
+    };
+  } catch (err) {
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
+  }
+}
+
+export async function putAvatar(token: string, userId: number, avatar: Blob) {
+  const searchParams = buildSearchParams({
+    key: "userId",
+    val: userId.toString(),
+  });
+  try {
+    const formData = new FormData();
+    formData.append("avatar", Buffer.from(await avatar.arrayBuffer()));
+
+    const multipartHeaders = formData.getHeaders();
+
+    const reply = await axios.put<{
+      message: string;
+      user: User;
+    }>(`/user/avatar${searchParams}`, formData, {
+      headers: {
+        ...buildAxiosHeaders(token),
+        ...multipartHeaders,
+      },
+    });
+
+    return {
+      success: reply.data.message,
+      code: reply.status,
+    };
+  } catch (err) {
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
+  }
+}
+
+export async function getAvatar(token: string, userId: number) {
+  const searchParams = buildSearchParams({
+    key: "userId",
+    val: userId.toString(),
+  });
+  try {
+    const reply = await axios.get<{ message: string; avatar: Buffer }>(
+      `/user/avatar${searchParams}`,
+      { headers: buildAxiosHeaders(token) }
+    );
+
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      avatar: reply.data.avatar,
+    };
+  } catch (err) {
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
+  }
+}
+
+export async function deleteAvatar(token: string, userId: number) {
+  const searchParams = buildSearchParams({
+    key: "userId",
+    val: userId.toString(),
+  });
+  try {
+    const reply = await axios.delete<{ message: string }>(
+      `/user/avatar${searchParams}`,
+      { headers: buildAxiosHeaders(token) }
+    );
+
+    return {
+      success: reply.data.message,
+      code: reply.status,
     };
   } catch (err) {
     if (

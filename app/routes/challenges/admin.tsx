@@ -3,6 +3,8 @@ import {
   json,
   LoaderFunction,
   redirect,
+  unstable_createMemoryUploadHandler,
+  unstable_parseMultipartFormData,
   useActionData,
   useCatch,
   useLoaderData,
@@ -24,7 +26,7 @@ import {
   getManyAccomplishment,
   updateAccomplishment,
 } from "~/services/accomplishment";
-import { createChallenge } from "~/services/challenges";
+import { createChallenge, putChallengePicture } from "~/services/challenges";
 import {
   Accomplishment,
   ValidateAccomplishmentFormData,
@@ -103,10 +105,11 @@ export async function handleChallengeCreation(
   name: string,
   reward: number,
   maxAtempts: number,
+  picture: Blob,
   description?: string
 ) {
   //Check fields format errors
-  const fields = { name, description, reward, maxAtempts };
+  const fields = { name, description, reward, maxAtempts, picture };
   const fieldsError = {
     reward: validateReward(reward),
     maxAtempts: validateMaxAtempts(maxAtempts),
@@ -126,7 +129,7 @@ export async function handleChallengeCreation(
     fields
   );
 
-  if (createChallengeResponse.error) {
+  if (createChallengeResponse.error || !createChallengeResponse.challengeId) {
     return json(
       {
         createChallengeResponse: {
@@ -138,6 +141,25 @@ export async function handleChallengeCreation(
     );
   }
 
+  const { code: UploadCode, ...uploadPictureResponse } =
+    await putChallengePicture(
+      token,
+      createChallengeResponse.challengeId,
+      picture
+    );
+
+  if (uploadPictureResponse.error) {
+    return json(
+      {
+        createChallengeResponse: {
+          ...uploadPictureResponse,
+          formData: { fields, fieldsError },
+        },
+      } as ActionData,
+      UploadCode
+    );
+  }
+
   return redirect("/challenges");
 }
 
@@ -146,7 +168,10 @@ export const action: ActionFunction = async ({ request }) => {
   const token = await requireAuth(request, `/challenges/admin`);
 
   //Declare all fields
-  const form = await request.formData();
+  const form = await unstable_parseMultipartFormData(
+    request,
+    unstable_createMemoryUploadHandler({ maxFileSize: 100_000_000 })
+  );
 
   //Validation request
   switch (request.method) {
@@ -192,13 +217,15 @@ export const action: ActionFunction = async ({ request }) => {
       const description = form.get("description");
       const reward = form.get("reward");
       const maxAtempts = form.get("max-atempts");
+      const picture = form.get("picture");
 
       //Check for undefined values
       if (
         typeof name !== "string" ||
         (typeof description !== "string" && description !== null) ||
         typeof reward !== "string" ||
-        typeof maxAtempts !== "string"
+        typeof maxAtempts !== "string" ||
+        !(picture instanceof Blob)
       ) {
         return json(
           {
@@ -216,6 +243,7 @@ export const action: ActionFunction = async ({ request }) => {
         name,
         parseInt(reward),
         parseInt(maxAtempts),
+        picture,
         description ? description : undefined
       );
 

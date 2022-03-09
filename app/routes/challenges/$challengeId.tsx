@@ -4,6 +4,7 @@ import {
   LoaderFunction,
   redirect,
   unstable_createFileUploadHandler,
+  unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
   useActionData,
   useCatch,
@@ -21,12 +22,14 @@ import {
   createAccomplishment,
   deleteAccomplishment,
   getManyAccomplishment,
+  putProof,
   updateAccomplishment,
 } from "~/services/accomplishment";
 import { requireAuth } from "~/services/authentication";
 import {
   deleteChallenge,
   getChallenge,
+  putChallengePicture,
   updateChallenge,
 } from "~/services/challenges";
 
@@ -134,7 +137,7 @@ async function loadChallenge(
             challengeResponse.challenge?.creatorId
           )),
       },
-      purchaseResponse: await loadAccomplishments(
+      accomplishmentResponse: await loadAccomplishments(
         token,
         challengeResponse.challenge?.id,
         userId
@@ -160,9 +163,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 async function handleAccomplishmentCreation(
   token: string,
   challengeId: number,
+  proof: Blob,
   comment?: string
 ) {
-  const fields = { comment };
+  const fields = { comment, proof };
 
   const { code, ...createAccomplishmentResponse } = await createAccomplishment(
     token,
@@ -170,23 +174,47 @@ async function handleAccomplishmentCreation(
     challengeId
   );
 
+  if (
+    createAccomplishmentResponse.error ||
+    !createAccomplishmentResponse.accomplishmentId
+  ) {
+    return json(
+      {
+        createAccomplishmentResponse: {
+          ...createAccomplishmentResponse,
+          formData: { fields },
+        },
+      } as ActionData,
+      code
+    );
+  }
+
+  console.log(createAccomplishmentResponse.accomplishmentId);
+
+  const { code: uploadCode, ...proofUploadResponse } = await putProof(
+    token,
+    createAccomplishmentResponse.accomplishmentId,
+    proof
+  );
+
   return json(
     {
       createAccomplishmentResponse: {
-        ...createAccomplishmentResponse,
+        ...proofUploadResponse,
         formData: { fields },
       },
     } as ActionData,
-    code
+    uploadCode
   );
 }
 
 async function handleAccomplishmentUpdate(
   token: string,
-  comment: string,
-  accomplishmentId: number
+  accomplishmentId: number,
+  proof: Blob,
+  comment: string
 ) {
-  const fields = { comment };
+  const fields = { comment, proof };
 
   const { code, ...updateAccomplishmentResponse } = await updateAccomplishment(
     token,
@@ -194,14 +222,32 @@ async function handleAccomplishmentUpdate(
     fields
   );
 
+  if (updateAccomplishmentResponse.error) {
+    return json(
+      {
+        updateAccomplishmentResponse: {
+          ...updateAccomplishmentResponse,
+          formData: { fields },
+        },
+      } as ActionData,
+      code
+    );
+  }
+
+  const { code: uploadCode, ...uploadProofResponse } = await putProof(
+    token,
+    accomplishmentId,
+    proof
+  );
+
   return json(
     {
       updateAccomplishmentResponse: {
-        ...updateAccomplishmentResponse,
+        ...uploadProofResponse,
         formData: { fields },
       },
     } as ActionData,
-    code
+    uploadCode
   );
 }
 
@@ -225,10 +271,11 @@ async function handleChallengeUpdate(
   description: string,
   reward: number,
   maxAtempts: number,
-  challengeId: number
+  challengeId: number,
+  picture: Blob
 ) {
   //Check fields format errors
-  const fields = { name, description, reward, maxAtempts };
+  const fields = { name, description, reward, maxAtempts, picture };
   const fieldsError = {
     reward: validateReward(reward),
     maxAtempts: validateMaxAtempts(maxAtempts),
@@ -249,14 +296,33 @@ async function handleChallengeUpdate(
     challengeId
   );
 
+  if (updateChallengeResponse.error || !updateChallengeResponse.challengeId) {
+    return json(
+      {
+        updateChallengeResponse: {
+          ...updateChallengeResponse,
+          formData: { fields, fieldsError },
+        },
+      } as ActionData,
+      code
+    );
+  }
+
+  const { code: uploadCode, ...uploadPictureResponse } =
+    await putChallengePicture(
+      token,
+      updateChallengeResponse.challengeId,
+      picture
+    );
+
   return json(
     {
       updateChallengeResponse: {
-        ...updateChallengeResponse,
-        formData: { fields, fieldsError },
+        ...uploadPictureResponse,
+        formData: { fields },
       },
     } as ActionData,
-    code
+    uploadCode
   );
 }
 
@@ -298,15 +364,19 @@ export const action: ActionFunction = async ({ request, params }) => {
   const token = await requireAuth(request, `/challenge/${params.challengeId}`);
 
   //Decalare all fields
-  const form = await request.formData();
+  const form = await unstable_parseMultipartFormData(
+    request,
+    unstable_createMemoryUploadHandler({ maxFileSize: 100_000_000 })
+  );
   const kind = form.get("kind");
 
   switch (request.method) {
     case "PUT":
       //Accomplishment creation
       const comment = form.get("comment");
+      const proof = form.get("proof");
 
-      if (typeof comment !== "string") {
+      if (typeof comment !== "string" || !(proof instanceof Blob)) {
         return json(
           {
             createAccomplishmentResponse: {
@@ -320,12 +390,14 @@ export const action: ActionFunction = async ({ request, params }) => {
       return await handleAccomplishmentCreation(
         token,
         parseInt(params.challengeId),
+        proof,
         comment
       );
     case "PATCH":
       switch (kind) {
         case "accomplishment":
           const proof = form.get("proof");
+          const comment = form.get("comment");
           const accomplishmentId = new URL(request.url).searchParams.get(
             "accomplishmentId"
           );
@@ -341,7 +413,7 @@ export const action: ActionFunction = async ({ request, params }) => {
             );
           }
 
-          if (typeof proof !== "string") {
+          if (typeof comment !== "string" || !(proof instanceof Blob)) {
             return json(
               {
                 updateAccomplishmentResponse: {
@@ -355,8 +427,9 @@ export const action: ActionFunction = async ({ request, params }) => {
 
           return await handleAccomplishmentUpdate(
             token,
+            parseInt(accomplishmentId),
             proof,
-            parseInt(accomplishmentId)
+            comment
           );
 
         case "challenge":
@@ -365,13 +438,15 @@ export const action: ActionFunction = async ({ request, params }) => {
           const description = form.get("description");
           const reward = form.get("reward");
           const maxAtempts = form.get("max-atempts");
+          const picture = form.get("picture");
 
           if (
             typeof name !== "string" ||
             (typeof description !== "string" &&
               typeof description !== "undefined") ||
             typeof reward !== "string" ||
-            typeof maxAtempts !== "string"
+            typeof maxAtempts !== "string" ||
+            !(picture instanceof Blob)
           ) {
             return json(
               {
@@ -390,7 +465,8 @@ export const action: ActionFunction = async ({ request, params }) => {
             description,
             parseInt(reward),
             parseInt(maxAtempts),
-            parseInt(params.challengeId)
+            parseInt(params.challengeId),
+            picture
           );
 
         default:

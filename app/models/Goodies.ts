@@ -19,6 +19,7 @@ export type GoodiesInfo = {
 
 export type CreateGoodiesFormData = {
   fieldsError: {
+    picture?: string;
     name?: string;
     description?: string;
     price?: string;
@@ -26,6 +27,7 @@ export type CreateGoodiesFormData = {
     stock?: string;
   };
   fields: {
+    picture: Blob;
     name: string;
     description?: string;
     price: number;

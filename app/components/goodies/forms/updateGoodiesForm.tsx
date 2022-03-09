@@ -1,4 +1,4 @@
-import { TextField, Button, Typography } from "@mui/material";
+import { TextField, Button, Typography, Input } from "@mui/material";
 import { Form } from "remix";
 import { CreateGoodiesFormData, Goodies } from "~/models/Goodies";
 import { User } from "~/models/User";
@@ -13,8 +13,23 @@ export default function UpdateGoodiesForm({
   formData?: CreateGoodiesFormData;
 }) {
   return (
-    <Form method="patch" action={`/goodies/${goodies.id}`}>
-      {/* Hiddent input with the method that the Action function will have to handle */}
+    <Form
+      method="patch"
+      action={`/goodies/${goodies.id}`}
+      encType="multipart/form-data"
+    >
+      <Input
+        margin="dense"
+        required
+        fullWidth
+        autoComplete="picture"
+        autoFocus
+        defaultValue={formData?.fields?.picture}
+        error={Boolean(formData?.fieldsError?.picture)}
+        type="file"
+        name="picture"
+        id="picture"
+      />
       <TextField
         variant="outlined"
         margin="normal"

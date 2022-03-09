@@ -17,12 +17,14 @@ export type ChallengeInfo = {
 
 export type CreateChallengeFormData = {
   fieldsError?: {
+    picture?: string;
     name?: string;
     description?: string;
     reward?: string;
     maxAtempts?: string;
   };
   fields?: {
+    picture: Blob;
     name: string;
     description?: string;
     reward: number;

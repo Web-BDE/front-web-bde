@@ -1,4 +1,5 @@
 import axios from "axios";
+import FormData from "form-data";
 
 import {
   Accomplishment,
@@ -13,16 +14,27 @@ export async function createAccomplishment(
   accomplishmentInfo: AccomplishmentInfo,
   challengeId: number
 ) {
+  const searchParams = buildSearchParams({
+    key: "challengeId",
+    val: challengeId.toString(),
+  });
   try {
-    const reply = await axios.put<{ message: string }>(
-      "/accomplishment",
+    const reply = await axios.put<{
+      message: string;
+      accomplishmentId: number;
+    }>(
+      `/accomplishment${searchParams}`,
       { info: accomplishmentInfo, challengeId },
       {
         headers: buildAxiosHeaders(token),
       }
     );
 
-    return { success: reply.data.message, code: reply.status };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      accomplishmentId: reply.data.accomplishmentId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -41,7 +53,10 @@ export async function updateAccomplishment(
   validation?: Validation
 ) {
   try {
-    const reply = await axios.patch<{ message: string }>(
+    const reply = await axios.patch<{
+      message: string;
+      accomplishmentId: number;
+    }>(
       `/accomplishment/${accomplishmentId}`,
       { info: accomplishmentInfo, status: validation },
       {
@@ -49,7 +64,11 @@ export async function updateAccomplishment(
       }
     );
 
-    return { success: reply.data.message, code: reply.status };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      accomplishmentId: reply.data.accomplishmentId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -66,14 +85,18 @@ export async function deleteAccomplishment(
   accomplishmentId: number
 ) {
   try {
-    const reply = await axios.delete<{ message: string }>(
-      `/accomplishment/${accomplishmentId}`,
-      {
-        headers: buildAxiosHeaders(token),
-      }
-    );
+    const reply = await axios.delete<{
+      message: string;
+      accomplishmentId: number;
+    }>(`/accomplishment/${accomplishmentId}`, {
+      headers: buildAxiosHeaders(token),
+    });
 
-    return { success: reply.data.message, code: reply.status };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      accomplishmentId: reply.data.accomplishmentId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -132,14 +155,9 @@ export async function getManyAccomplishment(
     const reply = await axios.get<{
       message: string;
       accomplishments: Accomplishment[];
-    }>(
-      `/accomplishment/${
-        searchParams.entries() ? "?" + searchParams.toString() : ""
-      }`,
-      {
-        headers: buildAxiosHeaders(token),
-      }
-    );
+    }>(`/accomplishment${searchParams}`, {
+      headers: buildAxiosHeaders(token),
+    });
 
     return {
       success: reply.data.message,
@@ -162,19 +180,80 @@ export async function putProof(
   accomplishmentId: number,
   proof: Blob
 ) {
+  const searchParams = buildSearchParams({
+    key: "accomplishmentId",
+    val: accomplishmentId.toString(),
+  });
   try {
     const formData = new FormData();
-    formData.append("proof", proof);
+    formData.append("proof", Buffer.from(await proof.arrayBuffer()));
+
+    const multipartHeaders = formData.getHeaders();
+
+    console.log(multipartHeaders);
 
     const reply = await axios.put<{
       message: string;
       accomplishment: Accomplishment;
-    }>(`/accomplishment/proof?accomplishmentId=${accomplishmentId}`, formData, {
+    }>(`/accomplishment/proof${searchParams}`, formData, {
       headers: {
         ...buildAxiosHeaders(token),
-        "content-type": "multipart/form-data",
+        ...multipartHeaders,
       },
     });
+
+    return {
+      success: reply.data.message,
+      code: reply.status,
+    };
+  } catch (err) {
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
+  }
+}
+
+export async function getProof(token: string, accomplishmentId: number) {
+  const searchParams = buildSearchParams({
+    key: "accomplishmentId",
+    val: accomplishmentId.toString(),
+  });
+  try {
+    const reply = await axios.get<{ message: string; proof: Buffer }>(
+      `/accomplishment/proof${searchParams}`,
+      { headers: buildAxiosHeaders(token) }
+    );
+
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      proof: reply.data.proof,
+    };
+  } catch (err) {
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
+  }
+}
+
+export async function deleteProof(token: string, accomplishmentId: number) {
+  const searchParams = buildSearchParams({
+    key: "accomplishmentId",
+    val: accomplishmentId.toString(),
+  });
+  try {
+    const reply = await axios.delete<{ message: string }>(
+      `/accomplishment/proof${searchParams}`,
+      { headers: buildAxiosHeaders(token) }
+    );
 
     return {
       success: reply.data.message,

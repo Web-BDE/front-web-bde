@@ -20,7 +20,7 @@ export type CreateAccomplishmentFormData = {
   };
   fields?: {
     comment?: string;
-    proof: Buffer;
+    proof: Blob;
   };
 };
 

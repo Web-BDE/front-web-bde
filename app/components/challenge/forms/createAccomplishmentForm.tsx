@@ -17,7 +17,11 @@ export default function CreateAccomplishmentForm({
   formData?: CreateAccomplishmentFormData;
 }) {
   return (
-    <Form method="put" action={`/challenges/${challenge.id}`}>
+    <Form
+      method="put"
+      action={`/challenges/${challenge.id}`}
+      encType="multipart/form-data"
+    >
       <Input
         margin="dense"
         required

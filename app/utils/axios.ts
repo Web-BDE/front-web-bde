@@ -19,5 +19,5 @@ export function buildSearchParams(
   params.forEach((entry) => {
     if (typeof entry.val !== "undefined") result.append(entry.key, entry.val);
   });
-  return result;
+  return result.entries() ? "?" + result.toString() : "";
 }

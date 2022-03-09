@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Goodies, GoodiesInfo } from "~/models/Goodies";
 import { buildAxiosHeaders, buildSearchParams } from "~/utils/axios";
+import FormData from "form-data";
 
 export async function getManyGoodies(
   token: string,
@@ -13,7 +14,7 @@ export async function getManyGoodies(
   );
   try {
     const reply = await axios.get<{ message: string; goodies: Goodies[] }>(
-      `/goodies/${searchParams.entries() ? "?" + searchParams.toString() : ""}`,
+      `/goodies${searchParams}`,
       {
         headers: buildAxiosHeaders(token),
       }
@@ -62,7 +63,7 @@ export async function getGoodies(token: string, goodiesId: number) {
 
 export async function createGoodies(token: string, goodiesInfo: GoodiesInfo) {
   try {
-    const reply = await axios.put<{ message: string }>(
+    const reply = await axios.put<{ message: string; goodiesId: number }>(
       "/goodies",
       goodiesInfo,
       {
@@ -70,7 +71,11 @@ export async function createGoodies(token: string, goodiesInfo: GoodiesInfo) {
       }
     );
 
-    return { success: reply.data.message, code: reply.status };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      goodiesId: reply.data.goodiesId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -88,7 +93,7 @@ export async function updateGoodies(
   goodiesId: number
 ) {
   try {
-    const reply = await axios.patch<{ message: string }>(
+    const reply = await axios.patch<{ message: string; goodiesId: number }>(
       `/goodies/${goodiesId}`,
       goodiesInfo,
       {
@@ -96,7 +101,11 @@ export async function updateGoodies(
       }
     );
 
-    return { success: reply.data.message, code: reply.status };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      goodiesId: reply.data.goodiesId,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&
@@ -110,14 +119,111 @@ export async function updateGoodies(
 
 export async function deleteGoodies(token: string, goodiesId: number) {
   try {
-    const reply = await axios.delete<{ message: string }>(
+    const reply = await axios.delete<{ message: string; goodiesId: number }>(
       `/goodies/${goodiesId}`,
       {
         headers: buildAxiosHeaders(token),
       }
     );
 
-    return { success: reply.data.message, code: reply.status };
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      goodiesId: reply.data.goodiesId,
+    };
+  } catch (err) {
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
+  }
+}
+
+export async function putGoodiesPicture(
+  token: string,
+  goodiesId: number,
+  goodiesPicture: Blob
+) {
+  const searchParams = buildSearchParams({
+    key: "goodiesId",
+    val: goodiesId.toString(),
+  });
+  try {
+    const formData = new FormData();
+    formData.append("goodiesPicture", Buffer.from(await goodiesPicture.arrayBuffer()));
+
+    const multipartHeaders = formData.getHeaders();
+
+    const reply = await axios.put<{
+      message: string;
+      goodies: Goodies;
+    }>(`/goodies/picture${searchParams}`, formData, {
+      headers: {
+        ...buildAxiosHeaders(token),
+        ...multipartHeaders,
+      },
+    });
+
+    return {
+      success: reply.data.message,
+      code: reply.status,
+    };
+  } catch (err) {
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
+  }
+}
+
+export async function getGoodiesPicture(token: string, goodiesId: number) {
+  const searchParams = buildSearchParams({
+    key: "goodiesId",
+    val: goodiesId.toString(),
+  });
+  try {
+    const reply = await axios.get<{ message: string; goodiesPicture: Buffer }>(
+      `/goodies/picture${searchParams}`,
+      { headers: buildAxiosHeaders(token) }
+    );
+
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      goodiesPicture: reply.data.goodiesPicture,
+    };
+  } catch (err) {
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
+  }
+}
+
+export async function deleteGoodiesPicture(token: string, goodiesId: number) {
+  const searchParams = buildSearchParams({
+    key: "goodiesId",
+    val: goodiesId.toString(),
+  });
+  try {
+    const reply = await axios.delete<{ message: string }>(
+      `/goodies/picture${searchParams}`,
+      { headers: buildAxiosHeaders(token) }
+    );
+
+    return {
+      success: reply.data.message,
+      code: reply.status,
+    };
   } catch (err) {
     if (
       axios.isAxiosError(err) &&

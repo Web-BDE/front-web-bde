@@ -3,6 +3,8 @@ import {
   json,
   LoaderFunction,
   redirect,
+  unstable_createMemoryUploadHandler,
+  unstable_parseMultipartFormData,
   useActionData,
   useCatch,
   useSearchParams,
@@ -20,7 +22,7 @@ import { Container, Typography } from "@mui/material";
 
 import CreateGoodiesForm from "~/components/goodies/forms/createGoodiesForm";
 
-import { createGoodies } from "~/services/goodies";
+import { createGoodies, putGoodiesPicture } from "~/services/goodies";
 import { CreateGoodiesFormData } from "~/models/Goodies";
 
 type ActionData = {
@@ -62,6 +64,7 @@ async function handleCreateGoodies(
   price: number,
   buyLimit: number,
   stock: number,
+  picture: Blob,
   description?: string
 ) {
   const fields = {
@@ -70,6 +73,7 @@ async function handleCreateGoodies(
     price,
     buyLimit,
     stock,
+    picture,
   };
   const fieldsError = {
     price: validatePrice(price),
@@ -88,7 +92,7 @@ async function handleCreateGoodies(
 
   const { code, ...createGoodiesResponse } = await createGoodies(token, fields);
 
-  if (createGoodiesResponse.error) {
+  if (createGoodiesResponse.error || !createGoodiesResponse.goodiesId) {
     return json(
       {
         createGoodiesResponse: {
@@ -100,6 +104,21 @@ async function handleCreateGoodies(
     );
   }
 
+  const { code: UploadCode, ...uploadPictureResponse } =
+    await putGoodiesPicture(token, createGoodiesResponse.goodiesId, picture);
+
+  if (uploadPictureResponse.error) {
+    return json(
+      {
+        createGoodiesResponse: {
+          ...uploadPictureResponse,
+          formData: { fields, fieldsError },
+        },
+      } as ActionData,
+      UploadCode
+    );
+  }
+
   return redirect("/goodies");
 }
 
@@ -108,13 +127,17 @@ export const action: ActionFunction = async ({ request }) => {
     case "PUT":
       //Initialise fiels
       const token = await requireAuth(request, "/goodies/admin");
-      const form = await request.formData();
+      const form = await unstable_parseMultipartFormData(
+        request,
+        unstable_createMemoryUploadHandler({ maxFileSize: 100_000_000 })
+      );
       //Goodies fields
       const name = form.get("name");
       const description = form.get("description");
       const price = form.get("price");
       const buyLimit = form.get("buy-limit");
       const stock = form.get("stock");
+      const picture = form.get("picture");
 
       //Check for field types
       if (
@@ -122,7 +145,8 @@ export const action: ActionFunction = async ({ request }) => {
         (typeof description !== "string" && description !== null) ||
         typeof price !== "string" ||
         typeof buyLimit !== "string" ||
-        typeof stock !== "string"
+        typeof stock !== "string" ||
+        !(picture instanceof Blob)
       ) {
         return json(
           {
@@ -141,6 +165,7 @@ export const action: ActionFunction = async ({ request }) => {
         parseInt(price),
         parseInt(buyLimit),
         parseInt(stock),
+        picture,
         description ? description : undefined
       );
 
