@@ -1,4 +1,5 @@
 import axios from "axios";
+import FormData from "form-data";
 
 import {
   Accomplishment,
@@ -22,9 +23,7 @@ export async function createAccomplishment(
       message: string;
       accomplishmentId: number;
     }>(
-      `/accomplishment${
-        searchParams
-      }`,
+      `/accomplishment${searchParams}`,
       { info: accomplishmentInfo, challengeId },
       {
         headers: buildAxiosHeaders(token),
@@ -156,14 +155,9 @@ export async function getManyAccomplishment(
     const reply = await axios.get<{
       message: string;
       accomplishments: Accomplishment[];
-    }>(
-      `/accomplishment/${
-        searchParams
-      }`,
-      {
-        headers: buildAxiosHeaders(token),
-      }
-    );
+    }>(`/accomplishment/${searchParams}`, {
+      headers: buildAxiosHeaders(token),
+    });
 
     return {
       success: reply.data.message,
@@ -184,11 +178,13 @@ export async function getManyAccomplishment(
 export async function putProof(
   token: string,
   accomplishmentId: number,
-  proof: any
+  proof: Blob
 ) {
   try {
     const formData = new FormData();
-    formData.append("proof", proof);
+    formData.append("proof", new Buffer(await proof.arrayBuffer()));
+
+    const multipartHeaders = formData.getHeaders();
 
     const reply = await axios.put<{
       message: string;
@@ -196,7 +192,7 @@ export async function putProof(
     }>(`/accomplishment/proof?accomplishmentId=${accomplishmentId}`, formData, {
       headers: {
         ...buildAxiosHeaders(token),
-        "content-type": "multipart/form-data",
+        ...multipartHeaders,
       },
     });
 

@@ -4,6 +4,7 @@ import {
   LoaderFunction,
   redirect,
   unstable_createFileUploadHandler,
+  unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
   useActionData,
   useCatch,
@@ -21,6 +22,7 @@ import {
   createAccomplishment,
   deleteAccomplishment,
   getManyAccomplishment,
+  putProof,
   updateAccomplishment,
 } from "~/services/accomplishment";
 import { requireAuth } from "~/services/authentication";
@@ -134,7 +136,7 @@ async function loadChallenge(
             challengeResponse.challenge?.creatorId
           )),
       },
-      purchaseResponse: await loadAccomplishments(
+      accomplishmentResponse: await loadAccomplishments(
         token,
         challengeResponse.challenge?.id,
         userId
@@ -160,6 +162,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 async function handleAccomplishmentCreation(
   token: string,
   challengeId: number,
+  proof: Blob,
   comment?: string
 ) {
   const fields = { comment };
@@ -170,14 +173,37 @@ async function handleAccomplishmentCreation(
     challengeId
   );
 
+  if (
+    createAccomplishmentResponse.error ||
+    !createAccomplishmentResponse.accomplishmentId
+  ) {
+    return json(
+      {
+        createAccomplishmentResponse: {
+          ...createAccomplishmentResponse,
+          formData: { fields },
+        },
+      } as ActionData,
+      code
+    );
+  }
+
+  console.log(createAccomplishmentResponse.accomplishmentId);
+
+  const { code: uploadCode, ...proofUploadResponse } = await putProof(
+    token,
+    createAccomplishmentResponse.accomplishmentId,
+    proof
+  );
+
   return json(
     {
       createAccomplishmentResponse: {
-        ...createAccomplishmentResponse,
+        ...proofUploadResponse,
         formData: { fields },
       },
     } as ActionData,
-    code
+    uploadCode
   );
 }
 
@@ -298,15 +324,19 @@ export const action: ActionFunction = async ({ request, params }) => {
   const token = await requireAuth(request, `/challenge/${params.challengeId}`);
 
   //Decalare all fields
-  const form = await request.formData();
+  const form = await unstable_parseMultipartFormData(
+    request,
+    unstable_createMemoryUploadHandler({ maxFileSize: 100_000_000 })
+  );
   const kind = form.get("kind");
 
   switch (request.method) {
     case "PUT":
       //Accomplishment creation
       const comment = form.get("comment");
+      const proof = form.get("proof");
 
-      if (typeof comment !== "string") {
+      if (typeof comment !== "string" || !(proof instanceof Blob)) {
         return json(
           {
             createAccomplishmentResponse: {
@@ -320,6 +350,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       return await handleAccomplishmentCreation(
         token,
         parseInt(params.challengeId),
+        proof,
         comment
       );
     case "PATCH":

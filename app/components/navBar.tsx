@@ -149,6 +149,7 @@ export default function NavBar({ userInfo }: { userInfo?: User }) {
                 <Link
                   style={{ textDecoration: "none", color: "black" }}
                   to={link.link}
+                  key={index}
                 >
                   <MenuItem key={index} onClick={handleCloseNavMenu}>
                     <Typography textAlign="center">{link.name}</Typography>

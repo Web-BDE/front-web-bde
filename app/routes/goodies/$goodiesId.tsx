@@ -370,8 +370,6 @@ export default function Goodies() {
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
 
-  console.log(loaderData);
-
   const { userInfo } = useOutletContext<ContextData>();
 
   return (
