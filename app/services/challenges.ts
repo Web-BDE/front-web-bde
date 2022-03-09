@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Challenge, ChallengeInfo } from "~/models/Challenge";
 import { buildAxiosHeaders, buildSearchParams } from "~/utils/axios";
+import FormData from "form-data";
 
 export async function getManyChallenge(
   token: string,
@@ -134,6 +135,99 @@ export async function deleteChallenge(token: string, challengeId: number) {
       success: reply.data.message,
       code: reply.status,
       challengeId: reply.data.challengeId,
+    };
+  } catch (err) {
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
+  }
+}
+
+export async function putChallengePicture(
+  token: string,
+  challengeId: number,
+  challengePicture: Blob
+) {
+  const searchParams = buildSearchParams({
+    key: "challengeId",
+    val: challengeId.toString(),
+  });
+  try {
+    const formData = new FormData();
+    formData.append("challengePicture", new Buffer(await challengePicture.arrayBuffer()));
+
+    const multipartHeaders = formData.getHeaders();
+
+    const reply = await axios.put<{
+      message: string;
+      challenge: Challenge;
+    }>(`/challenge/challengePicture${searchParams}`, formData, {
+      headers: {
+        ...buildAxiosHeaders(token),
+        ...multipartHeaders,
+      },
+    });
+
+    return {
+      success: reply.data.message,
+      code: reply.status,
+    };
+  } catch (err) {
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
+  }
+}
+
+export async function getChallengePicture(token: string, challengeId: number) {
+  const searchParams = buildSearchParams({
+    key: "challengeId",
+    val: challengeId.toString(),
+  });
+  try {
+    const reply = await axios.get<{ message: string; challengePicture: Buffer }>(
+      `/challenge/challengePicture${searchParams}`,
+      { headers: buildAxiosHeaders(token) }
+    );
+
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      challengePicture: reply.data.challengePicture,
+    };
+  } catch (err) {
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
+  }
+}
+
+export async function deleteChallengePicture(token: string, challengeId: number) {
+  const searchParams = buildSearchParams({
+    key: "challengeId",
+    val: challengeId.toString(),
+  });
+  try {
+    const reply = await axios.delete<{ message: string }>(
+      `/challenge/challengePicture${searchParams}`,
+      { headers: buildAxiosHeaders(token) }
+    );
+
+    return {
+      success: reply.data.message,
+      code: reply.status,
     };
   } catch (err) {
     if (
