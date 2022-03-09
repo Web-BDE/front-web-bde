@@ -180,6 +180,10 @@ export async function putProof(
   accomplishmentId: number,
   proof: Blob
 ) {
+  const searchParams = buildSearchParams({
+    key: "accomplishmentId",
+    val: accomplishmentId.toString(),
+  });
   try {
     const formData = new FormData();
     formData.append("proof", new Buffer(await proof.arrayBuffer()));
@@ -189,12 +193,65 @@ export async function putProof(
     const reply = await axios.put<{
       message: string;
       accomplishment: Accomplishment;
-    }>(`/accomplishment/proof?accomplishmentId=${accomplishmentId}`, formData, {
+    }>(`/accomplishment/proof/${searchParams}`, formData, {
       headers: {
         ...buildAxiosHeaders(token),
         ...multipartHeaders,
       },
     });
+
+    return {
+      success: reply.data.message,
+      code: reply.status,
+    };
+  } catch (err) {
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
+  }
+}
+
+export async function getProof(token: string, accomplishmentId: number) {
+  const searchParams = buildSearchParams({
+    key: "accomplishmentId",
+    val: accomplishmentId.toString(),
+  });
+  try {
+    const reply = await axios.get<{ message: string; proof: Buffer }>(
+      `/accomplishment/proof/${searchParams}`,
+      { headers: buildAxiosHeaders(token) }
+    );
+
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      proof: reply.data.proof,
+    };
+  } catch (err) {
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
+  }
+}
+
+export async function deleteProof(token: string, accomplishmentId: number) {
+  const searchParams = buildSearchParams({
+    key: "accomplishmentId",
+    val: accomplishmentId.toString(),
+  });
+  try {
+    const reply = await axios.delete<{ message: string }>(
+      `/accomplishment/proof/${searchParams}`,
+      { headers: buildAxiosHeaders(token) }
+    );
 
     return {
       success: reply.data.message,

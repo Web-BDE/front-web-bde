@@ -164,11 +164,12 @@ export default function NavBar({ userInfo }: { userInfo?: User }) {
               display: { xs: "none", md: "none", lg: "block" },
             }}
           >
-            {leftLinks.map((link) => {
+            {leftLinks.map((link, index) => {
               return (
                 <Link
                   style={{ textDecoration: "none", color: "white" }}
                   to={link.link}
+                  key={index}
                 >
                   <Button color="inherit" variant="text">
                     {link.name}
