@@ -1,4 +1,4 @@
-import { TextField, Button } from "@mui/material";
+import { TextField, Button, Input } from "@mui/material";
 import { Form } from "remix";
 import { CreateGoodiesFormData } from "~/models/Goodies";
 
@@ -10,7 +10,19 @@ export default function CreateGoodiesForm({
   redirectTo: string | null;
 }) {
   return (
-    <Form method="put" action="/goodies/admin">
+    <Form method="put" action="/goodies/admin" encType="multipart/form-data">
+      <Input
+        margin="dense"
+        required
+        fullWidth
+        autoComplete="picture"
+        autoFocus
+        defaultValue={formData?.fields?.picture}
+        error={Boolean(formData?.fieldsError?.picture)}
+        type="file"
+        name="picture"
+        id="picture"
+      />
       <TextField
         variant="outlined"
         margin="normal"

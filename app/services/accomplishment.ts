@@ -186,9 +186,11 @@ export async function putProof(
   });
   try {
     const formData = new FormData();
-    formData.append("proof", new Buffer(await proof.arrayBuffer()));
+    formData.append("proof", Buffer.from(await proof.arrayBuffer()));
 
     const multipartHeaders = formData.getHeaders();
+
+    console.log(multipartHeaders);
 
     const reply = await axios.put<{
       message: string;

@@ -1,4 +1,4 @@
-import { TextField, Button, Typography } from "@mui/material";
+import { TextField, Button, Typography, Input } from "@mui/material";
 import { Form } from "remix";
 import { Challenge, CreateChallengeFormData } from "~/models/Challenge";
 import { User } from "~/models/User";
@@ -13,9 +13,21 @@ export default function UpdateChallengeForm({
   creator?: User;
 }) {
   return (
-    <Form method="patch" action={`/challenges/${challenge.id}`}>
+    <Form method="patch" action={`/challenges/${challenge.id}`} encType="multipart/form-data">
       {/* Hiddent input with the method that the Action function will have to handle */}
       <input type="hidden" name="kind" value="challenge" />
+      <Input
+        margin="dense"
+        required
+        fullWidth
+        autoComplete="picture"
+        autoFocus
+        defaultValue={formData?.fields?.picture}
+        error={Boolean(formData?.fieldsError?.picture)}
+        type="file"
+        name="picture"
+        id="picture"
+      />
       <TextField
         variant="outlined"
         margin="normal"

@@ -29,6 +29,7 @@ import { requireAuth } from "~/services/authentication";
 import {
   deleteChallenge,
   getChallenge,
+  putChallengePicture,
   updateChallenge,
 } from "~/services/challenges";
 
@@ -165,7 +166,7 @@ async function handleAccomplishmentCreation(
   proof: Blob,
   comment?: string
 ) {
-  const fields = { comment };
+  const fields = { comment, proof };
 
   const { code, ...createAccomplishmentResponse } = await createAccomplishment(
     token,
@@ -213,7 +214,7 @@ async function handleAccomplishmentUpdate(
   proof: Blob,
   comment: string
 ) {
-  const fields = { comment };
+  const fields = { comment, proof };
 
   const { code, ...updateAccomplishmentResponse } = await updateAccomplishment(
     token,
@@ -270,10 +271,11 @@ async function handleChallengeUpdate(
   description: string,
   reward: number,
   maxAtempts: number,
-  challengeId: number
+  challengeId: number,
+  picture: Blob
 ) {
   //Check fields format errors
-  const fields = { name, description, reward, maxAtempts };
+  const fields = { name, description, reward, maxAtempts, picture };
   const fieldsError = {
     reward: validateReward(reward),
     maxAtempts: validateMaxAtempts(maxAtempts),
@@ -294,14 +296,33 @@ async function handleChallengeUpdate(
     challengeId
   );
 
+  if (updateChallengeResponse.error || !updateChallengeResponse.challengeId) {
+    return json(
+      {
+        updateChallengeResponse: {
+          ...updateChallengeResponse,
+          formData: { fields, fieldsError },
+        },
+      } as ActionData,
+      code
+    );
+  }
+
+  const { code: uploadCode, ...uploadPictureResponse } =
+    await putChallengePicture(
+      token,
+      updateChallengeResponse.challengeId,
+      picture
+    );
+
   return json(
     {
       updateChallengeResponse: {
-        ...updateChallengeResponse,
-        formData: { fields, fieldsError },
+        ...uploadPictureResponse,
+        formData: { fields },
       },
     } as ActionData,
-    code
+    uploadCode
   );
 }
 
@@ -417,13 +438,15 @@ export const action: ActionFunction = async ({ request, params }) => {
           const description = form.get("description");
           const reward = form.get("reward");
           const maxAtempts = form.get("max-atempts");
+          const picture = form.get("picture");
 
           if (
             typeof name !== "string" ||
             (typeof description !== "string" &&
               typeof description !== "undefined") ||
             typeof reward !== "string" ||
-            typeof maxAtempts !== "string"
+            typeof maxAtempts !== "string" ||
+            !(picture instanceof Blob)
           ) {
             return json(
               {
@@ -442,7 +465,8 @@ export const action: ActionFunction = async ({ request, params }) => {
             description,
             parseInt(reward),
             parseInt(maxAtempts),
-            parseInt(params.challengeId)
+            parseInt(params.challengeId),
+            picture
           );
 
         default:

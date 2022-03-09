@@ -14,9 +14,7 @@ export async function getManyChallenge(
   );
   try {
     const reply = await axios.get<{ message: string; challenges: Challenge[] }>(
-      `/challenge/${
-        searchParams
-      }`,
+      `/challenge/${searchParams}`,
       {
         headers: buildAxiosHeaders(token),
       }
@@ -158,14 +156,19 @@ export async function putChallengePicture(
   });
   try {
     const formData = new FormData();
-    formData.append("challengePicture", new Buffer(await challengePicture.arrayBuffer()));
+    formData.append(
+      "challengePicture",
+      Buffer.from(await challengePicture.arrayBuffer())
+    );
 
     const multipartHeaders = formData.getHeaders();
+
+    console.log(multipartHeaders);
 
     const reply = await axios.put<{
       message: string;
       challenge: Challenge;
-    }>(`/challenge/challengePicture${searchParams}`, formData, {
+    }>(`/challenge/picture${searchParams}`, formData, {
       headers: {
         ...buildAxiosHeaders(token),
         ...multipartHeaders,
@@ -193,10 +196,12 @@ export async function getChallengePicture(token: string, challengeId: number) {
     val: challengeId.toString(),
   });
   try {
-    const reply = await axios.get<{ message: string; challengePicture: Buffer }>(
-      `/challenge/challengePicture${searchParams}`,
-      { headers: buildAxiosHeaders(token) }
-    );
+    const reply = await axios.get<{
+      message: string;
+      challengePicture: Buffer;
+    }>(`/challenge/picture${searchParams}`, {
+      headers: buildAxiosHeaders(token),
+    });
 
     return {
       success: reply.data.message,
@@ -214,14 +219,17 @@ export async function getChallengePicture(token: string, challengeId: number) {
   }
 }
 
-export async function deleteChallengePicture(token: string, challengeId: number) {
+export async function deleteChallengePicture(
+  token: string,
+  challengeId: number
+) {
   const searchParams = buildSearchParams({
     key: "challengeId",
     val: challengeId.toString(),
   });
   try {
     const reply = await axios.delete<{ message: string }>(
-      `/challenge/challengePicture${searchParams}`,
+      `/challenge/picture${searchParams}`,
       { headers: buildAxiosHeaders(token) }
     );
 

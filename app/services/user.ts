@@ -195,18 +195,14 @@ export async function getManyUser(
   }
 }
 
-export async function putAvatar(
-  token: string,
-  userId: number,
-  avatar: Blob
-) {
+export async function putAvatar(token: string, userId: number, avatar: Blob) {
   const searchParams = buildSearchParams({
     key: "userId",
     val: userId.toString(),
   });
   try {
     const formData = new FormData();
-    formData.append("avatar", new Buffer(await avatar.arrayBuffer()));
+    formData.append("avatar", Buffer.from(await avatar.arrayBuffer()));
 
     const multipartHeaders = formData.getHeaders();
 

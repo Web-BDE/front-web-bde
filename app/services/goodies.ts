@@ -153,14 +153,14 @@ export async function putGoodiesPicture(
   });
   try {
     const formData = new FormData();
-    formData.append("goodiesPicture", new Buffer(await goodiesPicture.arrayBuffer()));
+    formData.append("goodiesPicture", Buffer.from(await goodiesPicture.arrayBuffer()));
 
     const multipartHeaders = formData.getHeaders();
 
     const reply = await axios.put<{
       message: string;
       goodies: Goodies;
-    }>(`/goodies/goodiesPicture${searchParams}`, formData, {
+    }>(`/goodies/picture${searchParams}`, formData, {
       headers: {
         ...buildAxiosHeaders(token),
         ...multipartHeaders,
@@ -189,7 +189,7 @@ export async function getGoodiesPicture(token: string, goodiesId: number) {
   });
   try {
     const reply = await axios.get<{ message: string; goodiesPicture: Buffer }>(
-      `/goodies/goodiesPicture${searchParams}`,
+      `/goodies/picture${searchParams}`,
       { headers: buildAxiosHeaders(token) }
     );
 
@@ -216,7 +216,7 @@ export async function deleteGoodiesPicture(token: string, goodiesId: number) {
   });
   try {
     const reply = await axios.delete<{ message: string }>(
-      `/goodies/goodiesPicture${searchParams}`,
+      `/goodies/picture${searchParams}`,
       { headers: buildAxiosHeaders(token) }
     );
 

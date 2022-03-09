@@ -3,6 +3,8 @@ import {
   json,
   LoaderFunction,
   redirect,
+  unstable_createMemoryUploadHandler,
+  unstable_parseMultipartFormData,
   useActionData,
   useCatch,
   useLoaderData,
@@ -24,7 +26,12 @@ import {
 } from "~/models/Goodies";
 
 import { requireAuth } from "~/services/authentication";
-import { deleteGoodies, getGoodies, updateGoodies } from "~/services/goodies";
+import {
+  deleteGoodies,
+  getGoodies,
+  putGoodiesPicture,
+  updateGoodies,
+} from "~/services/goodies";
 import {
   createPurchase,
   deletePurchase,
@@ -173,7 +180,8 @@ async function handleUpdateGoodies(
   price: number,
   buyLimit: number,
   stock: number,
-  goodiesId: number
+  goodiesId: number,
+  picture: Blob
 ) {
   const fields = {
     name,
@@ -181,6 +189,7 @@ async function handleUpdateGoodies(
     price: price,
     buyLimit: buyLimit,
     stock,
+    picture,
   };
   const fieldsError = {
     reward: validatePrice(price),
@@ -201,14 +210,29 @@ async function handleUpdateGoodies(
     goodiesId
   );
 
+  if (updateGoodiesResponse.error || !updateGoodiesResponse.goodiesId) {
+    return json(
+      {
+        updateGoodiesResponse: {
+          ...updateGoodiesResponse,
+          formData: { fields, fieldsError },
+        },
+      } as ActionData,
+      code
+    );
+  }
+
+  const { code: UploadCode, ...uploadPictureResponse } =
+    await putGoodiesPicture(token, updateGoodiesResponse.goodiesId, picture);
+
   return json(
     {
       updateGoodiesResponse: {
-        ...updateGoodiesResponse,
+        ...uploadPictureResponse,
         formData: { fields, fieldsError },
       },
     } as ActionData,
-    code
+    UploadCode
   );
 }
 
@@ -248,7 +272,10 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   //TODO : remove method & use REST routes
   //Initialize form fields
-  const form = await request.formData();
+  const form = await unstable_parseMultipartFormData(
+    request,
+    unstable_createMemoryUploadHandler({ maxFileSize: 100_000_000 })
+  );
 
   switch (request.method) {
     case "PUT":
@@ -260,13 +287,15 @@ export const action: ActionFunction = async ({ request, params }) => {
       const price = form.get("price");
       const buyLimit = form.get("buy-limit");
       const stock = form.get("stock");
+      const picture = form.get("picture");
 
       if (
         typeof name !== "string" ||
         typeof description !== "string" ||
         typeof price !== "string" ||
         typeof buyLimit !== "string" ||
-        typeof stock !== "string"
+        typeof stock !== "string" ||
+        !(picture instanceof Blob)
       ) {
         return json(
           {
@@ -286,7 +315,8 @@ export const action: ActionFunction = async ({ request, params }) => {
         parseInt(price),
         parseInt(buyLimit),
         parseInt(stock),
-        parseInt(params.goodiesId)
+        parseInt(params.goodiesId),
+        picture
       );
     case "DELETE":
       const kind = form.get("kind");
