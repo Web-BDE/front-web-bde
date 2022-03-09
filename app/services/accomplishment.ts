@@ -155,7 +155,7 @@ export async function getManyAccomplishment(
     const reply = await axios.get<{
       message: string;
       accomplishments: Accomplishment[];
-    }>(`/accomplishment/${searchParams}`, {
+    }>(`/accomplishment${searchParams}`, {
       headers: buildAxiosHeaders(token),
     });
 
@@ -193,7 +193,7 @@ export async function putProof(
     const reply = await axios.put<{
       message: string;
       accomplishment: Accomplishment;
-    }>(`/accomplishment/proof/${searchParams}`, formData, {
+    }>(`/accomplishment/proof${searchParams}`, formData, {
       headers: {
         ...buildAxiosHeaders(token),
         ...multipartHeaders,
@@ -222,7 +222,7 @@ export async function getProof(token: string, accomplishmentId: number) {
   });
   try {
     const reply = await axios.get<{ message: string; proof: Buffer }>(
-      `/accomplishment/proof/${searchParams}`,
+      `/accomplishment/proof${searchParams}`,
       { headers: buildAxiosHeaders(token) }
     );
 
@@ -249,7 +249,7 @@ export async function deleteProof(token: string, accomplishmentId: number) {
   });
   try {
     const reply = await axios.delete<{ message: string }>(
-      `/accomplishment/proof/${searchParams}`,
+      `/accomplishment/proof${searchParams}`,
       { headers: buildAxiosHeaders(token) }
     );
 

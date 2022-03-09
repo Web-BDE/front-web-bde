@@ -13,7 +13,7 @@ export async function getManyGoodies(
   );
   try {
     const reply = await axios.get<{ message: string; goodies: Goodies[] }>(
-      `/goodies/${searchParams}`,
+      `/goodies${searchParams}`,
       {
         headers: buildAxiosHeaders(token),
       }

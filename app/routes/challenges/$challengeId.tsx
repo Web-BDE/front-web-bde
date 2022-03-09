@@ -209,8 +209,9 @@ async function handleAccomplishmentCreation(
 
 async function handleAccomplishmentUpdate(
   token: string,
-  comment: string,
-  accomplishmentId: number
+  accomplishmentId: number,
+  proof: Blob,
+  comment: string
 ) {
   const fields = { comment };
 
@@ -220,14 +221,32 @@ async function handleAccomplishmentUpdate(
     fields
   );
 
+  if (updateAccomplishmentResponse.error) {
+    return json(
+      {
+        updateAccomplishmentResponse: {
+          ...updateAccomplishmentResponse,
+          formData: { fields },
+        },
+      } as ActionData,
+      code
+    );
+  }
+
+  const { code: uploadCode, ...uploadProofResponse } = await putProof(
+    token,
+    accomplishmentId,
+    proof
+  );
+
   return json(
     {
       updateAccomplishmentResponse: {
-        ...updateAccomplishmentResponse,
+        ...uploadProofResponse,
         formData: { fields },
       },
     } as ActionData,
-    code
+    uploadCode
   );
 }
 
@@ -357,6 +376,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       switch (kind) {
         case "accomplishment":
           const proof = form.get("proof");
+          const comment = form.get("comment");
           const accomplishmentId = new URL(request.url).searchParams.get(
             "accomplishmentId"
           );
@@ -372,7 +392,7 @@ export const action: ActionFunction = async ({ request, params }) => {
             );
           }
 
-          if (typeof proof !== "string") {
+          if (typeof comment !== "string" || !(proof instanceof Blob)) {
             return json(
               {
                 updateAccomplishmentResponse: {
@@ -386,8 +406,9 @@ export const action: ActionFunction = async ({ request, params }) => {
 
           return await handleAccomplishmentUpdate(
             token,
+            parseInt(accomplishmentId),
             proof,
-            parseInt(accomplishmentId)
+            comment
           );
 
         case "challenge":
