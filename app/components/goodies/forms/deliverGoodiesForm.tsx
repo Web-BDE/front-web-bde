@@ -10,10 +10,11 @@ export default function DeliverGoodiesForm({
   return (
     //TODO mark as delivered
     <Form
-      method="put"
+      method="patch"
       action={`/goodies/${purchase.goodiesId}?purchaseId=${purchase.id}`}
     >
-      <input type="hidden" name="method" value="deliver" />
+      <input type="hidden" name="kind" value="purchase" />
+      <input type="hidden" name="delivered" value="true" />
       <Button size="small" type="submit" name="refund" id="refund" value="1">
         Mark as delivered
       </Button>

@@ -8,3 +8,5 @@ export type Purchase = {
 export type PurchaseGoodiesFormData = {};
 
 export type RefundGoodiesFormData = {};
+
+export type DeliverGoodiesFormData = {};

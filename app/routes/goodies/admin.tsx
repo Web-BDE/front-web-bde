@@ -7,6 +7,7 @@ import {
   unstable_parseMultipartFormData,
   useActionData,
   useCatch,
+  useLoaderData,
   useSearchParams,
 } from "remix";
 
@@ -21,9 +22,20 @@ import { requireAuth } from "~/services/authentication";
 import { Container, Typography } from "@mui/material";
 
 import CreateGoodiesForm from "~/components/goodies/forms/createGoodiesForm";
+import PurchasesGrid from "~/components/goodies/grids/purchaseGrid";
 
 import { createGoodies, putGoodiesPicture } from "~/services/goodies";
 import { CreateGoodiesFormData } from "~/models/Goodies";
+import { Purchase } from "~/models/Purchase";
+import { getManyPurchase } from "~/services/purchase";
+
+type LoaderData = {
+  undeliveredPurchaseResponse: {
+    error?: string;
+    success?: string;
+    purchases?: Purchase[];
+  };
+};
 
 type ActionData = {
   createGoodiesResponse?: {
@@ -31,10 +43,33 @@ type ActionData = {
     error?: string;
     success?: string;
   };
+  deliverGoodiesResponse?: {
+    error?: string;
+    success?: string;
+  };
+  refundGoodiesResponse?: {
+    error?: string;
+    success?: string;
+  };
 };
 
+async function loadUndeliveredPurchases(token: string) {
+  const { code, ...undeliveredPurchaseResponse } = await getManyPurchase(
+    token,
+    100,
+    0,
+    undefined,
+    undefined,
+    false
+  );
+
+  return json({ undeliveredPurchaseResponse } as LoaderData, code);
+}
+
 export const loader: LoaderFunction = async ({ request }) => {
-  return await requireAuth(request, "/goodies/admin");
+  const token = await requireAuth(request, "/goodies/admin");
+
+  return loadUndeliveredPurchases(token);
 };
 
 //Validator for price fiels
@@ -176,16 +211,29 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function ShopAdmin() {
   const actionData = useActionData<ActionData>();
+  const loaderData = useLoaderData<LoaderData>();
   const [searchParams] = useSearchParams();
   return (
-    <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
-      <Typography variant="h4">Create Goodies</Typography>
-      {generateAlert("error", actionData?.createGoodiesResponse?.error)}
-      {generateAlert("success", actionData?.createGoodiesResponse?.success)}
-      <CreateGoodiesForm
-        formData={actionData?.createGoodiesResponse?.formData}
-        redirectTo={searchParams.get("redirectTo")}
-      />
+    <Container>
+      <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
+        <Typography variant="h4">Create Goodies</Typography>
+        {generateAlert("error", actionData?.createGoodiesResponse?.error)}
+        {generateAlert("success", actionData?.createGoodiesResponse?.success)}
+        <CreateGoodiesForm
+          formData={actionData?.createGoodiesResponse?.formData}
+          redirectTo={searchParams.get("redirectTo")}
+        />
+      </Container>
+      {loaderData.undeliveredPurchaseResponse.purchases && (
+        <div style={{ marginTop: "50px" }}>
+          <Typography textAlign="center" variant="h4">
+            Undelivered Purchases
+          </Typography>
+          <PurchasesGrid
+            purchases={loaderData.undeliveredPurchaseResponse.purchases}
+          />
+        </div>
+      )}
     </Container>
   );
 }

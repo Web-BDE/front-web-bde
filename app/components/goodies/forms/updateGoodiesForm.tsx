@@ -18,6 +18,7 @@ export default function UpdateGoodiesForm({
       action={`/goodies/${goodies.id}`}
       encType="multipart/form-data"
     >
+      <input type="hidden" name="kind" value="goodies" />
       <Input
         margin="dense"
         required
