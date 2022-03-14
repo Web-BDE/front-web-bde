@@ -7,6 +7,23 @@ export type User = {
   privilege: number;
 };
 
+export type UpdateUserFormData = {
+  fieldsError: {
+    pseudo?: string;
+    name?: string;
+    surname?: string;
+    wallet?: string;
+    privilege?: string;
+  };
+  fields: {
+    pseudo: string;
+    name: string;
+    surname: string;
+    wallet: number;
+    privilege: number;
+  };
+};
+
 export type LoginFormData = {
   fieldsError: {
     email?: string;
