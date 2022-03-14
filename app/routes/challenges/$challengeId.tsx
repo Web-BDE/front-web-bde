@@ -60,7 +60,6 @@ type LoaderData = {
     challenge?: Challenge;
     error?: string;
     success?: string;
-    creatorResponse?: { error?: string; success?: string; user?: User };
   };
   accomplishmentResponse?: {
     accomplishments?: Accomplishment[];
@@ -113,12 +112,6 @@ async function loadAccomplishments(
   return accomplishmentResponse;
 }
 
-async function loadChallengeCreator(token: string, creatorId: number) {
-  const { code, ...userResponse } = await getUser(token, creatorId);
-
-  return userResponse;
-}
-
 async function loadChallenge(
   token: string,
   challengeId: number,
@@ -130,12 +123,6 @@ async function loadChallenge(
     {
       challengeResponse: {
         ...challengeResponse,
-        creatorResponse:
-          challengeResponse.challenge?.creatorId &&
-          (await loadChallengeCreator(
-            token,
-            challengeResponse.challenge?.creatorId
-          )),
       },
       accomplishmentResponse: await loadAccomplishments(
         token,
@@ -527,16 +514,14 @@ function displayChallenge(
     updateForm?: CreateChallengeFormData;
     deleteForm?: DeleteChallengeFormData;
   },
-  userId?: number,
-  creator?: User
+  userId?: number
 ) {
-  if (userId === challenge.creatorId) {
+  if (userId === challenge.creatorId || userId === challenge.creator?.id) {
     return (
       <Container maxWidth="xs">
         <UpdateChallengeForm
           challenge={challenge}
           formData={formData?.updateForm}
-          creator={creator}
         />
         <DeleteChallengeForm
           challenge={challenge}
@@ -547,7 +532,7 @@ function displayChallenge(
   } else {
     return (
       <Container maxWidth="xs">
-        <ChallengeDisplay creator={creator} challenge={challenge} />
+        <ChallengeDisplay challenge={challenge} />
       </Container>
     );
   }
@@ -576,8 +561,7 @@ export default function Challenge() {
                 updateForm: actionData?.updateChallengeResponse?.formData,
                 deleteForm: actionData?.deleteChallengeResponse?.formData,
               },
-              userInfo?.id,
-              loaderData.challengeResponse.creatorResponse?.user
+              userInfo?.id
             )}
             <Typography marginTop="50px" variant="h4">
               Submit Proof

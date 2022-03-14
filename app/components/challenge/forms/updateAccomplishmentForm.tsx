@@ -28,7 +28,9 @@ export default function UpdateAccomplishmentForm({
         </Typography>
         <Form
           method="patch"
-          action={`/challenges/${accomplishment.challengeId}?accomplishmentId=${accomplishment.id}`}
+          action={`/challenges/${
+            accomplishment.challengeId || accomplishment.challenge?.id
+          }?accomplishmentId=${accomplishment.id}`}
           encType="multipart/form-data"
         >
           <input type="hidden" name="kind" value="accomplishment" />

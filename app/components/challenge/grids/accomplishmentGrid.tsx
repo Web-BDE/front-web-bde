@@ -18,30 +18,33 @@ function displayAccomplishment(
     deleteForm?: DeleteAccomplishmentFormData;
     validateForm?: ValidateAccomplishmentFormData;
   },
-  userPrivilege?: number
+  userPrivilege?: number,
+  userId?: number
 ) {
-  switch (accomplishment.validation) {
-    case "PENDING":
-      return (
-        <div>
-          <UpdateAccomplishmentForm
-            accomplishment={accomplishment}
-            formData={formData.updateForm}
-          />
-          <DeleteAccomplishmentForm
-            accomplishment={accomplishment}
-            formData={formData.deleteForm}
-          />
-        </div>
-      );
-    default:
-      return (
-        <AccomplishmentTile
+  if (
+    accomplishment.validation === "PENDING" &&
+    accomplishment.user?.id === userId
+  ) {
+    return (
+      <div>
+        <UpdateAccomplishmentForm
           accomplishment={accomplishment}
-          userPrivilege={userPrivilege}
-          formData={formData.validateForm}
+          formData={formData.updateForm}
         />
-      );
+        <DeleteAccomplishmentForm
+          accomplishment={accomplishment}
+          formData={formData.deleteForm}
+        />
+      </div>
+    );
+  } else {
+    return (
+      <AccomplishmentTile
+        accomplishment={accomplishment}
+        userPrivilege={userPrivilege}
+        formData={formData.validateForm}
+      />
+    );
   }
 }
 
@@ -56,7 +59,7 @@ export default function AccomplishmentsGrid({
     validateForm?: ValidateAccomplishmentFormData;
   };
 }) {
-  const {userInfo} = useOutletContext<ContextData>();
+  const { userInfo } = useOutletContext<ContextData>();
 
   return (
     <Grid
@@ -74,7 +77,8 @@ export default function AccomplishmentsGrid({
               {displayAccomplishment(
                 accomplishment,
                 formData,
-                userInfo?.privilege
+                userInfo?.privilege,
+                userInfo?.id
               )}
             </Grid>
           );

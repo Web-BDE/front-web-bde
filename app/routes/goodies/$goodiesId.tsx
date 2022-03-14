@@ -448,17 +448,12 @@ function displayGoodies(
     updateForm?: CreateGoodiesFormData;
     deleteForm?: DeleteGoodiesFormData;
   },
-  creator?: User,
   userId?: number
 ) {
-  if (goodies?.creatorId === userId) {
+  if (goodies?.creatorId === userId || goodies.creator?.id === userId) {
     return (
       <div>
-        <UpdateGoodiesForm
-          creator={creator}
-          goodies={goodies}
-          formData={formData?.updateForm}
-        />
+        <UpdateGoodiesForm goodies={goodies} formData={formData?.updateForm} />
         <DeleteGoodiesForm goodies={goodies} formData={formData?.deleteForm} />
       </div>
     );
@@ -494,7 +489,6 @@ export default function Goodies() {
                 updateForm: actionData?.updateGoodiesResponse?.formData,
                 deleteForm: actionData?.deleteGoodiesResponse?.formData,
               },
-              loaderData.goodiesResponse.creatorResponse?.user,
               userInfo?.id
             )}
             <PurchaseGoodiesForm

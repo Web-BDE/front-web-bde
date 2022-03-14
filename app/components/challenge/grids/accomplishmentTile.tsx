@@ -22,7 +22,7 @@ export default function AccomplishmentTile({
   formData?: ValidateAccomplishmentFormData;
 }) {
   return (
-    <Card>
+    <Card sx={{ minWidth: "350px" }}>
       <CardContent>
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           {new Date(accomplishment.createdAt).toLocaleDateString()}

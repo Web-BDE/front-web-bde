@@ -11,7 +11,7 @@ export default function DeliverGoodiesForm({
     //TODO mark as delivered
     <Form
       method="patch"
-      action={`/goodies/${purchase.goodiesId}?purchaseId=${purchase.id}`}
+      action={`/goodies/${purchase.goodiesId || purchase.goodies?.id}?purchaseId=${purchase.id}`}
     >
       <input type="hidden" name="kind" value="purchase" />
       <input type="hidden" name="delivered" value="true" />
