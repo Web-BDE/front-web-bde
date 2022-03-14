@@ -5,8 +5,10 @@ export type Goodies = {
   price: number;
   buyLimit: number;
   stock: number;
+  bought: number;
   createdAt: string; //But should be converted as Date
-  creatorId: number;
+  creatorId?: number;
+  creator?: { id: number; pseudo: string };
 };
 
 export type GoodiesInfo = {

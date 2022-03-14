@@ -65,24 +65,54 @@ export async function deletePurchase(token: string, purchaseId: number) {
   }
 }
 
+export async function UpdatePurchase(
+  token: string,
+  purchaseId: number,
+  delivered: boolean
+) {
+  try {
+    const reply = await axios.patch<{ message: string; purchaseId: number }>(
+      `/purchase/${purchaseId}`,
+      { delivered },
+      {
+        headers: buildAxiosHeaders(token),
+      }
+    );
+
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      purchaseId: reply.data.purchaseId,
+    };
+  } catch (err) {
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
+  }
+}
+
 export async function getManyPurchase(
   token: string,
   limit?: number,
   offset?: number,
   goodiesId?: number,
-  userId?: number
+  userId?: number,
+  delivered?: boolean
 ) {
   const searchParams = buildSearchParams(
     { key: "limit", val: limit?.toString() },
     { key: "offset", val: offset?.toString() },
     { key: "goodiesId", val: goodiesId?.toString() },
-    { key: "userId", val: userId?.toString() }
+    { key: "userId", val: userId?.toString() },
+    { key: "delivered", val: delivered?.toString() }
   );
   try {
     const reply = await axios.get<{ message: string; purchases: Purchase[] }>(
-      `/purchase/${
-        searchParams
-      }`,
+      `/purchase/${searchParams}`,
       {
         headers: buildAxiosHeaders(token),
       }

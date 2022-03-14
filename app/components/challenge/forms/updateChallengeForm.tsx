@@ -13,7 +13,11 @@ export default function UpdateChallengeForm({
   creator?: User;
 }) {
   return (
-    <Form method="patch" action={`/challenges/${challenge.id}`} encType="multipart/form-data">
+    <Form
+      method="patch"
+      action={`/challenges/${challenge.id}`}
+      encType="multipart/form-data"
+    >
       {/* Hiddent input with the method that the Action function will have to handle */}
       <input type="hidden" name="kind" value="challenge" />
       <Input
@@ -64,7 +68,7 @@ export default function UpdateChallengeForm({
           label="Reward"
           type="number"
           id="reward"
-          defaultValue={formData?.fields?.reward || 0}
+          defaultValue={formData?.fields?.reward || challenge.reward}
           error={Boolean(formData?.fieldsError?.reward)}
           helperText={formData?.fieldsError?.reward}
         />
@@ -77,7 +81,7 @@ export default function UpdateChallengeForm({
           label="Max atempts"
           type="number"
           id="max-atempts"
-          defaultValue={formData?.fields?.maxAtempts || 3}
+          defaultValue={formData?.fields?.maxAtempts || challenge.maxAtempts}
           error={Boolean(formData?.fieldsError?.maxAtempts)}
           helperText={formData?.fieldsError?.maxAtempts}
         />

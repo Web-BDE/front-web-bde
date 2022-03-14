@@ -5,7 +5,8 @@ export type Challenge = {
   reward: number;
   maxAtempts: number;
   createdAt: string; //But should be converted as Date
-  creatorId: number;
+  creatorId?: number;
+  creator?: { id: number; pseudo: string };
 };
 
 export type ChallengeInfo = {

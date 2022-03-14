@@ -18,7 +18,7 @@ export default function ValidateAccomplishmentForm({
         type="submit"
         name="validation"
         id="validation"
-        value="1"
+        value="ACCEPTED"
       >
         Validate
       </Button>
@@ -26,7 +26,7 @@ export default function ValidateAccomplishmentForm({
         size="small"
         type="submit"
         name="validation"
-        value="-1"
+        value="REFUSED"
         id="validation"
       >
         Refuse

@@ -19,7 +19,6 @@ export async function getManyGoodies(
         headers: buildAxiosHeaders(token),
       }
     );
-
     return {
       success: reply.data.message,
       code: reply.status,
@@ -153,7 +152,10 @@ export async function putGoodiesPicture(
   });
   try {
     const formData = new FormData();
-    formData.append("goodiesPicture", Buffer.from(await goodiesPicture.arrayBuffer()));
+    formData.append(
+      "goodiesPicture",
+      Buffer.from(await goodiesPicture.arrayBuffer())
+    );
 
     const multipartHeaders = formData.getHeaders();
 

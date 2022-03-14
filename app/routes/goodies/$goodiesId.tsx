@@ -36,6 +36,7 @@ import {
   createPurchase,
   deletePurchase,
   getManyPurchase,
+  UpdatePurchase,
 } from "~/services/purchase";
 
 import { Container, Typography } from "@mui/material";
@@ -44,6 +45,7 @@ import PurchaseGoodiesForm from "~/components/goodies/forms/purchaseGoodiesForm"
 import DeleteGoodiesForm from "~/components/goodies/forms/deleteGoodiesForm";
 import PurchasesGrid from "~/components/goodies/grids/purchaseGrid";
 import {
+  DeliverGoodiesFormData,
   Purchase,
   PurchaseGoodiesFormData,
   RefundGoodiesFormData,
@@ -84,6 +86,11 @@ type ActionData = {
   };
   refundGoodiesResponse?: {
     formData?: RefundGoodiesFormData;
+    success?: string;
+    error?: string;
+  };
+  deliverGoodiesResponse?: {
+    formData?: DeliverGoodiesFormData;
     success?: string;
     error?: string;
   };
@@ -258,6 +265,20 @@ async function handleRefundGoodies(token: string, purchaseId: number) {
   return json({ refundGoodiesResponse } as ActionData, code);
 }
 
+async function handleDeliverGoodies(
+  token: string,
+  delivered: boolean,
+  purchaseId: number
+) {
+  const { code, ...deliverGoodiesResponse } = await UpdatePurchase(
+    token,
+    purchaseId,
+    delivered
+  );
+
+  return json({ deliverGoodiesResponse } as ActionData, code);
+}
+
 export const action: ActionFunction = async ({ request, params }) => {
   if (!params.goodiesId) {
     return json(
@@ -277,50 +298,104 @@ export const action: ActionFunction = async ({ request, params }) => {
     unstable_createMemoryUploadHandler({ maxFileSize: 100_000_000 })
   );
 
+  const kind = form.get("kind");
+
   switch (request.method) {
     case "PUT":
       return await handleCreatePurchase(token, parseInt(params.goodiesId));
     case "PATCH":
-      //Goodies update fields
-      const name = form.get("name");
-      const description = form.get("description");
-      const price = form.get("price");
-      const buyLimit = form.get("buy-limit");
-      const stock = form.get("stock");
-      const picture = form.get("picture");
-
-      if (
-        typeof name !== "string" ||
-        typeof description !== "string" ||
-        typeof price !== "string" ||
-        typeof buyLimit !== "string" ||
-        typeof stock !== "string" ||
-        !(picture instanceof Blob)
-      ) {
+      if (typeof kind !== "string") {
         return json(
           {
-            updateGoodiesResponse: {
-              error:
-                "Invalid data provided, please check if you have fill all the requierd fields",
+            deleteGoodiesResponse: {
+              error: "There was an error, please try again",
             },
           } as ActionData,
-          400
+          500
         );
       }
 
-      return await handleUpdateGoodies(
-        token,
-        name,
-        description,
-        parseInt(price),
-        parseInt(buyLimit),
-        parseInt(stock),
-        parseInt(params.goodiesId),
-        picture
-      );
-    case "DELETE":
-      const kind = form.get("kind");
+      switch (kind) {
+        case "goodies":
+          //Goodies update fields
+          const name = form.get("name");
+          const description = form.get("description");
+          const price = form.get("price");
+          const buyLimit = form.get("buy-limit");
+          const stock = form.get("stock");
+          const picture = form.get("picture");
 
+          if (
+            typeof name !== "string" ||
+            typeof description !== "string" ||
+            typeof price !== "string" ||
+            typeof buyLimit !== "string" ||
+            typeof stock !== "string" ||
+            !(picture instanceof Blob)
+          ) {
+            return json(
+              {
+                updateGoodiesResponse: {
+                  error:
+                    "Invalid data provided, please check if you have fill all the requierd fields",
+                },
+              } as ActionData,
+              400
+            );
+          }
+
+          return await handleUpdateGoodies(
+            token,
+            name,
+            description,
+            parseInt(price),
+            parseInt(buyLimit),
+            parseInt(stock),
+            parseInt(params.goodiesId),
+            picture
+          );
+        case "purchase":
+          const purchaseId = new URL(request.url).searchParams.get(
+            "purchaseId"
+          );
+
+          if (!purchaseId) {
+            return json(
+              {
+                deliverGoodiesResponse: { error: "Invalid purchase query" },
+              } as ActionData,
+              404
+            );
+          }
+
+          const delivered = form.get("delivered");
+
+          if (typeof delivered !== "string") {
+            return json(
+              {
+                deliverGoodiesResponse: {
+                  error:
+                    "Invalid data provided, please check if you have fill all the requierd fields",
+                },
+              } as ActionData,
+              400
+            );
+          }
+
+          return handleDeliverGoodies(
+            token,
+            Boolean(delivered),
+            parseInt(purchaseId)
+          );
+        default:
+          return json(
+            {
+              deleteGoodiesResponse: { error: "Bad request kind" },
+            } as ActionData,
+            404
+          );
+      }
+    case "DELETE":
       if (typeof kind !== "string") {
         return json(
           {
@@ -373,17 +448,12 @@ function displayGoodies(
     updateForm?: CreateGoodiesFormData;
     deleteForm?: DeleteGoodiesFormData;
   },
-  creator?: User,
   userId?: number
 ) {
-  if (goodies?.creatorId === userId) {
+  if (goodies?.creatorId === userId || goodies.creator?.id === userId) {
     return (
       <div>
-        <UpdateGoodiesForm
-          creator={creator}
-          goodies={goodies}
-          formData={formData?.updateForm}
-        />
+        <UpdateGoodiesForm goodies={goodies} formData={formData?.updateForm} />
         <DeleteGoodiesForm goodies={goodies} formData={formData?.deleteForm} />
       </div>
     );
@@ -419,7 +489,6 @@ export default function Goodies() {
                 updateForm: actionData?.updateGoodiesResponse?.formData,
                 deleteForm: actionData?.deleteGoodiesResponse?.formData,
               },
-              loaderData.goodiesResponse.creatorResponse?.user,
               userInfo?.id
             )}
             <PurchaseGoodiesForm

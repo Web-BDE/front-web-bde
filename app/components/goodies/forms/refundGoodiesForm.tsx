@@ -10,7 +10,7 @@ export default function RefundGoodiesForm({
   return (
     <Form
       method="delete"
-      action={`/goodies/${purchase.goodiesId}?purchaseId=${purchase.id}`}
+      action={`/goodies/${purchase.goodiesId || purchase.goodies?.id}?purchaseId=${purchase.id}`}
     >
       <input type="hidden" name="kind" value="purchase" />
       <Button size="small" type="submit" name="refund" id="refund" value="1">

@@ -15,7 +15,9 @@ export default function DeleteAccomplishmentForm({
   return (
     <Form
       method="delete"
-      action={`/challenges/${accomplishment.challengeId}?accomplishmentId=${accomplishment.id}`}
+      action={`/challenges/${
+        accomplishment.challengeId || accomplishment.challenge?.id
+      }?accomplishmentId=${accomplishment.id}`}
     >
       <input type="hidden" name="kind" value="accomplishment" />
       <Button

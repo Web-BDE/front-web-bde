@@ -5,6 +5,7 @@ import {
   Typography,
   Button,
 } from "@mui/material";
+import { Link } from "remix";
 import {
   Accomplishment,
   ValidateAccomplishmentFormData,
@@ -21,16 +22,28 @@ export default function AccomplishmentTile({
   formData?: ValidateAccomplishmentFormData;
 }) {
   return (
-    <Card>
+    <Card sx={{ minWidth: "350px" }}>
       <CardContent>
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           {new Date(accomplishment.createdAt).toLocaleDateString()}
         </Typography>
+        {accomplishment.challenge && (
+          <Link to={`/challenges/${accomplishment.challenge.id}`}>
+            <Typography variant="h5" component="div">
+              {accomplishment.challenge.name}
+            </Typography>
+          </Link>
+        )}
+        {accomplishment.user && (
+          <Typography sx={{ mb: 1.5 }} color="text.secondary">
+            {accomplishment.user.pseudo}
+          </Typography>
+        )}
         <Typography variant="h5" component="div">
           {accomplishment.validation}
         </Typography>
         <Typography sx={{ mb: 1.5 }} color="text.secondary">
-          {accomplishment?.comment}
+          {accomplishment.comment}
         </Typography>
       </CardContent>
       {userPrivilege &&
