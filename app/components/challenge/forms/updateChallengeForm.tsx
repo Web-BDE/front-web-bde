@@ -1,4 +1,4 @@
-import { TextField, Button, Typography, Input } from "@mui/material";
+import { TextField, Button, Typography, Input, Avatar } from "@mui/material";
 import { Form } from "remix";
 import { Challenge, CreateChallengeFormData } from "~/models/Challenge";
 import { User } from "~/models/User";
@@ -20,6 +20,13 @@ export default function UpdateChallengeForm({
     >
       {/* Hiddent input with the method that the Action function will have to handle */}
       <input type="hidden" name="kind" value="challenge" />
+      <Avatar
+        variant="rounded"
+        alt={challenge.name}
+        src=""
+        sx={{ width: 256, height: 256 }}
+        style={{ marginLeft: "auto", marginRight: "auto" }}
+      />
       <Input
         margin="dense"
         required

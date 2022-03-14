@@ -1,4 +1,4 @@
-import { TextField, Button, Typography, Input } from "@mui/material";
+import { TextField, Button, Typography, Input, Avatar } from "@mui/material";
 import { Form } from "remix";
 import { CreateGoodiesFormData, Goodies } from "~/models/Goodies";
 import { User } from "~/models/User";
@@ -17,6 +17,13 @@ export default function UpdateGoodiesForm({
       encType="multipart/form-data"
     >
       <input type="hidden" name="kind" value="goodies" />
+      <Avatar
+        variant="rounded"
+        alt={goodies.name}
+        src=""
+        sx={{ width: 256, height: 256 }}
+        style={{ marginLeft: "auto", marginRight: "auto" }}
+      />
       <Input
         margin="dense"
         required

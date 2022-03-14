@@ -59,7 +59,6 @@ type LoaderData = {
     error?: string;
     success?: string;
     goodies?: Goodies;
-    creatorResponse?: { user?: User; error?: string; success?: string };
   };
   purchaseResponse?: {
     error?: string;
@@ -112,12 +111,6 @@ async function loadPurchases(
   return purchaseResponse;
 }
 
-async function loadGoodiesCreator(token: string, creatorId: number) {
-  const { code, ...userResponse } = await getUser(token, creatorId);
-
-  return userResponse;
-}
-
 async function loadGoodies(token: string, goodiesId: number, userId?: number) {
   const { code, ...goodiesResponse } = await getGoodies(token, goodiesId);
 
@@ -125,9 +118,6 @@ async function loadGoodies(token: string, goodiesId: number, userId?: number) {
     {
       goodiesResponse: {
         ...goodiesResponse,
-        creatorResponse:
-          goodiesResponse.goodies?.creatorId &&
-          (await loadGoodiesCreator(token, goodiesResponse.goodies?.creatorId)),
       },
       purchaseResponse: await loadPurchases(
         token,

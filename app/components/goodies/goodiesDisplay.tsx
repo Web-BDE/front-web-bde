@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { Avatar, Typography } from "@mui/material";
 import { Goodies } from "~/models/Goodies";
 import { User } from "~/models/User";
 
@@ -8,6 +8,13 @@ export default function GoodiesDisplay({ goodies }: { goodies: Goodies }) {
       <Typography variant="h3" style={{ marginTop: "10px" }}>
         {goodies.name}
       </Typography>
+      <Avatar
+        variant="rounded"
+        alt={goodies.name}
+        src=""
+        sx={{ width: 256, height: 256 }}
+        style={{ marginLeft: "auto", marginRight: "auto" }}
+      />
       <Typography variant="h5" style={{ marginTop: "10px" }}>
         <b>Price : {goodies.price}</b>
       </Typography>
