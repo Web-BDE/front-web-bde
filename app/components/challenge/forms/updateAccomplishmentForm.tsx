@@ -54,7 +54,7 @@ export default function UpdateAccomplishmentForm({
             name="comment"
             autoComplete="comment"
             autoFocus
-            defaultValue={formData?.fields?.comment}
+            defaultValue={formData?.fields?.comment || accomplishment.comment}
             error={Boolean(formData?.fieldsError?.comment)}
             helperText={formData?.fieldsError?.comment}
           />

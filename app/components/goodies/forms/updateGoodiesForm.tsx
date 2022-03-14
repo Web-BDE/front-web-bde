@@ -5,11 +5,9 @@ import { User } from "~/models/User";
 
 export default function UpdateGoodiesForm({
   goodies,
-  creator,
   formData,
 }: {
   goodies: Goodies;
-  creator?: User;
   formData?: CreateGoodiesFormData;
 }) {
   return (
@@ -80,7 +78,7 @@ export default function UpdateGoodiesForm({
           label="Buy Limit"
           type="number"
           id="buy-limit"
-          defaultValue={formData?.fields?.buyLimit || 1}
+          defaultValue={formData?.fields?.buyLimit || goodies.buyLimit}
           error={Boolean(formData?.fieldsError?.buyLimit)}
           helperText={formData?.fieldsError?.buyLimit}
         />
@@ -93,7 +91,7 @@ export default function UpdateGoodiesForm({
           label="Stock"
           type="number"
           id="stock"
-          defaultValue={formData?.fields?.stock || 1}
+          defaultValue={formData?.fields?.stock || goodies.stock}
           error={Boolean(formData?.fieldsError?.stock)}
           helperText={formData?.fieldsError?.stock}
         />
@@ -101,9 +99,9 @@ export default function UpdateGoodiesForm({
       <Typography variant="h6" align="center" style={{ marginTop: "10px" }}>
         Creation date : {new Date(goodies.createdAt).toLocaleDateString()}
       </Typography>
-      {creator && (
+      {goodies.creator && (
         <Typography variant="h6" align="center" style={{ marginTop: "10px" }}>
-          Creator : {creator?.pseudo}
+          Creator : {goodies.creator.pseudo}
         </Typography>
       )}
       <Button

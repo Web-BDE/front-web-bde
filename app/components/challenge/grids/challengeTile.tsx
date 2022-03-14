@@ -1,4 +1,3 @@
-import { Image } from "@mui/icons-material";
 import { Avatar, Card, CardContent, Typography } from "@mui/material";
 import { Link } from "remix";
 import { Challenge } from "~/models/Challenge";

@@ -1,18 +1,10 @@
-import {
-  Avatar,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Typography,
-} from "@mui/material";
+import { Avatar, Card, CardContent, Typography } from "@mui/material";
 import { Link } from "remix";
 import { Goodies } from "~/models/Goodies";
-import PurchaseGoodiesForm from "../forms/purchaseGoodiesForm";
 
 export default function GoodiesTile({ goodies }: { goodies: Goodies }) {
   return (
-    <Link style={{ textDecoration: "none" }} to={`/goodies/$^{goodies.id}`}>
+    <Link style={{ textDecoration: "none" }} to={`/goodies/${goodies.id}`}>
       <Card sx={{ minWidth: 275 }}>
         <CardContent>
           <Avatar
@@ -31,6 +23,9 @@ export default function GoodiesTile({ goodies }: { goodies: Goodies }) {
           </Typography>
           <Typography sx={{ mb: 1.5 }} color="text.secondary">
             Price : {goodies.price}
+          </Typography>
+          <Typography sx={{ mb: 1.5 }} color="text.secondary">
+            In Stock : {goodies.stock - goodies.bought}
           </Typography>
         </CardContent>
       </Card>
