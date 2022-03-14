@@ -1,7 +1,9 @@
 export type Accomplishment = {
   id: number;
-  userId: number;
-  challengeId: number;
+  user?: { id: number; pseudo: string };
+  userId?: number;
+  challengeId?: number;
+  challenge?: { id: number; name: string; reward: number };
   createdAt: string; //But should be converted as Date
   comment: string;
   validation: Validation;
