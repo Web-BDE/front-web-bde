@@ -17,6 +17,7 @@ import { getSelft } from "./services/user";
 
 import { generateExpectedError, generateUnexpectedError } from "./utils/error";
 import { tryGetToken } from "./services/authentication";
+import { Container } from "@mui/material";
 
 export const meta: MetaFunction = () => {
   return { title: "Web BDE" };
@@ -67,7 +68,9 @@ export default function App() {
       </head>
       <body>
         <NavBar userInfo={loaderData.userInfo} />
-        <Outlet context={context} />
+        <Container style={{ marginTop: "100px", marginBottom: "100px" }}>
+          <Outlet context={context} />
+        </Container>
         <ScrollRestoration />
         <Scripts />
         {process.env.NODE_ENV === "development" && <LiveReload />}
