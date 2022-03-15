@@ -79,6 +79,10 @@ export default function NavBar({ userInfo }: { userInfo?: User }) {
       {
         name: "Shop",
         link: "/goodies",
+      },
+      {
+        name: "Users",
+        link: "/users",
       }
     );
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { User } from "~/models/User";
+import { UpdateUserFormData, User } from "~/models/User";
 import { buildAxiosHeaders, buildSearchParams } from "~/utils/axios";
 import FormData from "form-data";
 
@@ -62,8 +62,8 @@ export async function updateSelf(token: string, registerInfo: RegisterInfo) {
 
 export async function updateUser(
   token: string,
-  registerInfo: RegisterInfo,
-  userId: string
+  registerInfo: any,
+  userId: number
 ) {
   try {
     const reply = await axios.patch<{ message: string; userId: number }>(

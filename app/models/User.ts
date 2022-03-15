@@ -5,6 +5,24 @@ export type User = {
   surname: string;
   wallet: number;
   privilege: number;
+  totalEarnedPoints: number;
+};
+
+export type UpdateUserFormData = {
+  fieldsError: {
+    pseudo?: string;
+    name?: string;
+    surname?: string;
+    wallet?: string;
+    privilege?: string;
+  };
+  fields: {
+    pseudo: string;
+    name: string;
+    surname: string;
+    wallet: number;
+    privilege: number;
+  };
 };
 
 export type LoginFormData = {
