@@ -5,6 +5,7 @@ export type User = {
   surname: string;
   wallet: number;
   privilege: number;
+  totalEarnedPoints: number;
 };
 
 export type UpdateUserFormData = {
