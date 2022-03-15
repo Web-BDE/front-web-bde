@@ -20,9 +20,6 @@ export default function UserDisplay({ user }: { user: User }) {
       <Typography variant="h5" style={{ marginTop: "10px" }}>
         <b>Surname : {user.surname}</b>
       </Typography>
-      <Typography variant="h5" style={{ marginTop: "10px" }}>
-        <b>Wallet : {user.wallet}</b>
-      </Typography>
     </div>
   );
 }
