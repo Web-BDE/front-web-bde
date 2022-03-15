@@ -1,7 +1,7 @@
 import { Grid, TextField, Button } from "@mui/material";
 import { Form, Link } from "remix";
 
-export default function LoginForm({
+export default function RecoverForm({
   formData,
   redirectTo,
 }: {

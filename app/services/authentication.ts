@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createCookieSessionStorage, json, redirect } from "remix";
-import { buildAxiosHeaders } from "~/utils/axios";
+import { buildAxiosHeaders, buildSearchParams } from "~/utils/axios";
 
 type LoginInfo = {
   email: string;
@@ -99,4 +99,27 @@ export async function tryGetToken(request: Request) {
   const token = session.get("token");
 
   return token;
+}
+
+export async function recoverPassword(email: string) {
+  const searchParams = buildSearchParams({ key: "email", val: email });
+  try {
+    const reply = await axios.post<{ message: string }>(
+      `/user/recover${searchParams}`,
+      {}
+    );
+
+    return {
+      success: reply.data.message,
+      code: reply.status,
+    };
+  } catch (err) {
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    throw err;
+  }
 }
