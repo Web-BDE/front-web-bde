@@ -39,7 +39,13 @@ export default function Users() {
       </Typography>
       {generateAlert("error", loaderData.userResponse?.error)}
       {loaderData.userResponse?.users && (
-        <UserList users={loaderData.userResponse.users} />
+        <div style={{ marginTop: "50px" }}>
+          <UserList
+            users={loaderData.userResponse.users.sort(
+              (a, b) => a.totalEarnedPoints - b.totalEarnedPoints
+            )}
+          />
+        </div>
       )}
     </Container>
   );
