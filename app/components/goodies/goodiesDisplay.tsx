@@ -1,6 +1,6 @@
 import { Avatar, Typography } from "@mui/material";
+import { Link } from "remix";
 import { Goodies } from "~/models/Goodies";
-import { User } from "~/models/User";
 
 export default function GoodiesDisplay({ goodies }: { goodies: Goodies }) {
   return (
@@ -31,9 +31,14 @@ export default function GoodiesDisplay({ goodies }: { goodies: Goodies }) {
         Creation date : {new Date(goodies.createdAt).toLocaleDateString()}
       </Typography>
       {goodies.creator && (
-        <Typography variant="h5" style={{ marginTop: "10px" }}>
-          Creator : {goodies.creator.pseudo}
-        </Typography>
+        <Link
+          style={{ textDecoration: "none", color: "black" }}
+          to={`/users/${goodies.creator.id}`}
+        >
+          <Typography variant="h5" style={{ marginTop: "10px" }}>
+            Creator : {goodies.creator.pseudo}
+          </Typography>
+        </Link>
       )}
     </div>
   );
