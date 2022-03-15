@@ -34,10 +34,18 @@ export async function registerUser(registerInfo: RegisterInfo) {
   }
 }
 
-export async function updateSelf(token?: string, registerInfo?: any) {
+export async function updateSelf(
+  token?: string,
+  registerInfo?: any,
+  recoverToken?: string
+) {
+  const searchParams = buildSearchParams({
+    key: "recoverToken",
+    val: recoverToken,
+  });
   try {
     const reply = await axios.patch<{ message: string; userId: number }>(
-      "/user",
+      `/user${searchParams}`,
       registerInfo,
       {
         headers: buildAxiosHeaders(token),

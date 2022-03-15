@@ -1,7 +1,13 @@
 import { Container, Typography } from "@mui/material";
 import { generateAlert } from "~/utils/error";
 import RecoverForm from "~/components/recoverForm";
-import { ActionFunction, json, useActionData, useSearchParams } from "remix";
+import {
+  ActionFunction,
+  json,
+  redirect,
+  useActionData,
+  useSearchParams,
+} from "remix";
 import { recoverPassword } from "~/services/authentication";
 import ChangePasswordForm from "~/components/changePasswordForm";
 import { updateSelf, updateUser } from "~/services/user";
@@ -37,7 +43,11 @@ function validatePasswordAndConfirm(password: string, confirm: string) {
   }
 }
 
-async function handleChangePassword(password: string, confirm: string) {
+async function handleChangePassword(
+  password: string,
+  confirm: string,
+  token: string
+) {
   const fields = {
     password,
   };
@@ -54,10 +64,11 @@ async function handleChangePassword(password: string, confirm: string) {
 
   const { code, ...changePasswordResponse } = await updateSelf(
     undefined,
-    fields
+    fields,
+    token
   );
 
-  return json({ changePasswordResponse } as ActionData, code);
+  return redirect("/login");
 }
 
 export const action: ActionFunction = async ({ request }) => {
@@ -96,7 +107,18 @@ export const action: ActionFunction = async ({ request }) => {
         );
       }
 
-      return handleChangePassword(password, confirm);
+      const recoverToken = new URL(request.url).searchParams.get("token");
+
+      if (!recoverToken) {
+        return json(
+          {
+            changePasswordResponse: { error: "Invalid token query" },
+          } as ActionData,
+          404
+        );
+      }
+
+      return handleChangePassword(password, confirm, recoverToken);
     default:
       throw json("Bad request method", 404);
   }
