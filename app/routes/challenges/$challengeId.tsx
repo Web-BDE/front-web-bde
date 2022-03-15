@@ -206,7 +206,7 @@ async function handleAccomplishmentUpdate(
   const { code, ...updateAccomplishmentResponse } = await updateAccomplishment(
     token,
     accomplishmentId,
-    fields
+    fields.comment
   );
 
   if (updateAccomplishmentResponse.error) {

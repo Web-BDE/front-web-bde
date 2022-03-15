@@ -49,7 +49,7 @@ export async function createAccomplishment(
 export async function updateAccomplishment(
   token: string,
   accomplishmentId: number,
-  accomplishmentInfo?: AccomplishmentInfo,
+  comment?: string,
   validation?: Validation
 ) {
   try {
@@ -58,7 +58,7 @@ export async function updateAccomplishment(
       accomplishmentId: number;
     }>(
       `/accomplishment/${accomplishmentId}`,
-      { info: accomplishmentInfo, status: validation },
+      { comment, status: validation },
       {
         headers: buildAxiosHeaders(token),
       }
