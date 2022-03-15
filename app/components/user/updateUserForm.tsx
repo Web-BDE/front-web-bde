@@ -12,7 +12,7 @@ export default function UpdateUserForm({
   return (
     <Form
       method="patch"
-      action={`/user/${user.id}`}
+      action={`/users/${user.id}`}
       encType="multipart/form-data"
     >
       <input type="hidden" name="kind" value="user" />
@@ -30,24 +30,10 @@ export default function UpdateUserForm({
         defaultValue={formData?.fields?.pseudo || user.pseudo}
         autoFocus
       />
-      <TextField
-        variant="outlined"
-        margin="normal"
-        required
-        fullWidth
-        error={Boolean(formData?.fieldsError?.wallet)}
-        helperText={formData?.fieldsError?.wallet}
-        name="wallet"
-        defaultValue={formData?.fields?.wallet || user.wallet}
-        label="Wallet"
-        type="number"
-        id="wallet"
-      />
       <div style={{ display: "flex" }}>
         <TextField
           variant="outlined"
           margin="normal"
-          required
           fullWidth
           name="name"
           label="Name"
@@ -59,7 +45,6 @@ export default function UpdateUserForm({
         <TextField
           variant="outlined"
           margin="normal"
-          required
           fullWidth
           name="surname"
           label="Surname"
@@ -67,6 +52,32 @@ export default function UpdateUserForm({
           defaultValue={formData?.fields?.surname || user.surname}
           error={Boolean(formData?.fieldsError?.surname)}
           helperText={formData?.fieldsError?.surname}
+        />
+      </div>
+      <div style={{ display: "flex" }}>
+        <TextField
+          variant="outlined"
+          margin="normal"
+          fullWidth
+          name="wallet"
+          label="Wallet"
+          id="wallet"
+          type="number"
+          defaultValue={formData?.fields?.wallet || user.wallet}
+          error={Boolean(formData?.fieldsError?.wallet)}
+          helperText={formData?.fieldsError?.wallet}
+        />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          fullWidth
+          name="privilege"
+          label="Privilege"
+          type="number"
+          id="privilege"
+          defaultValue={formData?.fields?.privilege || user.privilege}
+          error={Boolean(formData?.fieldsError?.privilege)}
+          helperText={formData?.fieldsError?.privilege}
         />
       </div>
       <Button
