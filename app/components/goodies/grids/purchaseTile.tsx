@@ -28,16 +28,24 @@ export default function PurchaseTile({
           {new Date(purchase.createdAt).toLocaleDateString()}
         </Typography>
         {purchase.goodies && (
-          <Link to={`/goodies/${purchase.goodies.id}`}>
+          <Link
+            style={{ textDecoration: "none", color: "black" }}
+            to={`/goodies/${purchase.goodies.id}`}
+          >
             <Typography variant="h5" component="div">
               {purchase.goodies?.name}
             </Typography>
           </Link>
         )}
         {purchase.user && (
-          <Typography color="text.secondary" component="div">
-            {purchase.user.pseudo}
-          </Typography>
+          <Link
+            to={`/users/${purchase.user.id}`}
+            style={{ textDecoration: "none", color: "black" }}
+          >
+            <Typography color="text.secondary" component="div">
+              {purchase.user.pseudo}
+            </Typography>
+          </Link>
         )}
       </CardContent>
       {userPrivilege && userPrivilege >= 2 ? (
