@@ -34,7 +34,7 @@ export async function registerUser(registerInfo: RegisterInfo) {
   }
 }
 
-export async function updateSelf(token: string, registerInfo: RegisterInfo) {
+export async function updateSelf(token?: string, registerInfo?: any) {
   try {
     const reply = await axios.patch<{ message: string; userId: number }>(
       "/user",

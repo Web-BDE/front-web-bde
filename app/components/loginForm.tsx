@@ -43,9 +43,12 @@ export default function LoginForm({
       <Button type="submit" fullWidth variant="contained" color="primary">
         Sign In
       </Button>
-      <Grid container>
+      <Grid justifyContent="space-between" container>
         <Grid item>
-          <Link to="/register">{"Don't have an account? Sign Up"}</Link>
+          <Link to="/register">{"Sign Up"}</Link>
+        </Grid>
+        <Grid item>
+          <Link to="/recover">{"Recover Password"}</Link>
         </Grid>
       </Grid>
     </Form>

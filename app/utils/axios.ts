@@ -7,7 +7,7 @@ export function initAxiosConfig() {
   axios.defaults.headers.common["Authorization"] = "Bearer";
 }
 
-export function buildAxiosHeaders(token: string) {
+export function buildAxiosHeaders(token?: string) {
   return { Authorization: `Bearer ${token}` };
 }
 
