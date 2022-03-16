@@ -1,11 +1,16 @@
-import { Button } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import { Form } from "remix";
-import { Accomplishment } from "~/models/Accomplishment";
+import {
+  Accomplishment,
+  ValidateAccomplishmentFormData,
+} from "~/models/Accomplishment";
 
 export default function ValidateAccomplishmentForm({
   accomplishment,
+  formData,
 }: {
   accomplishment: Accomplishment;
+  formData?: ValidateAccomplishmentFormData;
 }) {
   return (
     <Form
@@ -13,8 +18,24 @@ export default function ValidateAccomplishmentForm({
       method="patch"
       action={`/challenges/admin?accomplishmentId=${accomplishment.id}`}
     >
+      <TextField
+        variant="outlined"
+        margin="normal"
+        fullWidth
+        id="refusedComment"
+        required
+        label="Refuse refusedComment"
+        name="refusedComment"
+        autoComplete="refusedComment"
+        autoFocus
+        defaultValue={
+          formData?.fields?.refusedComment || accomplishment.refusedComment
+        }
+        error={Boolean(formData?.fieldsError?.refusedComment)}
+        helperText={formData?.fieldsError?.refusedComment}
+      />
       <Button
-        size="small"
+        fullWidth
         type="submit"
         name="validation"
         id="validation"
@@ -23,7 +44,8 @@ export default function ValidateAccomplishmentForm({
         Validate
       </Button>
       <Button
-        size="small"
+        fullWidth
+        color="error"
         type="submit"
         name="validation"
         value="REFUSED"
