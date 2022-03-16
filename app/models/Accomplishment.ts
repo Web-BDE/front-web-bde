@@ -6,6 +6,7 @@ export type Accomplishment = {
   challenge?: { id: number; name: string; reward: number };
   createdAt: string; //But should be converted as Date
   comment: string;
+  refusedComment: string;
   validation: Validation;
 };
 
@@ -28,4 +29,11 @@ export type CreateAccomplishmentFormData = {
 
 export type DeleteAccomplishmentFormData = {};
 
-export type ValidateAccomplishmentFormData = {};
+export type ValidateAccomplishmentFormData = {
+  fieldsError?: {
+    refusedComment?: string;
+  };
+  fields?: {
+    refusedComment: string;
+  };
+};
