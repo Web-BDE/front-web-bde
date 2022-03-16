@@ -1,4 +1,4 @@
-import { TextField, Button, Input } from "@mui/material";
+import { TextField, Button, Input, Typography } from "@mui/material";
 import { Form } from "remix";
 import { CreateGoodiesFormData } from "~/models/Goodies";
 
@@ -11,6 +11,9 @@ export default function CreateGoodiesForm({
 }) {
   return (
     <Form method="put" action="/goodies/admin" encType="multipart/form-data">
+      <Typography variant="h6" style={{ marginTop: "10px" }}>
+        <b>Miniature</b>
+      </Typography>
       <Input
         margin="dense"
         required
