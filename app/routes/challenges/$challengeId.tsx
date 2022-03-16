@@ -54,6 +54,8 @@ import {
 import { ContextData } from "~/root";
 import { getSelft, getUser } from "~/services/user";
 import { User } from "~/models/User";
+import AccomplishmentAdminList from "~/components/challenge/accomplishmentAdminList";
+import AccomplishmentList from "~/components/challenge/accomplishmentList";
 
 type LoaderData = {
   challengeResponse?: {
@@ -584,7 +586,7 @@ export default function Challenge() {
       {/* Display all user's accomplishment for this challenge */}
       {loaderData.accomplishmentResponse?.accomplishments && (
         <div style={{ marginTop: "50px" }}>
-          <Typography textAlign="center" variant="h4">
+          <Typography marginBottom={"50px"} textAlign="center" variant="h4">
             Your accomplishments
           </Typography>
           {generateAlert(
@@ -603,12 +605,8 @@ export default function Challenge() {
             "success",
             actionData?.deleteAccomplishmentResponse?.success
           )}
-          <AccomplishmentsGrid
+          <AccomplishmentList
             accomplishments={loaderData.accomplishmentResponse.accomplishments}
-            formData={{
-              updateForm: actionData?.updateAccomplishmentResponse?.formData,
-              deleteForm: actionData?.deleteAccomplishmentResponse?.formData,
-            }}
           />
         </div>
       )}

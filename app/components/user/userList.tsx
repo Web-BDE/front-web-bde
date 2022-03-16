@@ -18,11 +18,11 @@ export default function UserList({ users }: { users: User[] }) {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Avatar</TableCell>
-            <TableCell align="right">Pseudo</TableCell>
-            <TableCell align="right">Name</TableCell>
-            <TableCell align="right">Surname</TableCell>
-            <TableCell align="right">Total earned</TableCell>
+            <TableCell align="center">Avatar</TableCell>
+            <TableCell align="center">Pseudo</TableCell>
+            <TableCell align="center">Name</TableCell>
+            <TableCell align="center">Surname</TableCell>
+            <TableCell align="center">Total earned</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -42,7 +42,7 @@ export default function UserList({ users }: { users: User[] }) {
                   />
                 </Link>
               </TableCell>
-              <TableCell align="right">
+              <TableCell align="center">
                 <Link
                   style={{ textDecoration: "none", color: "black" }}
                   to={`/users/${user.id}`}
@@ -50,7 +50,7 @@ export default function UserList({ users }: { users: User[] }) {
                   <b>{user.pseudo}</b>
                 </Link>
               </TableCell>
-              <TableCell align="right">
+              <TableCell align="center">
                 <Link
                   style={{ textDecoration: "none", color: "black" }}
                   to={`/users/${user.id}`}
@@ -58,7 +58,7 @@ export default function UserList({ users }: { users: User[] }) {
                   <b>{user.name}</b>
                 </Link>
               </TableCell>
-              <TableCell align="right">
+              <TableCell align="center">
                 <Link
                   style={{ textDecoration: "none", color: "black" }}
                   to={`/users/${user.id}`}
@@ -66,7 +66,7 @@ export default function UserList({ users }: { users: User[] }) {
                   <b>{user.surname}</b>
                 </Link>
               </TableCell>
-              <TableCell align="right">
+              <TableCell align="center">
                 <Link
                   style={{ textDecoration: "none", color: "black" }}
                   to={`/users/${user.id}`}

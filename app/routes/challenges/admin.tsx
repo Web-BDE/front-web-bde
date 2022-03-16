@@ -33,6 +33,7 @@ import {
   Validation,
 } from "~/models/Accomplishment";
 import { CreateChallengeFormData } from "~/models/Challenge";
+import AccomplishmentAdminList from "~/components/challenge/accomplishmentAdminList";
 
 type ActionData = {
   createChallengeResponse?: {
@@ -271,7 +272,7 @@ export default function ChallengesAdmin() {
       {/* Display a list of accomplishments that need to be validated */}
       {loaderData.accomplishmentResponse?.accomplishments && (
         <div style={{ marginTop: "50px" }}>
-          <Typography textAlign="center" variant="h4">
+          <Typography marginBottom={"50px"} textAlign="center" variant="h4">
             Pending Accomplishments
           </Typography>
           {generateAlert(
@@ -282,12 +283,8 @@ export default function ChallengesAdmin() {
             "success",
             actionData?.validateAccomplishmentResponse?.success
           )}
-          <AccomplishmentsGrid
+          <AccomplishmentAdminList
             accomplishments={loaderData.accomplishmentResponse?.accomplishments}
-            formData={{
-              validateForm:
-                actionData?.validateAccomplishmentResponse?.formData,
-            }}
           />
         </div>
       )}
