@@ -71,7 +71,7 @@ export default function UserList({ users }: { users: User[] }) {
                   style={{ textDecoration: "none", color: "black" }}
                   to={`/users/${user.id}`}
                 >
-                  <b>{"1000"}</b>
+                  <b>{user.totalEarnedPoints}</b>
                 </Link>
               </TableCell>
             </TableRow>

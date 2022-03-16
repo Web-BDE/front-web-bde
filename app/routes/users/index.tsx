@@ -42,7 +42,7 @@ export default function Users() {
         <div style={{ marginTop: "50px" }}>
           <UserList
             users={loaderData.userResponse.users.sort(
-              (a, b) => a.totalEarnedPoints - b.totalEarnedPoints
+              (a, b) => b.totalEarnedPoints - a.totalEarnedPoints
             )}
           />
         </div>
