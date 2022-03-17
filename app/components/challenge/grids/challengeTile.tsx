@@ -14,6 +14,7 @@ export default function ChallengeTile({
       <Card sx={{ minWidth: 275 }}>
         <CardContent>
           <Avatar
+            variant="rounded"
             src={`${API_URL || "http://localhost:4000/"}challenge/picture/${
               challenge.imageId
             }`}

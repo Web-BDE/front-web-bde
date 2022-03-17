@@ -15,6 +15,7 @@ export default function GoodiesDisplay({
         {goodies.name}
       </Typography>
         <Avatar
+          variant="rounded"
           src={`${API_URL || "http://localhost:4000/"}goodies/picture/${
             goodies.imageId
           }`}

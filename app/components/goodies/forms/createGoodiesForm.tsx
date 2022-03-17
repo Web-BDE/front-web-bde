@@ -14,14 +14,11 @@ export default function CreateGoodiesForm({
       <Typography variant="h6" style={{ marginTop: "10px" }}>
         <b>Miniature</b>
       </Typography>
-      <Input
-        margin="dense"
+      <input
         required
-        fullWidth
         autoComplete="picture"
         autoFocus
-        defaultValue={formData?.fields?.picture}
-        error={Boolean(formData?.fieldsError?.picture)}
+        accept="image/*"
         type="file"
         name="picture"
         id="picture"

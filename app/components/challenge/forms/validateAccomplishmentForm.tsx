@@ -23,7 +23,6 @@ export default function ValidateAccomplishmentForm({
         margin="normal"
         fullWidth
         id="refusedComment"
-        required
         label="Refuse refusedComment"
         name="refusedComment"
         autoComplete="refusedComment"

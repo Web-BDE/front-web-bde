@@ -14,6 +14,7 @@ export default function GoodiesTile({
       <Card sx={{ minWidth: 275 }}>
         <CardContent>
           <Avatar
+            variant="rounded"
             src={`${API_URL || "http://localhost:4000/"}goodies/picture/${
               goodies.imageId
             }`}

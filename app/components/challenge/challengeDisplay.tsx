@@ -14,6 +14,7 @@ export default function ChallengeDisplay({
         {challenge.name}
       </Typography>
       <Avatar
+        variant="rounded"
         src={`${API_URL || "http://localhost:4000/"}challenge/picture/${
           challenge.imageId
         }`}

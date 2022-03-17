@@ -38,14 +38,11 @@ export default function AccomplishmentDisplay({
           width="300"
         />
       </div>
-      <Input
-        margin="dense"
+      <input
         required
-        fullWidth
         autoComplete="proof"
         autoFocus
-        defaultValue={formData?.fields?.proof}
-        error={Boolean(formData?.fieldsError?.proof)}
+        accept="image/*,video/*"
         type="file"
         name="proof"
         id="proof"
@@ -53,7 +50,6 @@ export default function AccomplishmentDisplay({
       <TextField
         variant="outlined"
         margin="normal"
-        required
         fullWidth
         id="comment"
         error={Boolean(formData?.fieldsError?.comment)}

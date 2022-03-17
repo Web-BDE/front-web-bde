@@ -3,6 +3,7 @@ import {
   json,
   LoaderFunction,
   redirect,
+  unstable_createFileUploadHandler,
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
   useActionData,
@@ -34,6 +35,7 @@ import {
 } from "~/models/Accomplishment";
 import { CreateChallengeFormData } from "~/models/Challenge";
 import AccomplishmentAdminList from "~/components/challenge/accomplishmentAdminList";
+import { NodeOnDiskFile } from "@remix-run/node";
 
 type ActionData = {
   createChallengeResponse?: {
@@ -167,12 +169,17 @@ export async function handleChallengeCreation(
 export const action: ActionFunction = async ({ request }) => {
   //User need to be logged in
   const token = await requireAuth(request, `/challenges/admin`);
+  console.log("form");
+
+  const uploadHandler = unstable_createFileUploadHandler({
+    maxFileSize: 100_000_000,
+    file: ({ filename }) => filename,
+  });
 
   //Declare all fields
-  const form = await unstable_parseMultipartFormData(
-    request,
-    unstable_createMemoryUploadHandler({ maxFileSize: 100_000_000 })
-  );
+  const form = await unstable_parseMultipartFormData(request, uploadHandler);
+
+  console.log(form);
 
   //Validation request
   switch (request.method) {
@@ -226,7 +233,7 @@ export const action: ActionFunction = async ({ request }) => {
         (typeof description !== "string" && description !== null) ||
         typeof reward !== "string" ||
         typeof maxAtempts !== "string" ||
-        !(picture instanceof Blob)
+        !(picture instanceof NodeOnDiskFile)
       ) {
         return json(
           {

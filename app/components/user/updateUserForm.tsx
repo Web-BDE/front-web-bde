@@ -26,14 +26,11 @@ export default function UpdateUserForm({
         sx={{ width: 300, height: 300 }}
         style={{ margin: "auto" }}
       />
-      <Input
-        margin="dense"
+      <input
         required
-        fullWidth
         autoComplete="avatar"
         autoFocus
-        defaultValue={formData?.fields?.avatar}
-        error={Boolean(formData?.fieldsError?.avatar)}
+        accept="image/*"
         type="file"
         name="avatar"
         id="avatar"
