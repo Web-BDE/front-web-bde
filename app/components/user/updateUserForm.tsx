@@ -26,6 +26,18 @@ export default function UpdateUserForm({
         sx={{ width: 300, height: 300 }}
         style={{ margin: "auto" }}
       />
+      <Input
+        margin="dense"
+        required
+        fullWidth
+        autoComplete="avatar"
+        autoFocus
+        defaultValue={formData?.fields?.avatar}
+        error={Boolean(formData?.fieldsError?.avatar)}
+        type="file"
+        name="avatar"
+        id="avatar"
+      />
       <TextField
         variant="outlined"
         margin="normal"

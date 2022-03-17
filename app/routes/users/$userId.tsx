@@ -22,7 +22,7 @@ import {
 } from "~/utils/error";
 
 import { requireAuth } from "~/services/authentication";
-import { deleteUser, getUser, updateUser } from "~/services/user";
+import { deleteUser, getUser, putAvatar, updateUser } from "~/services/user";
 import {
   createPurchase,
   deletePurchase,
@@ -99,7 +99,8 @@ async function handleUpdateUser(
   surname: string | null,
   wallet: number,
   privilege: number,
-  userId: number
+  userId: number,
+  avatar: Blob
 ) {
   const fields = {
     pseudo,
@@ -107,6 +108,7 @@ async function handleUpdateUser(
     surname,
     wallet,
     privilege,
+    avatar,
   };
   const fieldsError = {
     pseudo: validatePseudo(pseudo),
@@ -125,45 +127,30 @@ async function handleUpdateUser(
     userId
   );
 
-  return json(
-    {
-      updateUserResponse,
-    } as ActionData,
-    code
-  );
-}
-
-async function handleDeleteUser(token: string, userId: number) {
-  const { code, ...deleteUserResponse } = await deleteUser(token, userId);
-
-  if (deleteUserResponse.error) {
-    return json({ deleteUserResponse } as ActionData, code);
+  if (updateUserResponse.error || !updateUserResponse.userId) {
+    return json(
+      {
+        updateUserResponse,
+      } as ActionData,
+      code
+    );
   }
 
-  return redirect("/user");
-}
-
-async function handleRefundUser(token: string, purchaseId: number) {
-  const { code, ...refundUserResponse } = await deletePurchase(
+  const { code: uploadCode, ...uploadAvatarResponse } = await putAvatar(
     token,
-    purchaseId
+    updateUserResponse.userId,
+    avatar
   );
 
-  return json({ refundUserResponse } as ActionData, code);
-}
-
-async function handleDeliverUser(
-  token: string,
-  delivered: boolean,
-  purchaseId: number
-) {
-  const { code, ...deliverUserResponse } = await UpdatePurchase(
-    token,
-    purchaseId,
-    delivered
+  return json(
+    {
+      updateUserResponse: {
+        ...uploadAvatarResponse,
+        formData: { fields, fieldsError },
+      },
+    } as ActionData,
+    uploadCode
   );
-
-  return json({ deliverUserResponse } as ActionData, code);
 }
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -178,19 +165,24 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   const token = await requireAuth(request, `/user/${params.challengeId}`);
 
-  const form = await request.formData();
+  const form = await unstable_parseMultipartFormData(
+    request,
+    unstable_createMemoryUploadHandler({ maxFileSize: 100_000_000 })
+  );
   const pseudo = form.get("pseudo");
   const name = form.get("name");
   const surname = form.get("surname");
   const wallet = form.get("wallet");
   const privilege = form.get("privilege");
+  const avatar = form.get("avatar");
 
   if (
     typeof pseudo !== "string" ||
     (typeof name !== "string" && name !== null) ||
     (typeof surname !== "string" && surname !== null) ||
     typeof wallet !== "string" ||
-    typeof privilege !== "string"
+    typeof privilege !== "string" ||
+    !(avatar instanceof Blob)
   ) {
     return json(
       {
@@ -210,7 +202,8 @@ export const action: ActionFunction = async ({ request, params }) => {
     surname,
     parseInt(wallet),
     parseInt(privilege),
-    parseInt(params.userId)
+    parseInt(params.userId),
+    avatar
   );
 };
 

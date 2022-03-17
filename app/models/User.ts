@@ -16,6 +16,7 @@ export type UpdateUserFormData = {
     surname?: string;
     wallet?: string;
     privilege?: string;
+    avatar?: string;
   };
   fields: {
     pseudo: string;
@@ -23,6 +24,7 @@ export type UpdateUserFormData = {
     surname: string;
     wallet: number;
     privilege: number;
+    avatar: Blob;
   };
 };
 
