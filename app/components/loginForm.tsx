@@ -1,5 +1,6 @@
-import { Grid, TextField, Button } from "@mui/material";
-import { Form, Link } from "remix";
+import { Grid, TextField, Button, Box, CircularProgress } from "@mui/material";
+import { blue } from "@mui/material/colors";
+import { Form, Link, useTransition } from "remix";
 import { LoginFormData } from "~/models/User";
 
 export default function LoginForm({
@@ -9,6 +10,8 @@ export default function LoginForm({
   formData?: LoginFormData;
   redirectTo: string | null;
 }) {
+  const transition = useTransition();
+
   return (
     //TODO : add action on forms to redirect on apropriate routes
     <Form method="post" action="/login">
@@ -40,9 +43,29 @@ export default function LoginForm({
         error={Boolean(formData?.fieldsError?.password)}
         helperText={formData?.fieldsError?.password}
       />
-      <Button type="submit" fullWidth variant="contained" color="primary">
-        Sign In
-      </Button>
+      <Box>
+        <Button
+          disabled={transition.state === "submitting"}
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="primary"
+        >
+          Sign In
+        </Button>
+        {transition.state === "submitting" && (
+          <CircularProgress
+            size={24}
+            sx={{
+              color: blue[500],
+              position: "absolute",
+              left: "50%",
+              marginTop: "6px",
+              marginLeft: "-12px",
+            }}
+          />
+        )}
+      </Box>
       <Grid justifyContent="space-between" container>
         <Grid item>
           <Link to="/register">{"Sign Up"}</Link>
