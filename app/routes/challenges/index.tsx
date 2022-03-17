@@ -1,6 +1,12 @@
 import { Container, Typography } from "@mui/material";
 
-import { json, LoaderFunction, useCatch, useLoaderData } from "remix";
+import {
+  json,
+  LoaderFunction,
+  useCatch,
+  useLoaderData,
+  useOutletContext,
+} from "remix";
 
 import {
   generateAlert,
@@ -13,6 +19,7 @@ import { Challenge } from "~/models/Challenge";
 import { requireAuth } from "~/services/authentication";
 import ChallengeGrid from "~/components/challenge/grids/challengeGrid";
 import { getManyChallenge } from "~/services/challenges";
+import { ContextData } from "~/root";
 
 type LoaderData = {
   challengeResponse?: {
@@ -37,6 +44,9 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function Challenges() {
   const loaderData = useLoaderData<LoaderData>();
+
+  const { API_URL } = useOutletContext<ContextData>();
+
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
       <Typography style={{ textAlign: "center" }} variant="h2">
@@ -44,7 +54,10 @@ export default function Challenges() {
       </Typography>
       {generateAlert("error", loaderData.challengeResponse?.error)}
       {loaderData.challengeResponse?.challenges && (
-        <ChallengeGrid challenges={loaderData.challengeResponse?.challenges} />
+        <ChallengeGrid
+          API_URL={API_URL}
+          challenges={loaderData.challengeResponse?.challenges}
+        />
       )}
     </Container>
   );

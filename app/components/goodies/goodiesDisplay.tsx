@@ -2,19 +2,26 @@ import { Avatar, Typography } from "@mui/material";
 import { Link } from "remix";
 import { Goodies } from "~/models/Goodies";
 
-export default function GoodiesDisplay({ goodies }: { goodies: Goodies }) {
+export default function GoodiesDisplay({
+  goodies,
+  API_URL,
+}: {
+  goodies: Goodies;
+  API_URL?: string;
+}) {
   return (
     <div>
       <Typography variant="h3" style={{ marginTop: "10px" }}>
         {goodies.name}
       </Typography>
-      <Avatar
-        variant="rounded"
-        alt={goodies.name}
-        src=""
-        sx={{ width: 256, height: 256 }}
-        style={{ marginLeft: "auto", marginRight: "auto" }}
-      />
+        <Avatar
+          src={`${API_URL || "http://localhost:4000/"}goodies/picture/${
+            goodies.imageId
+          }`}
+          alt={goodies.name}
+          sx={{ width: 300, height: 300 }}
+          style={{ margin: "auto" }}
+        />
       <Typography variant="h5" style={{ marginTop: "10px" }}>
         <b>Price : {goodies.price}</b>
       </Typography>

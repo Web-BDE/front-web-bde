@@ -4,8 +4,10 @@ import ChallengeTile from "./challengeTile";
 
 export default function ChallengeGrid({
   challenges,
+  API_URL,
 }: {
   challenges?: Challenge[];
+  API_URL?: string;
 }) {
   return (
     <Grid
@@ -16,7 +18,10 @@ export default function ChallengeGrid({
     >
       {challenges?.map((challenge) => (
         <Grid item xs={2} sm={4} md={4} key={challenge.id}>
-          <ChallengeTile challenge={challenge}></ChallengeTile>
+          <ChallengeTile
+            API_URL={API_URL}
+            challenge={challenge}
+          ></ChallengeTile>
         </Grid>
       ))}
     </Grid>

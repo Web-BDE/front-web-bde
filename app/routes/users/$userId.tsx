@@ -219,18 +219,19 @@ function displayUser(
   user: User,
   formData?: UpdateUserFormData,
   userId?: number,
-  userPrivilege?: number
+  userPrivilege?: number,
+  API_URL?: string
 ) {
   if (user.id === userId || (userPrivilege && userPrivilege >= 2)) {
     return (
       <div>
-        <UpdateUserForm user={user} formData={formData} />
+        <UpdateUserForm API_URL={API_URL} user={user} formData={formData} />
       </div>
     );
   } else {
     return (
       <div>
-        <UserDisplay user={user} />
+        <UserDisplay API_URL={API_URL} user={user} />
       </div>
     );
   }
@@ -240,7 +241,7 @@ export default function User() {
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
 
-  const { userInfo } = useOutletContext<ContextData>();
+  const { userInfo, API_URL } = useOutletContext<ContextData>();
 
   return (
     <Container style={{ marginTop: "50px" }} component="main">
@@ -255,7 +256,8 @@ export default function User() {
               loaderData.userResponse?.user,
               actionData?.updateUserResponse?.formData,
               userInfo?.id,
-              userInfo?.privilege
+              userInfo?.privilege,
+              API_URL
             )}
           </div>
         )}

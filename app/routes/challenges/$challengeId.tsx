@@ -516,12 +516,14 @@ function displayChallenge(
     updateForm?: CreateChallengeFormData;
     deleteForm?: DeleteChallengeFormData;
   },
-  userId?: number
+  userId?: number,
+  API_URL?: string
 ) {
   if (userId === challenge.creatorId || userId === challenge.creator?.id) {
     return (
       <Container maxWidth="xs">
         <UpdateChallengeForm
+          API_URL={API_URL}
           challenge={challenge}
           formData={formData?.updateForm}
         />
@@ -534,7 +536,7 @@ function displayChallenge(
   } else {
     return (
       <Container maxWidth="xs">
-        <ChallengeDisplay challenge={challenge} />
+        <ChallengeDisplay API_URL={API_URL} challenge={challenge} />
       </Container>
     );
   }
@@ -544,7 +546,7 @@ export default function Challenge() {
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
 
-  const { userInfo } = useOutletContext<ContextData>();
+  const { userInfo, API_URL } = useOutletContext<ContextData>();
 
   return (
     <Container style={{ marginTop: "50px" }}>
@@ -563,7 +565,8 @@ export default function Challenge() {
                 updateForm: actionData?.updateChallengeResponse?.formData,
                 deleteForm: actionData?.deleteChallengeResponse?.formData,
               },
-              userInfo?.id
+              userInfo?.id,
+              API_URL
             )}
             <Typography marginTop="50px" variant="h4">
               Submit Proof

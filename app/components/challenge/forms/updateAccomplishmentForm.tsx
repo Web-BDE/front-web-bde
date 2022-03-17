@@ -12,11 +12,13 @@ export default function AccomplishmentDisplay({
   formData,
   userPrivilege,
   validateFormData,
+  API_URL,
 }: {
   accomplishment: Accomplishment;
   formData?: CreateAccomplishmentFormData;
   userPrivilege?: number;
   validateFormData?: ValidateAccomplishmentFormData;
+  API_URL?: string;
 }) {
   return (
     <Form
@@ -27,13 +29,15 @@ export default function AccomplishmentDisplay({
       <Typography variant="h3" style={{ marginTop: "10px" }}>
         {accomplishment.challenge?.name}
       </Typography>
-      <Avatar
-        variant="rounded"
-        alt={accomplishment.comment}
-        src=""
-        sx={{ width: 256, height: 256 }}
-        style={{ marginLeft: "auto", marginRight: "auto" }}
-      />
+      <div style={{ textAlign: "center" }}>
+        <img
+          src={`${API_URL || "http://localhost:4000/"}accomplishment/proof/${
+            accomplishment.proofId
+          }`}
+          alt="Failed to get the proof, please reload the page"
+          width="300"
+        />
+      </div>
       <Input
         margin="dense"
         required

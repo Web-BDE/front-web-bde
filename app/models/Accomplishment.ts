@@ -4,6 +4,7 @@ export type Accomplishment = {
   userId?: number;
   challengeId?: number;
   challenge?: { id: number; name: string; reward: number };
+  proofId: string,
   createdAt: string; //But should be converted as Date
   comment: string;
   refusedComment: string;

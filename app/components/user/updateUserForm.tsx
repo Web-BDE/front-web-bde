@@ -5,9 +5,11 @@ import { UpdateUserFormData, User } from "~/models/User";
 export default function UpdateUserForm({
   user,
   formData,
+  API_URL,
 }: {
   user: User;
   formData?: UpdateUserFormData;
+  API_URL?: string;
 }) {
   return (
     <Form
@@ -16,6 +18,14 @@ export default function UpdateUserForm({
       encType="multipart/form-data"
     >
       <input type="hidden" name="kind" value="user" />
+      <Avatar
+        src={`${API_URL || "http://localhost:4000/"}user/avatar/${
+          user.avatarId
+        }`}
+        alt={user.pseudo}
+        sx={{ width: 300, height: 300 }}
+        style={{ margin: "auto" }}
+      />
       <TextField
         variant="outlined"
         margin="normal"

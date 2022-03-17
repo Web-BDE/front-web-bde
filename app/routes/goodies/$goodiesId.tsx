@@ -438,19 +438,24 @@ function displayGoodies(
     updateForm?: CreateGoodiesFormData;
     deleteForm?: DeleteGoodiesFormData;
   },
-  userId?: number
+  userId?: number,
+  API_URL?: string
 ) {
   if (goodies?.creatorId === userId || goodies.creator?.id === userId) {
     return (
       <div>
-        <UpdateGoodiesForm goodies={goodies} formData={formData?.updateForm} />
+        <UpdateGoodiesForm
+          API_URL={API_URL}
+          goodies={goodies}
+          formData={formData?.updateForm}
+        />
         <DeleteGoodiesForm goodies={goodies} formData={formData?.deleteForm} />
       </div>
     );
   } else {
     return (
       <div>
-        <GoodiesDisplay goodies={goodies} />
+        <GoodiesDisplay API_URL={API_URL} goodies={goodies} />
       </div>
     );
   }
@@ -460,7 +465,7 @@ export default function Goodies() {
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
 
-  const { userInfo } = useOutletContext<ContextData>();
+  const { userInfo, API_URL } = useOutletContext<ContextData>();
 
   return (
     <Container style={{ marginTop: "50px" }} component="main">
@@ -479,7 +484,8 @@ export default function Goodies() {
                 updateForm: actionData?.updateGoodiesResponse?.formData,
                 deleteForm: actionData?.deleteGoodiesResponse?.formData,
               },
-              userInfo?.id
+              userInfo?.id,
+              API_URL
             )}
             <PurchaseGoodiesForm
               goodies={loaderData.goodiesResponse?.goodies}

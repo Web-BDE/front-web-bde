@@ -3,6 +3,7 @@ export type User = {
   pseudo: string;
   name: string;
   surname: string;
+  avatarId: string;
   wallet: number;
   privilege: number;
   totalEarnedPoints: number;

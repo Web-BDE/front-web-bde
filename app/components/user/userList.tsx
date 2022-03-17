@@ -12,7 +12,13 @@ import {
 import { User } from "~/models/User";
 import { Link } from "remix";
 
-export default function UserList({ users }: { users: User[] }) {
+export default function UserList({
+  users,
+  API_URL,
+}: {
+  users: User[];
+  API_URL?: string;
+}) {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -32,13 +38,17 @@ export default function UserList({ users }: { users: User[] }) {
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                <Link to={`/users/${user.id}`}>
+                <Link
+                  to={`/users/${user.id}`}
+                  style={{ textDecoration: "none", color: "black" }}
+                >
                   <Avatar
-                    variant="rounded"
-                    alt={user.name}
-                    src=""
-                    sx={{ width: 128, height: 128 }}
-                    style={{ marginLeft: "auto", marginRight: "auto" }}
+                    src={`${API_URL || "http://localhost:4000/"}user/avatar/${
+                      user.avatarId
+                    }`}
+                    alt={user.pseudo}
+                    sx={{ width: 150, height: 150 }}
+                    style={{ margin: "auto" }}
                   />
                 </Link>
               </TableCell>

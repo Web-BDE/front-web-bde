@@ -1,3 +1,4 @@
+import { Image } from "@mui/icons-material";
 import { TextField, Button, Typography, Input, Avatar } from "@mui/material";
 import { Form } from "remix";
 import { Challenge, CreateChallengeFormData } from "~/models/Challenge";
@@ -7,11 +8,14 @@ export default function UpdateChallengeForm({
   challenge,
   formData,
   creator,
+  API_URL,
 }: {
   challenge: Challenge;
   formData?: CreateChallengeFormData;
   creator?: User;
+  API_URL?: string;
 }) {
+  console.log(challenge);
   return (
     <Form
       method="patch"
@@ -21,11 +25,12 @@ export default function UpdateChallengeForm({
       {/* Hiddent input with the method that the Action function will have to handle */}
       <input type="hidden" name="kind" value="challenge" />
       <Avatar
-        variant="rounded"
+        src={`${API_URL || "http://localhost:4000/"}challenge/picture/${
+          challenge.imageId
+        }`}
         alt={challenge.name}
-        src=""
-        sx={{ width: 256, height: 256 }}
-        style={{ marginLeft: "auto", marginRight: "auto" }}
+        sx={{ width: 300, height: 300 }}
+        style={{ margin: "auto" }}
       />
       <Input
         margin="dense"

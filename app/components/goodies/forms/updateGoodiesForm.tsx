@@ -6,9 +6,11 @@ import { User } from "~/models/User";
 export default function UpdateGoodiesForm({
   goodies,
   formData,
+  API_URL,
 }: {
   goodies: Goodies;
   formData?: CreateGoodiesFormData;
+  API_URL?: string;
 }) {
   return (
     <Form
@@ -17,13 +19,14 @@ export default function UpdateGoodiesForm({
       encType="multipart/form-data"
     >
       <input type="hidden" name="kind" value="goodies" />
-      <Avatar
-        variant="rounded"
-        alt={goodies.name}
-        src=""
-        sx={{ width: 256, height: 256 }}
-        style={{ marginLeft: "auto", marginRight: "auto" }}
-      />
+        <Avatar
+          src={`${API_URL || "http://localhost:4000/"}goodies/picture/${
+            goodies.imageId
+          }`}
+          alt={goodies.name}
+          sx={{ width: 300, height: 300 }}
+          style={{ margin: "auto" }}
+        />
       <Input
         margin="dense"
         required

@@ -3,8 +3,10 @@ import { Challenge } from "~/models/Challenge";
 
 export default function ChallengeDisplay({
   challenge,
+  API_URL,
 }: {
   challenge: Challenge;
+  API_URL?: string;
 }) {
   return (
     <div>
@@ -12,11 +14,12 @@ export default function ChallengeDisplay({
         {challenge.name}
       </Typography>
       <Avatar
-        variant="rounded"
+        src={`${API_URL || "http://localhost:4000/"}challenge/picture/${
+          challenge.imageId
+        }`}
         alt={challenge.name}
-        src=""
-        sx={{ width: 256, height: 256 }}
-        style={{ marginLeft: "auto", marginRight: "auto" }}
+        sx={{ width: 300, height: 300 }}
+        style={{ margin: "auto" }}
       />
       <Typography variant="h5" style={{ marginTop: "10px" }}>
         <b>Reward : {challenge.reward}</b>
