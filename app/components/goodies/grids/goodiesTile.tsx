@@ -2,17 +2,25 @@ import { Avatar, Card, CardContent, Typography } from "@mui/material";
 import { Link } from "remix";
 import { Goodies } from "~/models/Goodies";
 
-export default function GoodiesTile({ goodies }: { goodies: Goodies }) {
+export default function GoodiesTile({
+  goodies,
+  API_URL,
+}: {
+  goodies: Goodies;
+  API_URL?: string;
+}) {
   return (
     <Link style={{ textDecoration: "none" }} to={`/goodies/${goodies.id}`}>
       <Card sx={{ minWidth: 275 }}>
         <CardContent>
           <Avatar
             variant="rounded"
+            src={`${API_URL || "http://localhost:4000/"}goodies/picture/${
+              goodies.imageId
+            }`}
             alt={goodies.name}
-            src=""
-            sx={{ width: 256, height: 256 }}
-            style={{ marginLeft: "auto", marginRight: "auto" }}
+            sx={{ width: 300, height: 300 }}
+            style={{ margin: "auto" }}
           />
           <Typography
             style={{ marginTop: "20px" }}

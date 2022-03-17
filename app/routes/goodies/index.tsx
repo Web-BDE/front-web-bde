@@ -1,6 +1,12 @@
 import { Container, Typography } from "@mui/material";
 
-import { json, LoaderFunction, useCatch, useLoaderData } from "remix";
+import {
+  json,
+  LoaderFunction,
+  useCatch,
+  useLoaderData,
+  useOutletContext,
+} from "remix";
 
 import {
   generateAlert,
@@ -12,6 +18,7 @@ import { requireAuth } from "~/services/authentication";
 import { getManyGoodies } from "~/services/goodies";
 import GoodiesGrid from "~/components/goodies/grids/goodiesGrid";
 import { Goodies } from "~/models/Goodies";
+import { ContextData } from "~/root";
 
 type LoaderData = {
   goodiesResponse?: { error?: string; goodies?: Goodies[]; success?: string };
@@ -32,6 +39,9 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function Shop() {
   const loaderData = useLoaderData<LoaderData>();
+
+  const { API_URL } = useOutletContext<ContextData>();
+
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
       <Typography style={{ textAlign: "center" }} variant="h2">
@@ -39,7 +49,10 @@ export default function Shop() {
       </Typography>
       {generateAlert("error", loaderData.goodiesResponse?.error)}
       {loaderData.goodiesResponse?.goodies && (
-        <GoodiesGrid goodies={loaderData.goodiesResponse.goodies} />
+        <GoodiesGrid
+          API_URL={API_URL}
+          goodies={loaderData.goodiesResponse.goodies}
+        />
       )}
     </Container>
   );

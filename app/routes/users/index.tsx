@@ -1,6 +1,12 @@
 import { Container, Typography } from "@mui/material";
 
-import { json, LoaderFunction, useCatch, useLoaderData } from "remix";
+import {
+  json,
+  LoaderFunction,
+  useCatch,
+  useLoaderData,
+  useOutletContext,
+} from "remix";
 
 import {
   generateAlert,
@@ -12,6 +18,7 @@ import UserList from "~/components/user/userList";
 import { requireAuth } from "~/services/authentication";
 import { User } from "~/models/User";
 import { getManyUser } from "~/services/user";
+import { ContextData } from "~/root";
 
 type LoaderData = {
   userResponse?: { error?: string; users?: User[]; success?: string };
@@ -32,6 +39,9 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function Users() {
   const loaderData = useLoaderData<LoaderData>();
+
+  const { API_URL } = useOutletContext<ContextData>();
+
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
       <Typography style={{ textAlign: "center" }} variant="h2">
@@ -41,6 +51,7 @@ export default function Users() {
       {loaderData.userResponse?.users && (
         <div style={{ marginTop: "50px" }}>
           <UserList
+            API_URL={API_URL}
             users={loaderData.userResponse.users.sort(
               (a, b) => b.totalEarnedPoints - a.totalEarnedPoints
             )}

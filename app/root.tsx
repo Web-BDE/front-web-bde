@@ -39,25 +39,33 @@ export const links: LinksFunction = () => {
 
 type LoaderData = {
   userInfo?: User;
+  API_URL?: string;
 };
 
 export type ContextData = {
   userInfo?: User;
+  API_URL?: string;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
   const token = await tryGetToken(request);
 
   if (token) {
-    return { userInfo: (await getSelft(token))?.user };
+    return {
+      userInfo: (await getSelft(token))?.user,
+      API_URL: process.env["API_URL"],
+    } as LoaderData;
   }
 
-  return {};
+  return { API_URL: process.env["API_URL"] } as LoaderData;
 };
 
 export default function App() {
   const loaderData = useLoaderData<LoaderData>();
-  const context: ContextData = { userInfo: loaderData.userInfo };
+  const context: ContextData = {
+    userInfo: loaderData.userInfo,
+    API_URL: loaderData.API_URL,
+  };
   return (
     <html lang="en">
       <head>

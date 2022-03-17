@@ -22,14 +22,11 @@ export default function CreateAccomplishmentForm({
       action={`/challenges/${challenge.id}`}
       encType="multipart/form-data"
     >
-      <Input
-        margin="dense"
+      <input
         required
-        fullWidth
         autoComplete="proof"
         autoFocus
-        defaultValue={formData?.fields?.proof}
-        error={Boolean(formData?.fieldsError?.proof)}
+        accept="image/*,video/*"
         type="file"
         name="proof"
         id="proof"

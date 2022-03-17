@@ -6,9 +6,11 @@ import { User } from "~/models/User";
 export default function UpdateGoodiesForm({
   goodies,
   formData,
+  API_URL,
 }: {
   goodies: Goodies;
   formData?: CreateGoodiesFormData;
+  API_URL?: string;
 }) {
   return (
     <Form
@@ -19,19 +21,18 @@ export default function UpdateGoodiesForm({
       <input type="hidden" name="kind" value="goodies" />
       <Avatar
         variant="rounded"
+        src={`${API_URL || "http://localhost:4000/"}goodies/picture/${
+          goodies.imageId
+        }`}
         alt={goodies.name}
-        src=""
-        sx={{ width: 256, height: 256 }}
-        style={{ marginLeft: "auto", marginRight: "auto" }}
+        sx={{ width: 300, height: 300 }}
+        style={{ margin: "auto" }}
       />
-      <Input
-        margin="dense"
+      <input
         required
-        fullWidth
         autoComplete="picture"
         autoFocus
-        defaultValue={formData?.fields?.picture}
-        error={Boolean(formData?.fieldsError?.picture)}
+        accept="image/*"
         type="file"
         name="picture"
         id="picture"
@@ -53,7 +54,6 @@ export default function UpdateGoodiesForm({
       <TextField
         variant="outlined"
         margin="normal"
-        required
         fullWidth
         error={Boolean(formData?.fieldsError?.description)}
         helperText={formData?.fieldsError?.description}
