@@ -77,7 +77,10 @@ function displayAuthMenu(
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              <MenuItem key="1" onClick={handleCloseUserMenu}>
+              <MenuItem key="1">
+                <Typography>{userInfo.pseudo}</Typography>
+              </MenuItem>
+              <MenuItem key="2" onClick={handleCloseUserMenu}>
                 <Link
                   to={`/users/${userInfo.id}`}
                   style={{ textDecoration: "none", color: "inherit" }}
@@ -87,7 +90,7 @@ function displayAuthMenu(
                   </Button>
                 </Link>
               </MenuItem>
-              <MenuItem key="2" onClick={handleCloseUserMenu}>
+              <MenuItem key="3" onClick={handleCloseUserMenu}>
                 <Form method="post" action="/logout">
                   <Button
                     disabled={transition.state === "submitting"}
