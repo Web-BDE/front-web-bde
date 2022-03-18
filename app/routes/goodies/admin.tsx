@@ -9,6 +9,7 @@ import {
   useCatch,
   useLoaderData,
   useSearchParams,
+  useTransition,
 } from "remix";
 
 import {
@@ -19,7 +20,7 @@ import {
 
 import { requireAuth } from "~/services/authentication";
 
-import { Container, Typography } from "@mui/material";
+import { CircularProgress, Container, Typography } from "@mui/material";
 
 import CreateGoodiesForm from "~/components/goodies/forms/createGoodiesForm";
 import PurchasesGrid from "~/components/goodies/grids/purchaseGrid";
@@ -28,6 +29,7 @@ import { createGoodies, putGoodiesPicture } from "~/services/goodies";
 import { CreateGoodiesFormData } from "~/models/Goodies";
 import { Purchase } from "~/models/Purchase";
 import { getManyPurchase } from "~/services/purchase";
+import { blue } from "@mui/material/colors";
 
 type LoaderData = {
   undeliveredPurchaseResponse: {
@@ -213,6 +215,9 @@ export default function ShopAdmin() {
   const actionData = useActionData<ActionData>();
   const loaderData = useLoaderData<LoaderData>();
   const [searchParams] = useSearchParams();
+
+  const transition = useTransition();
+
   return (
     <Container>
       <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
@@ -233,6 +238,18 @@ export default function ShopAdmin() {
             purchases={loaderData.undeliveredPurchaseResponse.purchases}
           />
         </div>
+      )}
+      {transition.state === "submitting" && (
+        <CircularProgress
+          size={36}
+          sx={{
+            color: blue[500],
+            position: "absolute",
+            left: "50%",
+            marginTop: "18px",
+            marginLeft: "-18px",
+          }}
+        />
       )}
     </Container>
   );

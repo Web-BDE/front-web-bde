@@ -10,6 +10,7 @@ import {
   useCatch,
   useLoaderData,
   useSearchParams,
+  useTransition,
 } from "remix";
 
 import { requireAuth } from "~/services/authentication";
@@ -20,7 +21,7 @@ import {
   generateUnexpectedError,
 } from "~/utils/error";
 
-import { Container, Typography } from "@mui/material";
+import { CircularProgress, Container, Typography } from "@mui/material";
 import AccomplishmentsGrid from "~/components/challenge/grids/accomplishmentGrid";
 import CreateChallengeForm from "~/components/challenge/forms/createChallengeForm";
 import {
@@ -36,6 +37,7 @@ import {
 import { CreateChallengeFormData } from "~/models/Challenge";
 import AccomplishmentAdminList from "~/components/challenge/accomplishmentAdminList";
 import { NodeOnDiskFile } from "@remix-run/node";
+import { blue } from "@mui/material/colors";
 
 type ActionData = {
   createChallengeResponse?: {
@@ -265,6 +267,8 @@ export default function ChallengesAdmin() {
   const [searchParams] = useSearchParams();
   const loaderData = useLoaderData<LoaderData>();
 
+  const transition = useTransition();
+
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
       <Container maxWidth="xs">
@@ -278,7 +282,7 @@ export default function ChallengesAdmin() {
       </Container>
       {/* Display a list of accomplishments that need to be validated */}
       {loaderData.accomplishmentResponse?.accomplishments && (
-        <div style={{ marginTop: "50px" }}>
+        <Container style={{ marginTop: "50px" }}>
           <Typography marginBottom={"50px"} textAlign="center" variant="h4">
             Pending Accomplishments
           </Typography>
@@ -293,7 +297,19 @@ export default function ChallengesAdmin() {
           <AccomplishmentAdminList
             accomplishments={loaderData.accomplishmentResponse?.accomplishments}
           />
-        </div>
+        </Container>
+      )}
+      {transition.state === "submitting" && (
+        <CircularProgress
+          size={36}
+          sx={{
+            color: blue[500],
+            position: "absolute",
+            left: "50%",
+            marginTop: "18px",
+            marginLeft: "-18px",
+          }}
+        />
       )}
     </Container>
   );

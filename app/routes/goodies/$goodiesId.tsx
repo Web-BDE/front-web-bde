@@ -9,6 +9,7 @@ import {
   useCatch,
   useLoaderData,
   useOutletContext,
+  useTransition,
 } from "remix";
 
 import GoodiesDisplay from "~/components/goodies/goodiesDisplay";
@@ -39,7 +40,7 @@ import {
   UpdatePurchase,
 } from "~/services/purchase";
 
-import { Container, Typography } from "@mui/material";
+import { CircularProgress, Container, Typography } from "@mui/material";
 import UpdateGoodiesForm from "~/components/goodies/forms/updateGoodiesForm";
 import PurchaseGoodiesForm from "~/components/goodies/forms/purchaseGoodiesForm";
 import DeleteGoodiesForm from "~/components/goodies/forms/deleteGoodiesForm";
@@ -53,6 +54,7 @@ import {
 import { ContextData } from "~/root";
 import { User } from "~/models/User";
 import { getSelft, getUser } from "~/services/user";
+import { blue } from "@mui/material/colors";
 
 type LoaderData = {
   goodiesResponse?: {
@@ -467,6 +469,8 @@ export default function Goodies() {
 
   const { userInfo, API_URL } = useOutletContext<ContextData>();
 
+  const transition = useTransition();
+
   return (
     <Container style={{ marginTop: "50px" }} component="main">
       <Container maxWidth="xs">
@@ -494,7 +498,7 @@ export default function Goodies() {
           </div>
         )}
       </Container>
-      <div style={{ marginTop: "50px" }}>
+      <Container style={{ marginTop: "50px" }}>
         <Typography textAlign="center" variant="h4">
           Undelivered purchases
         </Typography>
@@ -509,7 +513,19 @@ export default function Goodies() {
             formData={actionData?.refundGoodiesResponse?.formData}
           />
         )}
-      </div>
+      </Container>
+      {transition.state === "submitting" && (
+        <CircularProgress
+          size={36}
+          sx={{
+            color: blue[500],
+            position: "absolute",
+            left: "50%",
+            marginTop: "18px",
+            marginLeft: "-18px",
+          }}
+        />
+      )}
     </Container>
   );
 }

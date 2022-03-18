@@ -10,6 +10,7 @@ import {
   useCatch,
   useLoaderData,
   useOutletContext,
+  useTransition,
 } from "remix";
 
 import {
@@ -30,7 +31,7 @@ import {
   generateAlert,
 } from "../../utils/error";
 
-import { Container, Typography } from "@mui/material";
+import { CircularProgress, Container, Typography } from "@mui/material";
 import { useContext } from "react";
 import {
   Accomplishment,
@@ -44,6 +45,7 @@ import { User } from "~/models/User";
 import UpdateAccomplishmentForm from "~/components/challenge/forms/updateAccomplishmentForm";
 import DeleteAccomplishmentForm from "~/components/challenge/forms/deleteAccomplishmentForm";
 import AccomplishmentDisplay from "~/components/challenge/accomplishmentDisplay";
+import { blue } from "@mui/material/colors";
 
 type LoaderData = {
   accomplishmentResponse?: {
@@ -248,40 +250,46 @@ export default function Accomplishment() {
 
   const { userInfo } = useOutletContext<ContextData>();
 
+  const transition = useTransition();
+
   return (
-    <Container style={{ marginTop: "50px" }}>
-      <Container maxWidth="xs" style={{ marginTop: "50px" }}>
-        <Typography variant="h4">Accomplishment</Typography>
-        {generateAlert("error", loaderData.accomplishmentResponse?.error)}
-        {generateAlert(
-          "error",
-          actionData?.updateAccomplishmentResponse?.error
-        )}
-        {generateAlert(
-          "success",
-          actionData?.updateAccomplishmentResponse?.success
-        )}
-        {generateAlert(
-          "error",
-          actionData?.deleteAccomplishmentResponse?.error
-        )}
-        {generateAlert(
-          "success",
-          actionData?.deleteAccomplishmentResponse?.success
-        )}
-        {loaderData.accomplishmentResponse?.accomplishment && (
-          <div>
-            {displayAccomplishment(
-              loaderData.accomplishmentResponse.accomplishment,
-              {
-                updateForm: actionData?.updateAccomplishmentResponse?.formData,
-                deleteForm: actionData?.deleteAccomplishmentResponse?.formData,
-              },
-              userInfo?.id
-            )}
-          </div>
-        )}
-      </Container>
+    <Container style={{ marginTop: "50px" }} maxWidth="xs">
+      <Typography variant="h4">Accomplishment</Typography>
+      {generateAlert("error", loaderData.accomplishmentResponse?.error)}
+      {generateAlert("error", actionData?.updateAccomplishmentResponse?.error)}
+      {generateAlert(
+        "success",
+        actionData?.updateAccomplishmentResponse?.success
+      )}
+      {generateAlert("error", actionData?.deleteAccomplishmentResponse?.error)}
+      {generateAlert(
+        "success",
+        actionData?.deleteAccomplishmentResponse?.success
+      )}
+      {loaderData.accomplishmentResponse?.accomplishment && (
+        <Container>
+          {displayAccomplishment(
+            loaderData.accomplishmentResponse.accomplishment,
+            {
+              updateForm: actionData?.updateAccomplishmentResponse?.formData,
+              deleteForm: actionData?.deleteAccomplishmentResponse?.formData,
+            },
+            userInfo?.id
+          )}
+        </Container>
+      )}
+      {transition.state === "submitting" && (
+        <CircularProgress
+          size={36}
+          sx={{
+            color: blue[500],
+            position: "absolute",
+            left: "50%",
+            marginTop: "18px",
+            marginLeft: "-18px",
+          }}
+        />
+      )}
     </Container>
   );
 }

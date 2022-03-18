@@ -9,6 +9,7 @@ import {
   useCatch,
   useLoaderData,
   useOutletContext,
+  useTransition,
 } from "remix";
 
 import UserDisplay from "~/components/user/userDisplay";
@@ -30,10 +31,11 @@ import {
   UpdatePurchase,
 } from "~/services/purchase";
 
-import { Container, Typography } from "@mui/material";
+import { CircularProgress, Container, Typography } from "@mui/material";
 import { ContextData } from "~/root";
 import { getSelft } from "~/services/user";
 import { UpdateUserFormData, User } from "~/models/User";
+import { blue } from "@mui/material/colors";
 
 type LoaderData = {
   userResponse?: {
@@ -236,25 +238,37 @@ export default function User() {
 
   const { userInfo, API_URL } = useOutletContext<ContextData>();
 
+  const transition = useTransition()
+
   return (
-    <Container style={{ marginTop: "50px" }} component="main">
-      <Container maxWidth="xs">
-        <Typography variant="h4">User</Typography>
-        {generateAlert("error", loaderData.userResponse?.error)}
-        {generateAlert("error", actionData?.updateUserResponse?.error)}
-        {generateAlert("success", actionData?.updateUserResponse?.success)}
-        {loaderData.userResponse?.user && (
-          <div>
-            {displayUser(
-              loaderData.userResponse?.user,
-              actionData?.updateUserResponse?.formData,
-              userInfo?.id,
-              userInfo?.privilege,
-              API_URL
-            )}
-          </div>
-        )}
-      </Container>
+    <Container style={{ marginTop: "50px" }} component="main" maxWidth="xs">
+      <Typography variant="h4">User</Typography>
+      {generateAlert("error", loaderData.userResponse?.error)}
+      {generateAlert("error", actionData?.updateUserResponse?.error)}
+      {generateAlert("success", actionData?.updateUserResponse?.success)}
+      {loaderData.userResponse?.user && (
+        <div>
+          {displayUser(
+            loaderData.userResponse?.user,
+            actionData?.updateUserResponse?.formData,
+            userInfo?.id,
+            userInfo?.privilege,
+            API_URL
+          )}
+        </div>
+      )}
+      {transition.state === "submitting" && (
+        <CircularProgress
+        size={36}
+        sx={{
+          color: blue[500],
+          position: "absolute",
+          left: "50%",
+          marginTop: "18px",
+          marginLeft: "-18px",
+        }}
+      />
+      )}
     </Container>
   );
 }

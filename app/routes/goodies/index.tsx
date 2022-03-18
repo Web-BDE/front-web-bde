@@ -1,4 +1,4 @@
-import { Container, Typography } from "@mui/material";
+import { CircularProgress, Container, Typography } from "@mui/material";
 
 import {
   json,
@@ -6,6 +6,7 @@ import {
   useCatch,
   useLoaderData,
   useOutletContext,
+  useTransition,
 } from "remix";
 
 import {
@@ -19,6 +20,7 @@ import { getManyGoodies } from "~/services/goodies";
 import GoodiesGrid from "~/components/goodies/grids/goodiesGrid";
 import { Goodies } from "~/models/Goodies";
 import { ContextData } from "~/root";
+import { blue } from "@mui/material/colors";
 
 type LoaderData = {
   goodiesResponse?: { error?: string; goodies?: Goodies[]; success?: string };
@@ -42,6 +44,8 @@ export default function Shop() {
 
   const { API_URL } = useOutletContext<ContextData>();
 
+  const transition = useTransition();
+
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
       <Typography style={{ textAlign: "center" }} variant="h2">
@@ -52,6 +56,18 @@ export default function Shop() {
         <GoodiesGrid
           API_URL={API_URL}
           goodies={loaderData.goodiesResponse.goodies}
+        />
+      )}
+      {transition.state === "submitting" && (
+        <CircularProgress
+          size={36}
+          sx={{
+            color: blue[500],
+            position: "absolute",
+            left: "50%",
+            marginTop: "18px",
+            marginLeft: "-18px",
+          }}
         />
       )}
     </Container>

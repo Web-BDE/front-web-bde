@@ -1,4 +1,4 @@
-import { Container, Typography } from "@mui/material";
+import { CircularProgress, Container, Typography } from "@mui/material";
 
 import {
   json,
@@ -6,6 +6,7 @@ import {
   useCatch,
   useLoaderData,
   useOutletContext,
+  useTransition,
 } from "remix";
 
 import {
@@ -20,6 +21,7 @@ import { requireAuth } from "~/services/authentication";
 import ChallengeGrid from "~/components/challenge/grids/challengeGrid";
 import { getManyChallenge } from "~/services/challenges";
 import { ContextData } from "~/root";
+import { blue } from "@mui/material/colors";
 
 type LoaderData = {
   challengeResponse?: {
@@ -47,6 +49,8 @@ export default function Challenges() {
 
   const { API_URL } = useOutletContext<ContextData>();
 
+  const transition = useTransition();
+
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
       <Typography style={{ textAlign: "center" }} variant="h2">
@@ -57,6 +61,18 @@ export default function Challenges() {
         <ChallengeGrid
           API_URL={API_URL}
           challenges={loaderData.challengeResponse?.challenges}
+        />
+      )}
+      {transition.state === "submitting" && (
+        <CircularProgress
+          size={36}
+          sx={{
+            color: blue[500],
+            position: "absolute",
+            left: "50%",
+            marginTop: "18px",
+            marginLeft: "-18px",
+          }}
         />
       )}
     </Container>
