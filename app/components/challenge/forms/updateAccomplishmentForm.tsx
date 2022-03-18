@@ -41,14 +41,14 @@ export default function AccomplishmentDisplay({
             accomplishment.proofId
           }`}
           alt=""
-          width="500"
+          width="95%"
         />
         <video
           controls
           src={`${API_URL || "http://localhost:4000/"}accomplishment/proof/${
             accomplishment.proofId
           }`}
-          width="500"
+          width="95%"
         />
       </div>
       <input

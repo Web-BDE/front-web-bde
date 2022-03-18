@@ -62,7 +62,7 @@ export function generateUnexpectedError(error: Error) {
 export function generateAlert(severity: AlertColor, message?: string) {
   if (message) {
     return (
-      <Container maxWidth="xs">
+      <Container maxWidth="md">
         <Alert severity={severity}>{message}</Alert>
       </Container>
     );

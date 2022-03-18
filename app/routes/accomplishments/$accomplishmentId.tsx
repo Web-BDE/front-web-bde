@@ -258,7 +258,7 @@ export default function Accomplishment() {
   const transition = useTransition();
 
   return (
-    <Container style={{ marginTop: "50px" }} maxWidth="sm">
+    <Container style={{ marginTop: "50px" }} maxWidth="md">
       <Typography textAlign="center" variant="h4">
         Accomplishment
       </Typography>

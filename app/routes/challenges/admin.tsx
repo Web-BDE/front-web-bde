@@ -283,7 +283,7 @@ export default function ChallengesAdmin() {
 
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
-      <Container maxWidth="xs">
+      <Container maxWidth="md">
         <Typography variant="h4">Create Challenge</Typography>
         {generateAlert("error", actionData?.createChallengeResponse?.error)}
         {generateAlert("success", actionData?.createChallengeResponse?.success)}

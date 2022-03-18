@@ -523,7 +523,7 @@ function displayChallenge(
 ) {
   if (userId === challenge.creatorId || userId === challenge.creator?.id) {
     return (
-      <Container maxWidth="xs">
+      <Container>
         <UpdateChallengeForm
           API_URL={API_URL}
           challenge={challenge}
@@ -537,7 +537,7 @@ function displayChallenge(
     );
   } else {
     return (
-      <Container maxWidth="xs">
+      <Container>
         <ChallengeDisplay API_URL={API_URL} challenge={challenge} />
       </Container>
     );
@@ -554,7 +554,7 @@ export default function Challenge() {
 
   return (
     <Container style={{ marginTop: "50px" }}>
-      <Container maxWidth="xs" style={{ marginTop: "50px" }}>
+      <Container maxWidth="md" style={{ marginTop: "50px" }}>
         <Typography variant="h4">Challenge</Typography>
         {generateAlert("error", loaderData.challengeResponse?.error)}
         {generateAlert("error", actionData?.updateChallengeResponse?.error)}

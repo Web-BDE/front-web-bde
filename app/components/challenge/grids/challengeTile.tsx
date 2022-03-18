@@ -19,7 +19,7 @@ export default function ChallengeTile({
               challenge.imageId
             }`}
             alt={challenge.name}
-            sx={{ width: 300, height: 300 }}
+            sx={{ width: "90%", height: "90%" }}
             style={{ margin: "auto" }}
           />
           <Typography
