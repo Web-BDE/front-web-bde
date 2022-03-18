@@ -200,6 +200,7 @@ export async function putProof(
         ...buildAxiosHeaders(token),
         ...multipartHeaders,
       },
+      maxBodyLength: 100_000_000,
     });
 
     return {
