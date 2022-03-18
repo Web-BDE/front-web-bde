@@ -37,15 +37,16 @@ export default function UpdateUserForm({
         sx={{ width: "75%", height: "75%" }}
         style={{ margin: "auto" }}
       />
-      <input
-        required
-        autoComplete="avatar"
-        autoFocus
-        accept="image/*"
-        type="file"
-        name="avatar"
-        id="avatar"
-      />
+      <div style={{ textAlign: "center" }}>
+        <input
+          required
+          autoComplete="avatar"
+          accept="image/*"
+          type="file"
+          name="avatar"
+          id="avatar"
+        />
+      </div>
       <TextField
         variant="outlined"
         margin="normal"

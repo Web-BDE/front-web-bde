@@ -51,15 +51,16 @@ export default function AccomplishmentDisplay({
           width="95%"
         />
       </div>
-      <input
-        required
-        autoComplete="proof"
-        autoFocus
-        accept="image/*,video/*"
-        type="file"
-        name="proof"
-        id="proof"
-      />
+      <div style={{ textAlign: "center" }}>
+        <input
+          required
+          autoComplete="proof"
+          accept="image/*, video/*"
+          type="file"
+          name="proof"
+          id="proof"
+        />
+      </div>
       <TextField
         variant="outlined"
         margin="normal"

@@ -26,7 +26,6 @@ export default function CreateChallengeForm({
       <input
         required
         autoComplete="picture"
-        autoFocus
         accept="image/*"
         type="file"
         name="picture"

@@ -30,8 +30,7 @@ export default function CreateAccomplishmentForm({
       <input
         required
         autoComplete="proof"
-        autoFocus
-        accept="image/*,video/*"
+        accept="image/*, video/*"
         type="file"
         name="proof"
         id="proof"

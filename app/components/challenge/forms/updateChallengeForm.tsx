@@ -43,15 +43,16 @@ export default function UpdateChallengeForm({
         sx={{ width: "50%", height: "50%" }}
         style={{ margin: "auto" }}
       />
-      <input
-        required
-        autoComplete="picture"
-        autoFocus
-        accept="image/*"
-        type="file"
-        name="picture"
-        id="picture"
-      />
+      <div style={{ textAlign: "center" }}>
+        <input
+          required
+          autoComplete="picture"
+          accept="image/*"
+          type="file"
+          name="picture"
+          id="picture"
+        />
+      </div>
       <TextField
         variant="outlined"
         margin="normal"

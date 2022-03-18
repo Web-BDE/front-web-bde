@@ -27,7 +27,6 @@ export default function CreateGoodiesForm({
       <input
         required
         autoComplete="picture"
-        autoFocus
         accept="image/*"
         type="file"
         name="picture"
