@@ -1,5 +1,13 @@
-import { TextField, Button, Input, Typography } from "@mui/material";
-import { Form } from "remix";
+import {
+  TextField,
+  Button,
+  Input,
+  Typography,
+  Box,
+  CircularProgress,
+} from "@mui/material";
+import { blue } from "@mui/material/colors";
+import { Form, useTransition } from "remix";
 import { CreateChallengeFormData } from "~/models/Challenge";
 
 export default function CreateChallengeForm({
@@ -8,6 +16,8 @@ export default function CreateChallengeForm({
   formData?: CreateChallengeFormData;
   redirectTo: string | null;
 }) {
+  const transition = useTransition();
+
   return (
     <Form method="put" action="/challenges/admin" encType="multipart/form-data">
       <Typography variant="h6" style={{ marginTop: "10px" }}>
@@ -75,9 +85,29 @@ export default function CreateChallengeForm({
           helperText={formData?.fieldsError?.maxAtempts}
         />
       </div>
-      <Button type="submit" fullWidth variant="contained" color="primary">
-        Create Challenge
-      </Button>
+      <Box>
+        <Button
+          disabled={transition.state === "submitting"}
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="primary"
+        >
+          Create Challenge
+        </Button>
+        {transition.state === "submitting" && (
+          <CircularProgress
+            size={24}
+            sx={{
+              color: blue[500],
+              position: "absolute",
+              left: "50%",
+              marginTop: "6px",
+              marginLeft: "-12px",
+            }}
+          />
+        )}
+      </Box>
     </Form>
   );
 }

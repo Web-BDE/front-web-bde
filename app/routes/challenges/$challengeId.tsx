@@ -10,6 +10,7 @@ import {
   useCatch,
   useLoaderData,
   useOutletContext,
+  useTransition,
 } from "remix";
 
 import {
@@ -39,7 +40,8 @@ import {
   generateAlert,
 } from "../../utils/error";
 
-import { Container, Typography } from "@mui/material";
+import { Container, Typography, CircularProgress } from "@mui/material";
+import { blue } from "@mui/material/colors";
 import { useContext } from "react";
 import UpdateChallengeForm from "~/components/challenge/forms/updateChallengeForm";
 import ChallengeDisplay from "~/components/challenge/challengeDisplay";
@@ -548,6 +550,8 @@ export default function Challenge() {
 
   const { userInfo, API_URL } = useOutletContext<ContextData>();
 
+  const transition = useTransition();
+
   return (
     <Container style={{ marginTop: "50px" }}>
       <Container maxWidth="xs" style={{ marginTop: "50px" }}>
@@ -558,7 +562,7 @@ export default function Challenge() {
         {generateAlert("error", actionData?.deleteChallengeResponse?.error)}
         {generateAlert("success", actionData?.deleteChallengeResponse?.success)}
         {loaderData.challengeResponse?.challenge && (
-          <div>
+          <Container>
             {displayChallenge(
               loaderData.challengeResponse.challenge,
               {
@@ -583,12 +587,12 @@ export default function Challenge() {
               formData={actionData?.createAccomplishmentResponse?.formData}
               challenge={loaderData.challengeResponse.challenge}
             />
-          </div>
+          </Container>
         )}
       </Container>
       {/* Display all user's accomplishment for this challenge */}
       {loaderData.accomplishmentResponse?.accomplishments && (
-        <div style={{ marginTop: "50px" }}>
+        <Container style={{ marginTop: "50px" }}>
           <Typography marginBottom={"50px"} textAlign="center" variant="h4">
             Your accomplishments
           </Typography>
@@ -611,7 +615,19 @@ export default function Challenge() {
           <AccomplishmentList
             accomplishments={loaderData.accomplishmentResponse.accomplishments}
           />
-        </div>
+        </Container>
+      )}
+      {transition.state === "submitting" && (
+        <CircularProgress
+          size={36}
+          sx={{
+            color: blue[500],
+            position: "absolute",
+            left: "50%",
+            marginTop: "18px",
+            marginLeft: "-18px",
+          }}
+        />
       )}
     </Container>
   );

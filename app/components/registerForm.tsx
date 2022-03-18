@@ -1,6 +1,8 @@
 //MUI Components
-import { Grid, TextField, Button } from "@mui/material";
-import { Form, Link } from "remix";
+import { Grid, TextField, Button, CircularProgress } from "@mui/material";
+import { blue } from "@mui/material/colors";
+import { Box } from "@mui/system";
+import { Form, Link, useTransition } from "remix";
 import { RegisterFormData } from "~/models/User";
 
 export default function RegisterForm({
@@ -10,6 +12,8 @@ export default function RegisterForm({
   formData?: RegisterFormData;
   redirectTo: string | null;
 }) {
+  const transition = useTransition();
+
   return (
     <Form method="put" action="/register">
       <input type="hidden" name="redirectTo" value={redirectTo || "/"} />
@@ -90,9 +94,29 @@ export default function RegisterForm({
         error={Boolean(formData?.fieldsError?.pseudo)}
         helperText={formData?.fieldsError?.pseudo}
       />
-      <Button type="submit" fullWidth variant="contained" color="primary">
-        Sign In
-      </Button>
+      <Box>
+        <Button
+          disabled={transition.state === "submitting"}
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="primary"
+        >
+          Register
+        </Button>
+        {transition.state === "submitting" && (
+          <CircularProgress
+            size={24}
+            sx={{
+              color: blue[500],
+              position: "absolute",
+              left: "50%",
+              marginTop: "6px",
+              marginLeft: "-12px",
+            }}
+          />
+        )}
+      </Box>
       <Grid container>
         <Grid item>
           <Link to="/login">{"Already have an account ? Sign in"}</Link>

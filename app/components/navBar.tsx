@@ -1,4 +1,4 @@
-import { Form, Link } from "remix";
+import { Form, Link, useTransition } from "remix";
 import { User } from "~/models/User";
 
 import AppBar from "@mui/material/AppBar";
@@ -30,6 +30,8 @@ function displayAuthMenu(userInfo?: User) {
       </div>
     );
   } else {
+    const transition = useTransition();
+
     return (
       <div>
         <Grid container>
@@ -53,7 +55,12 @@ function displayAuthMenu(userInfo?: User) {
             Wallet : <b>{userInfo.wallet}</b>
           </Typography>
           <Form method="post" action="/logout">
-            <Button type="submit" color="inherit" variant="text">
+            <Button
+              disabled={transition.state === "submitting"}
+              type="submit"
+              color="inherit"
+              variant="text"
+            >
               Logout
             </Button>
           </Form>

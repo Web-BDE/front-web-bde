@@ -1,5 +1,13 @@
-import { TextField, Button, Input, Typography } from "@mui/material";
-import { Form } from "remix";
+import {
+  TextField,
+  Button,
+  Input,
+  Typography,
+  Box,
+  CircularProgress,
+} from "@mui/material";
+import { blue } from "@mui/material/colors";
+import { Form, useTransition } from "remix";
 import { CreateGoodiesFormData } from "~/models/Goodies";
 
 export default function CreateGoodiesForm({
@@ -9,6 +17,8 @@ export default function CreateGoodiesForm({
   formData?: CreateGoodiesFormData;
   redirectTo: string | null;
 }) {
+  const transition = useTransition();
+
   return (
     <Form method="put" action="/goodies/admin" encType="multipart/form-data">
       <Typography variant="h6" style={{ marginTop: "10px" }}>
@@ -89,9 +99,29 @@ export default function CreateGoodiesForm({
           helperText={formData?.fieldsError?.stock}
         />
       </div>
-      <Button type="submit" fullWidth variant="contained" color="primary">
-        Create Goodies
-      </Button>
+      <Box>
+        <Button
+          disabled={transition.state === "submitting"}
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="primary"
+        >
+          Create Goodies
+        </Button>
+        {transition.state === "submitting" && (
+          <CircularProgress
+            size={24}
+            sx={{
+              color: blue[500],
+              position: "absolute",
+              left: "50%",
+              marginTop: "6px",
+              marginLeft: "-12px",
+            }}
+          />
+        )}
+      </Box>
     </Form>
   );
 }
