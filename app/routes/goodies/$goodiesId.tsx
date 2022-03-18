@@ -175,12 +175,12 @@ function validateStock(stock: number) {
 async function handleUpdateGoodies(
   token: string,
   name: string,
-  description: string,
   price: number,
   buyLimit: number,
   stock: number,
   goodiesId: number,
-  picture: Blob
+  picture: Blob,
+  description?: string
 ) {
   const fields = {
     name,
@@ -319,7 +319,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
           if (
             typeof name !== "string" ||
-            typeof description !== "string" ||
+            (typeof description !== "string" && description !== null) ||
             typeof price !== "string" ||
             typeof buyLimit !== "string" ||
             typeof stock !== "string" ||
@@ -339,12 +339,12 @@ export const action: ActionFunction = async ({ request, params }) => {
           return await handleUpdateGoodies(
             token,
             name,
-            description,
             parseInt(price),
             parseInt(buyLimit),
             parseInt(stock),
             parseInt(params.goodiesId),
-            picture
+            picture,
+            description ? description : undefined
           );
         case "purchase":
           const purchaseId = new URL(request.url).searchParams.get(
