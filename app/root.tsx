@@ -75,7 +75,7 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <NavBar userInfo={loaderData.userInfo} />
+        <NavBar userInfo={loaderData.userInfo} API_URL={loaderData.API_URL} />
         <Container style={{ marginTop: "100px", marginBottom: "100px" }}>
           <Outlet context={context} />
         </Container>
