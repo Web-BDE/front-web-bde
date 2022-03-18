@@ -46,6 +46,7 @@ import UpdateAccomplishmentForm from "~/components/challenge/forms/updateAccompl
 import DeleteAccomplishmentForm from "~/components/challenge/forms/deleteAccomplishmentForm";
 import AccomplishmentDisplay from "~/components/challenge/accomplishmentDisplay";
 import { blue } from "@mui/material/colors";
+import ValidateAccomplishmentForm from "~/components/challenge/forms/validateAccomplishmentForm";
 
 type LoaderData = {
   accomplishmentResponse?: {
@@ -220,7 +221,7 @@ function displayAccomplishment(
 ) {
   if (userId === accomplishment.userId || userId === accomplishment.user?.id) {
     return (
-      <Container maxWidth="xs">
+      <Container>
         <UpdateAccomplishmentForm
           accomplishment={accomplishment}
           formData={formData?.updateForm}
@@ -229,11 +230,15 @@ function displayAccomplishment(
           accomplishment={accomplishment}
           formData={formData?.deleteForm}
         />
+        <ValidateAccomplishmentForm
+          formData={formData.validateForm}
+          accomplishment={accomplishment}
+        />
       </Container>
     );
   } else {
     return (
-      <Container maxWidth="xs">
+      <Container>
         <AccomplishmentDisplay
           validateFormData={formData.validateForm}
           userPrivilege={userPrivilege}
@@ -253,8 +258,10 @@ export default function Accomplishment() {
   const transition = useTransition();
 
   return (
-    <Container style={{ marginTop: "50px" }} maxWidth="xs">
-      <Typography variant="h4">Accomplishment</Typography>
+    <Container style={{ marginTop: "50px" }} maxWidth="md">
+      <Typography textAlign="center" variant="h4">
+        Accomplishment
+      </Typography>
       {generateAlert("error", loaderData.accomplishmentResponse?.error)}
       {generateAlert("error", actionData?.updateAccomplishmentResponse?.error)}
       {generateAlert(
@@ -274,7 +281,8 @@ export default function Accomplishment() {
               updateForm: actionData?.updateAccomplishmentResponse?.formData,
               deleteForm: actionData?.deleteAccomplishmentResponse?.formData,
             },
-            userInfo?.id
+            userInfo?.id,
+            userInfo?.privilege
           )}
         </Container>
       )}

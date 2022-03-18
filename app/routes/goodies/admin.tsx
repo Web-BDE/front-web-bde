@@ -220,7 +220,7 @@ export default function ShopAdmin() {
 
   return (
     <Container>
-      <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
+      <Container component="main" maxWidth="md" style={{ marginTop: "50px" }}>
         <Typography variant="h4">Create Goodies</Typography>
         {generateAlert("error", actionData?.createGoodiesResponse?.error)}
         {generateAlert("success", actionData?.createGoodiesResponse?.success)}

@@ -241,7 +241,7 @@ export default function User() {
   const transition = useTransition()
 
   return (
-    <Container style={{ marginTop: "50px" }} component="main" maxWidth="xs">
+    <Container style={{ marginTop: "50px" }} component="main" maxWidth="md">
       <Typography variant="h4">User</Typography>
       {generateAlert("error", loaderData.userResponse?.error)}
       {generateAlert("error", actionData?.updateUserResponse?.error)}

@@ -473,7 +473,7 @@ export default function Goodies() {
 
   return (
     <Container style={{ marginTop: "50px" }} component="main">
-      <Container maxWidth="xs">
+      <Container maxWidth="md">
         <Typography variant="h4">Goodies</Typography>
         {generateAlert("error", loaderData.goodiesResponse?.error)}
         {generateAlert("error", actionData?.updateGoodiesResponse?.error)}

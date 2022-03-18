@@ -222,6 +222,7 @@ export async function putAvatar(token: string, userId: number, avatar: Blob) {
         ...buildAxiosHeaders(token),
         ...multipartHeaders,
       },
+      maxBodyLength: 100_000_000,
     });
 
     return {

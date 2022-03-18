@@ -173,6 +173,7 @@ export async function putChallengePicture(
         ...buildAxiosHeaders(token),
         ...multipartHeaders,
       },
+      maxBodyLength: 100_000_000,
     });
 
     return {
