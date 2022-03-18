@@ -292,25 +292,35 @@ export default function ChallengesAdmin() {
           redirectTo={searchParams.get("redirectTo")}
         />
       </Container>
-      {/* Display a list of accomplishments that need to be validated */}
-      {loaderData.accomplishmentResponse?.accomplishments && (
-        <Container style={{ marginTop: "50px" }}>
-          <Typography marginBottom={"50px"} textAlign="center" variant="h4">
-            Pending Accomplishments
-          </Typography>
-          {generateAlert(
-            "error",
-            actionData?.validateAccomplishmentResponse?.error
+      <Container style={{ marginTop: "50px" }}>
+        <Typography marginBottom={"50px"} textAlign="center" variant="h4">
+          Pending Accomplishments
+        </Typography>
+        {generateAlert(
+          "error",
+          actionData?.validateAccomplishmentResponse?.error
+        )}
+        {generateAlert(
+          "success",
+          actionData?.validateAccomplishmentResponse?.success
+        )}
+        {generateAlert(
+          "info",
+          loaderData.accomplishmentResponse?.success &&
+            (!loaderData.accomplishmentResponse?.accomplishments ||
+              loaderData.accomplishmentResponse.accomplishments.length === 0)
+            ? "There is currently no accomplishments to show"
+            : undefined
+        )}
+        {loaderData.accomplishmentResponse?.accomplishments &&
+          loaderData.accomplishmentResponse.accomplishments.length !== 0 && (
+            <AccomplishmentAdminList
+              accomplishments={
+                loaderData.accomplishmentResponse?.accomplishments
+              }
+            />
           )}
-          {generateAlert(
-            "success",
-            actionData?.validateAccomplishmentResponse?.success
-          )}
-          <AccomplishmentAdminList
-            accomplishments={loaderData.accomplishmentResponse?.accomplishments}
-          />
-        </Container>
-      )}
+      </Container>
       {transition.state === "submitting" && (
         <CircularProgress
           size={36}

@@ -561,6 +561,13 @@ export default function Challenge() {
         {generateAlert("success", actionData?.updateChallengeResponse?.success)}
         {generateAlert("error", actionData?.deleteChallengeResponse?.error)}
         {generateAlert("success", actionData?.deleteChallengeResponse?.success)}
+        {generateAlert(
+          "info",
+          loaderData.challengeResponse?.success &&
+            !loaderData.challengeResponse?.challenge
+            ? "Sorry, we were currently unable to find the challenge you were looking for"
+            : undefined
+        )}
         {loaderData.challengeResponse?.challenge && (
           <Container>
             {displayChallenge(
@@ -590,33 +597,43 @@ export default function Challenge() {
           </Container>
         )}
       </Container>
-      {/* Display all user's accomplishment for this challenge */}
-      {loaderData.accomplishmentResponse?.accomplishments && (
-        <Container style={{ marginTop: "50px" }}>
-          <Typography marginBottom={"50px"} textAlign="center" variant="h4">
-            Your accomplishments
-          </Typography>
-          {generateAlert(
-            "error",
-            actionData?.updateAccomplishmentResponse?.error
+      <Container style={{ marginTop: "50px" }}>
+        <Typography marginBottom={"50px"} textAlign="center" variant="h4">
+          Your accomplishments
+        </Typography>
+        {generateAlert(
+          "error",
+          actionData?.updateAccomplishmentResponse?.error
+        )}
+        {generateAlert(
+          "success",
+          actionData?.updateAccomplishmentResponse?.success
+        )}
+        {generateAlert(
+          "error",
+          actionData?.deleteAccomplishmentResponse?.error
+        )}
+        {generateAlert(
+          "success",
+          actionData?.deleteAccomplishmentResponse?.success
+        )}
+        {generateAlert(
+          "info",
+          loaderData.accomplishmentResponse?.success &&
+            (!loaderData.accomplishmentResponse?.accomplishments ||
+              loaderData.accomplishmentResponse.accomplishments.length === 0)
+            ? "There is currently no accomplishments to show"
+            : undefined
+        )}
+        {loaderData.accomplishmentResponse?.accomplishments &&
+          loaderData.accomplishmentResponse.accomplishments.length !== 0 && (
+            <AccomplishmentList
+              accomplishments={
+                loaderData.accomplishmentResponse.accomplishments
+              }
+            />
           )}
-          {generateAlert(
-            "success",
-            actionData?.updateAccomplishmentResponse?.success
-          )}
-          {generateAlert(
-            "error",
-            actionData?.deleteAccomplishmentResponse?.error
-          )}
-          {generateAlert(
-            "success",
-            actionData?.deleteAccomplishmentResponse?.success
-          )}
-          <AccomplishmentList
-            accomplishments={loaderData.accomplishmentResponse.accomplishments}
-          />
-        </Container>
-      )}
+      </Container>
       {transition.state === "submitting" && (
         <CircularProgress
           size={36}

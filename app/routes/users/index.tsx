@@ -52,16 +52,25 @@ export default function Users() {
         User List
       </Typography>
       {generateAlert("error", loaderData.userResponse?.error)}
-      {loaderData.userResponse?.users && (
-        <div style={{ marginTop: "50px" }}>
-          <UserList
-            API_URL={API_URL}
-            users={loaderData.userResponse.users.sort(
-              (a, b) => b.totalEarnedPoints - a.totalEarnedPoints
-            )}
-          />
-        </div>
+      {generateAlert(
+        "info",
+        loaderData.userResponse?.success &&
+          (!loaderData.userResponse?.users ||
+            loaderData.userResponse?.users.length === 0)
+          ? "There is currently no users to show"
+          : undefined
       )}
+      {loaderData.userResponse?.users &&
+        loaderData.userResponse?.users.length !== 0 && (
+          <div style={{ marginTop: "50px" }}>
+            <UserList
+              API_URL={API_URL}
+              users={loaderData.userResponse.users.sort(
+                (a, b) => b.totalEarnedPoints - a.totalEarnedPoints
+              )}
+            />
+          </div>
+        )}
       {transition.state === "submitting" && (
         <CircularProgress
           size={36}
