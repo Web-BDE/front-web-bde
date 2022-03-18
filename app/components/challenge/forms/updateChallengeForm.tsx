@@ -40,7 +40,7 @@ export default function UpdateChallengeForm({
           challenge.imageId
         }`}
         alt={challenge.name}
-        sx={{ width: "75%", height: "75%" }}
+        sx={{ width: "50%", height: "50%" }}
         style={{ margin: "auto" }}
       />
       <input

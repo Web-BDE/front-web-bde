@@ -19,7 +19,7 @@ export default function ChallengeDisplay({
           challenge.imageId
         }`}
         alt={challenge.name}
-        sx={{ maxWidth: "75%", maxHeight: "75%" }}
+        sx={{ width: "50%", height: "50%" }}
         style={{ margin: "auto" }}
       />
       <Typography variant="h5" style={{ marginTop: "10px" }}>
