@@ -52,7 +52,10 @@ export default function AccomplishmentList({
                       style={{ textDecoration: "none", color: "black" }}
                       to={`/accomplishments/${accomplishment.id}`}
                     >
-                      <b>{accomplishment.comment.slice(100)}</b>
+                      <b>
+                        {accomplishment.comment.slice(0, 20) +
+                          (accomplishment.comment.length >= 20 ? "..." : "")}
+                      </b>
                     </Link>
                   </TableCell>
                   <TableCell align="center">
