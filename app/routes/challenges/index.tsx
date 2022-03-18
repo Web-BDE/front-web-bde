@@ -57,12 +57,21 @@ export default function Challenges() {
         Challenges
       </Typography>
       {generateAlert("error", loaderData.challengeResponse?.error)}
-      {loaderData.challengeResponse?.challenges && (
-        <ChallengeGrid
-          API_URL={API_URL}
-          challenges={loaderData.challengeResponse?.challenges}
-        />
+      {generateAlert(
+        "info",
+        loaderData.challengeResponse?.success &&
+          (!loaderData.challengeResponse?.challenges ||
+            loaderData.challengeResponse.challenges.length === 0)
+          ? "There is currently no challenges to show"
+          : undefined
       )}
+      {loaderData.challengeResponse?.challenges &&
+        loaderData.challengeResponse?.challenges.length !== 0 && (
+          <ChallengeGrid
+            API_URL={API_URL}
+            challenges={loaderData.challengeResponse?.challenges}
+          />
+        )}
       {transition.state === "submitting" && (
         <CircularProgress
           size={36}

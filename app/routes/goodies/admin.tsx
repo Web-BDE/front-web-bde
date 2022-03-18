@@ -229,16 +229,25 @@ export default function ShopAdmin() {
           redirectTo={searchParams.get("redirectTo")}
         />
       </Container>
-      {loaderData.undeliveredPurchaseResponse.purchases && (
-        <div style={{ marginTop: "50px" }}>
-          <Typography textAlign="center" variant="h4">
-            Undelivered Purchases
-          </Typography>
-          <PurchasesGrid
-            purchases={loaderData.undeliveredPurchaseResponse.purchases}
-          />
-        </div>
-      )}
+      <div style={{ marginTop: "50px" }}>
+        <Typography textAlign="center" variant="h4">
+          Undelivered Purchases
+        </Typography>
+        {generateAlert(
+          "info",
+          loaderData.undeliveredPurchaseResponse?.success &&
+            (!loaderData.undeliveredPurchaseResponse?.purchases ||
+              loaderData.undeliveredPurchaseResponse.purchases.length === 0)
+            ? "There is currently no purchases to show to show"
+            : undefined
+        )}
+        {loaderData.undeliveredPurchaseResponse.purchases &&
+          loaderData.undeliveredPurchaseResponse.purchases.length !== 0 && (
+            <PurchasesGrid
+              purchases={loaderData.undeliveredPurchaseResponse.purchases}
+            />
+          )}
+      </div>
       {transition.state === "submitting" && (
         <CircularProgress
           size={36}

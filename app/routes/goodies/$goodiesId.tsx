@@ -480,6 +480,13 @@ export default function Goodies() {
         {generateAlert("success", actionData?.updateGoodiesResponse?.success)}
         {generateAlert("error", actionData?.deleteGoodiesResponse?.error)}
         {generateAlert("success", actionData?.deleteGoodiesResponse?.success)}
+        {generateAlert(
+          "info",
+          loaderData.goodiesResponse?.success &&
+            !loaderData.goodiesResponse?.goodies
+            ? "Sorry, we were currently unable to find the goodies you were looking for"
+            : undefined
+        )}
         {loaderData.goodiesResponse?.goodies && (
           <div>
             {displayGoodies(
@@ -507,12 +514,21 @@ export default function Goodies() {
         {generateAlert("success", actionData?.purchaseGoodiesResponse?.success)}
         {generateAlert("error", actionData?.refundGoodiesResponse?.error)}
         {generateAlert("success", actionData?.refundGoodiesResponse?.success)}
-        {loaderData.purchaseResponse?.purchases && (
-          <PurchasesGrid
-            purchases={loaderData.purchaseResponse.purchases}
-            formData={actionData?.refundGoodiesResponse?.formData}
-          />
+        {generateAlert(
+          "info",
+          loaderData.purchaseResponse?.success &&
+            (!loaderData.purchaseResponse?.purchases ||
+              loaderData.purchaseResponse.purchases.length === 0)
+            ? "There is currently no purchases to show"
+            : undefined
         )}
+        {loaderData.purchaseResponse?.purchases &&
+          loaderData.purchaseResponse?.purchases.length !== 0 && (
+            <PurchasesGrid
+              purchases={loaderData.purchaseResponse.purchases}
+              formData={actionData?.refundGoodiesResponse?.formData}
+            />
+          )}
       </Container>
       {transition.state === "submitting" && (
         <CircularProgress

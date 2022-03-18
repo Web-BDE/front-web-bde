@@ -273,6 +273,13 @@ export default function Accomplishment() {
         "success",
         actionData?.deleteAccomplishmentResponse?.success
       )}
+      {generateAlert(
+        "info",
+        loaderData.accomplishmentResponse?.success &&
+          !loaderData.accomplishmentResponse?.accomplishment
+          ? "Sorry, we were currently unable to find the accomplishment you were looking for"
+          : undefined
+      )}
       {loaderData.accomplishmentResponse?.accomplishment && (
         <Container>
           {displayAccomplishment(

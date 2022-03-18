@@ -45,19 +45,27 @@ export default function Shop() {
   const { API_URL } = useOutletContext<ContextData>();
 
   const transition = useTransition();
-
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
       <Typography style={{ textAlign: "center" }} variant="h2">
         Shop
       </Typography>
       {generateAlert("error", loaderData.goodiesResponse?.error)}
-      {loaderData.goodiesResponse?.goodies && (
-        <GoodiesGrid
-          API_URL={API_URL}
-          goodies={loaderData.goodiesResponse.goodies}
-        />
+      {generateAlert(
+        "info",
+        loaderData.goodiesResponse?.success &&
+          (!loaderData.goodiesResponse?.goodies ||
+            loaderData.goodiesResponse.goodies.length === 0)
+          ? "There is currently no goodies to show"
+          : undefined
       )}
+      {loaderData.goodiesResponse?.goodies &&
+        loaderData.goodiesResponse.goodies.length !== 0 && (
+          <GoodiesGrid
+            API_URL={API_URL}
+            goodies={loaderData.goodiesResponse.goodies}
+          />
+        )}
       {transition.state === "submitting" && (
         <CircularProgress
           size={36}
