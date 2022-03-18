@@ -19,18 +19,13 @@ import ValidateAccomplishmentForm from "./validateAccomplishmentForm";
 export default function AccomplishmentDisplay({
   accomplishment,
   formData,
-  userPrivilege,
-  validateFormData,
   API_URL,
 }: {
   accomplishment: Accomplishment;
   formData?: CreateAccomplishmentFormData;
-  userPrivilege?: number;
-  validateFormData?: ValidateAccomplishmentFormData;
   API_URL?: string;
 }) {
   const transition = useTransition();
-
   return (
     <Form
       method="patch"
@@ -45,8 +40,15 @@ export default function AccomplishmentDisplay({
           src={`${API_URL || "http://localhost:4000/"}accomplishment/proof/${
             accomplishment.proofId
           }`}
-          alt="Failed to get the proof, please reload the page"
-          width="300"
+          alt=""
+          width="500"
+        />
+        <video
+          controls
+          src={`${API_URL || "http://localhost:4000/"}accomplishment/proof/${
+            accomplishment.proofId
+          }`}
+          width="500"
         />
       </div>
       <input
@@ -81,19 +83,12 @@ export default function AccomplishmentDisplay({
         </b>
       </Typography>
       <Typography variant="h5" style={{ marginTop: "10px" }}>
-        State : {accomplishment.validation}
+        State :{" "}
+        {accomplishment.validation +
+          (accomplishment.validation === "REFUSED"
+            ? `, ${accomplishment.refusedComment}`
+            : "")}
       </Typography>
-      {accomplishment.validation === "REFUSED" && (
-        <Typography variant="body1" style={{ marginTop: "10px" }}>
-          {accomplishment.refusedComment}
-        </Typography>
-      )}
-      {userPrivilege && userPrivilege >= 1 && (
-        <ValidateAccomplishmentForm
-          formData={validateFormData}
-          accomplishment={accomplishment}
-        />
-      )}
       <Box>
         <Button
           disabled={transition.state === "submitting"}

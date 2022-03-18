@@ -50,7 +50,8 @@ export async function updateAccomplishment(
   token: string,
   accomplishmentId: number,
   comment?: string,
-  validation?: Validation
+  validation?: Validation,
+  refusedComment?: string
 ) {
   try {
     const reply = await axios.patch<{
@@ -58,7 +59,7 @@ export async function updateAccomplishment(
       accomplishmentId: number;
     }>(
       `/accomplishment/${accomplishmentId}`,
-      { comment, status: validation },
+      { comment, status: validation, refusedComment },
       {
         headers: buildAxiosHeaders(token),
       }

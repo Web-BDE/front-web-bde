@@ -17,7 +17,6 @@ export default function ValidateAccomplishmentForm({
 
   return (
     <Form
-      style={{ display: "flex", justifyContent: "space-between" }}
       method="patch"
       action={`/challenges/admin?accomplishmentId=${accomplishment.id}`}
     >
@@ -25,10 +24,10 @@ export default function ValidateAccomplishmentForm({
         variant="outlined"
         margin="normal"
         fullWidth
-        id="refusedComment"
+        id="refused-comment"
         label="Refuse refusedComment"
-        name="refusedComment"
-        autoComplete="refusedComment"
+        name="refused-comment"
+        autoComplete="refused-comment"
         autoFocus
         defaultValue={
           formData?.fields?.refusedComment || accomplishment.refusedComment
@@ -36,53 +35,51 @@ export default function ValidateAccomplishmentForm({
         error={Boolean(formData?.fieldsError?.refusedComment)}
         helperText={formData?.fieldsError?.refusedComment}
       />
-      <Box>
-        <Button
-          fullWidth
-          type="submit"
-          name="validation"
-          id="validation"
-          value="ACCEPTED"
-        >
-          Validate
-        </Button>
-        {transition.state === "submitting" && (
-          <CircularProgress
-            size={24}
-            sx={{
-              color: blue[500],
-              position: "absolute",
-              left: "50%",
-              marginTop: "6px",
-              marginLeft: "-12px",
-            }}
-          />
-        )}
-      </Box>
-      <Box>
-        <Button
-          fullWidth
-          color="error"
-          type="submit"
-          name="validation"
-          value="REFUSED"
-          id="validation"
-        >
-          Refuse
-        </Button>
-        {transition.state === "submitting" && (
-          <CircularProgress
-            size={24}
-            sx={{
-              color: blue[500],
-              position: "absolute",
-              left: "50%",
-              marginTop: "6px",
-              marginLeft: "-12px",
-            }}
-          />
-        )}
-      </Box>
+      <Button
+        fullWidth
+        variant="contained"
+        type="submit"
+        name="validation"
+        id="validation"
+        value="ACCEPTED"
+      >
+        Validate
+      </Button>
+      {transition.state === "submitting" && (
+        <CircularProgress
+          size={24}
+          sx={{
+            color: blue[500],
+            position: "absolute",
+            left: "50%",
+            marginTop: "6px",
+            marginLeft: "-12px",
+          }}
+        />
+      )}
+      <Button
+        fullWidth
+        variant="contained"
+        color="error"
+        type="submit"
+        name="validation"
+        value="REFUSED"
+        id="validation"
+      >
+        Refuse
+      </Button>
+      {transition.state === "submitting" && (
+        <CircularProgress
+          size={24}
+          sx={{
+            color: blue[500],
+            position: "absolute",
+            left: "50%",
+            marginTop: "6px",
+            marginLeft: "-12px",
+          }}
+        />
+      )}
     </Form>
   );
 }

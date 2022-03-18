@@ -83,10 +83,17 @@ export const loader: LoaderFunction = async ({ request }) => {
 async function handleValidateAccomplishment(
   token: string,
   validation: Validation,
-  accomplishmentId: number
+  accomplishmentId: number,
+  refusedComment?: string
 ) {
   const { code, ...validateAccomplishmentResponse } =
-    await updateAccomplishment(token, accomplishmentId, undefined, validation);
+    await updateAccomplishment(
+      token,
+      accomplishmentId,
+      undefined,
+      validation,
+      refusedComment
+    );
 
   return json({ validateAccomplishmentResponse } as ActionData, code);
 }
@@ -191,6 +198,7 @@ export const action: ActionFunction = async ({ request }) => {
       const accomplishmentId = new URL(request.url).searchParams.get(
         "accomplishmentId"
       );
+      const refusedComment = form.get("refused-comment");
 
       if (!accomplishmentId) {
         return json(
@@ -204,7 +212,10 @@ export const action: ActionFunction = async ({ request }) => {
       }
 
       //Should never happend
-      if (validation !== "ACCEPTED" && validation !== "REFUSED") {
+      if (
+        (validation !== "ACCEPTED" && validation !== "REFUSED") ||
+        (typeof refusedComment !== "string" && refusedComment !== null)
+      ) {
         return json(
           {
             validateAccomplishmentResponse: {
@@ -218,7 +229,8 @@ export const action: ActionFunction = async ({ request }) => {
       return await handleValidateAccomplishment(
         token,
         validation,
-        parseInt(accomplishmentId)
+        parseInt(accomplishmentId),
+        refusedComment ? refusedComment : undefined
       );
 
     case "PUT":
