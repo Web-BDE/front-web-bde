@@ -21,12 +21,16 @@ export default function UserDisplay({
         sx={{ width: 300, height: 300 }}
         style={{ margin: "auto" }}
       />
-      <Typography variant="h5" style={{ marginTop: "10px" }}>
-        <b>Name : {user.name}</b>
-      </Typography>
-      <Typography variant="h5" style={{ marginTop: "10px" }}>
-        <b>Surname : {user.surname}</b>
-      </Typography>
+      {user.name && (
+        <Typography variant="h5" style={{ marginTop: "10px" }}>
+          <b>Name : {user.name}</b>
+        </Typography>
+      )}
+      {user.surname && (
+        <Typography variant="h5" style={{ marginTop: "10px" }}>
+          <b>Surname : {user.surname}</b>
+        </Typography>
+      )}
     </div>
   );
 }
