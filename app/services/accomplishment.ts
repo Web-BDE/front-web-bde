@@ -42,7 +42,11 @@ export async function createAccomplishment(
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -77,7 +81,11 @@ export async function updateAccomplishment(
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -105,7 +113,11 @@ export async function deleteAccomplishment(
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -133,7 +145,11 @@ export async function getAccomplishment(
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -172,7 +188,11 @@ export async function getManyAccomplishment(
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -215,7 +235,11 @@ export async function putProof(
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -242,7 +266,11 @@ export async function getProof(token: string, accomplishmentId: number) {
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -268,6 +296,10 @@ export async function deleteProof(token: string, accomplishmentId: number) {
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }

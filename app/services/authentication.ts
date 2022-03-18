@@ -46,7 +46,11 @@ export async function loginUser(loginForm: LoginInfo) {
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -71,7 +75,11 @@ export async function logout(request: Request) {
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -120,6 +128,10 @@ export async function recoverPassword(email: string) {
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }

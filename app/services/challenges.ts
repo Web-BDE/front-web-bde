@@ -32,7 +32,11 @@ export async function getManyChallenge(
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -57,7 +61,11 @@ export async function getChallenge(token: string, challengeId: number) {
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -86,7 +94,11 @@ export async function createChallenge(
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -116,7 +128,11 @@ export async function updateChallenge(
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -141,7 +157,11 @@ export async function deleteChallenge(token: string, challengeId: number) {
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -187,7 +207,11 @@ export async function putChallengePicture(
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -216,7 +240,11 @@ export async function getChallengePicture(token: string, challengeId: number) {
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -245,6 +273,10 @@ export async function deleteChallengePicture(
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }

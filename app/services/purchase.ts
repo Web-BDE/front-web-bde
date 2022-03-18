@@ -36,7 +36,11 @@ export async function createPurchase(
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -61,7 +65,11 @@ export async function deletePurchase(token: string, purchaseId: number) {
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -91,7 +99,11 @@ export async function UpdatePurchase(
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -130,7 +142,11 @@ export async function getManyPurchase(
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -155,6 +171,10 @@ export async function getPurchase(token: string, purchaseId: number) {
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }

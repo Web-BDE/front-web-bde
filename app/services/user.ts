@@ -30,7 +30,11 @@ export async function registerUser(registerInfo: RegisterInfo) {
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -64,7 +68,11 @@ export async function updateSelf(
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -94,7 +102,11 @@ export async function updateUser(
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -119,7 +131,11 @@ export async function deleteUser(token: string, userId: number) {
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -141,7 +157,11 @@ export async function getSelft(token: string) {
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -166,7 +186,11 @@ export async function getUser(token: string, userId: number) {
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -199,7 +223,11 @@ export async function getManyUser(
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -236,7 +264,11 @@ export async function putAvatar(token: string, userId: number, avatar: Blob) {
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -263,7 +295,11 @@ export async function getAvatar(token: string, userId: number) {
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
 
@@ -289,6 +325,10 @@ export async function deleteAvatar(token: string, userId: number) {
     ) {
       return { error: err.response.data.message, code: err.response.status };
     }
-    throw err;
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
   }
 }
