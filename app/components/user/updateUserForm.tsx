@@ -34,7 +34,7 @@ export default function UpdateUserForm({
           user.avatarId
         }`}
         alt={user.pseudo}
-        sx={{ width: "75%", height: "75%" }}
+        sx={{ width: 300, height: 300 }}
         style={{ margin: "auto" }}
       />
       <div style={{ textAlign: "center" }}>

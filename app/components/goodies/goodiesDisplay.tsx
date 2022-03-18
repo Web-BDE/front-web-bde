@@ -20,7 +20,7 @@ export default function GoodiesDisplay({
             goodies.imageId
           }`}
           alt={goodies.name}
-          sx={{ width: "75%", height: "75%" }}
+          sx={{ width: 400, height: 400 }}
           style={{ margin: "auto" }}
         />
       <Typography variant="h5" style={{ marginTop: "10px" }}>

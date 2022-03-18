@@ -19,7 +19,7 @@ export default function GoodiesTile({
               goodies.imageId
             }`}
             alt={goodies.name}
-            sx={{ width: "90%", height: "90%" }}
+            sx={{ width: 260, height: 260 }}
             style={{ margin: "auto" }}
           />
           <Typography

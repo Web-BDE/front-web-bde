@@ -36,7 +36,7 @@ export default function UpdateGoodiesForm({
           goodies.imageId
         }`}
         alt={goodies.name}
-        sx={{ width: "75%", height: "75%" }}
+        sx={{ width: 400, height: 400 }}
         style={{ margin: "auto" }}
       />
       <div style={{ textAlign: "center" }}>
