@@ -30,10 +30,10 @@ export default function GoodiesTile({
             {goodies.name}
           </Typography>
           <Typography sx={{ mb: 1.5 }} color="text.secondary">
-            Price : {goodies.price}
+            Prix : {goodies.price}
           </Typography>
           <Typography sx={{ mb: 1.5 }} color="text.secondary">
-            In Stock : {goodies.stock - goodies.bought}
+            Stock : {goodies.stock - goodies.bought}
           </Typography>
         </CardContent>
       </Card>

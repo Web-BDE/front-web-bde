@@ -23,20 +23,20 @@ export default function ChallengeDisplay({
         style={{ margin: "auto" }}
       />
       <Typography variant="h5" style={{ marginTop: "10px" }}>
-        <b>Reward : {challenge.reward}</b>
+        <b>Récompense : {challenge.reward}</b>
       </Typography>
       <Typography variant="h5" style={{ marginTop: "10px" }}>
-        <b>Max Atempts : {challenge.maxAtempts}</b>
+        <b>Nombre d'essais maximal : {challenge.maxAtempts}</b>
       </Typography>
       <Typography variant="body1" style={{ marginTop: "10px" }}>
         {challenge.description}
       </Typography>
       <Typography variant="h5" style={{ marginTop: "10px" }}>
-        Creation date : {new Date(challenge.createdAt).toLocaleDateString()}
+        Date de création : {new Date(challenge.createdAt).toLocaleDateString()}
       </Typography>
-      {challenge.creator && (
+      {challenge.Auteur && (
         <Typography variant="h5" style={{ marginTop: "10px" }}>
-          Creator : {challenge.creator.pseudo}
+          Auteur : {challenge.Auteur.pseudo}
         </Typography>
       )}
     </div>

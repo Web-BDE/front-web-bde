@@ -29,7 +29,7 @@ export default function DeliverGoodiesForm({
           id="refund"
           value="1"
         >
-          Mark as delivered
+          Marquer comme livré 
         </Button>
         {transition.state === "submitting" && (
           <CircularProgress

@@ -16,12 +16,12 @@ import { User } from "~/models/User";
 export default function UpdateChallengeForm({
   challenge,
   formData,
-  creator,
+  Auteur,
   API_URL,
 }: {
   challenge: Challenge;
   formData?: CreateChallengeFormData;
-  creator?: User;
+  Auteur?: User;
   API_URL?: string;
 }) {
   const transition = useTransition();
@@ -75,7 +75,7 @@ export default function UpdateChallengeForm({
         helperText={formData?.fieldsError?.description}
         name="description"
         defaultValue={formData?.fields?.description || challenge.description}
-        label="description"
+        label="Description"
         id="description"
       />
       <div style={{ display: "flex" }}>
@@ -85,7 +85,7 @@ export default function UpdateChallengeForm({
           required
           fullWidth
           name="reward"
-          label="Reward"
+          label="Récompense"
           type="number"
           id="reward"
           defaultValue={formData?.fields?.reward || challenge.reward}
@@ -98,7 +98,7 @@ export default function UpdateChallengeForm({
           required
           fullWidth
           name="max-atempts"
-          label="Max atempts"
+          label="Nombre maximum d'essais"
           type="number"
           id="max-atempts"
           defaultValue={formData?.fields?.maxAtempts || challenge.maxAtempts}
@@ -107,11 +107,11 @@ export default function UpdateChallengeForm({
         />
       </div>
       <Typography variant="h6" align="center" style={{ marginTop: "10px" }}>
-        Creation date : {new Date(challenge.createdAt).toLocaleDateString()}
+        Date de création : {new Date(challenge.createdAt).toLocaleDateString()}
       </Typography>
-      {creator && (
+      {Auteur && (
         <Typography variant="h6" align="center" style={{ marginTop: "10px" }}>
-          Creator : {creator?.pseudo}
+          Auteur : {Auteur?.pseudo}
         </Typography>
       )}
       <Box>
@@ -122,7 +122,7 @@ export default function UpdateChallengeForm({
           variant="contained"
           color="primary"
         >
-          Update Challenge
+          Mettre à jour
         </Button>
         {transition.state === "submitting" && (
           <CircularProgress

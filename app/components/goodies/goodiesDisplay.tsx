@@ -24,27 +24,27 @@ export default function GoodiesDisplay({
         style={{ margin: "auto" }}
       />
       <Typography variant="h5" style={{ marginTop: "10px" }}>
-        <b>Price : {goodies.price}</b>
+        <b>Prix : {goodies.price}</b>
       </Typography>
       <Typography variant="h5" style={{ marginTop: "10px" }}>
-        <b>Buy limit : {goodies.buyLimit}</b>
+        <b>Limite d'achat : {goodies.buyLimit}</b>
       </Typography>
       <Typography variant="h5" style={{ marginTop: "10px" }}>
-        <b>In Stock : {goodies.stock - goodies.bought}</b>
+        <b>Stock : {goodies.stock - goodies.bought}</b>
       </Typography>
       <Typography variant="body1" style={{ marginTop: "10px" }}>
         {goodies.description}
       </Typography>
       <Typography variant="h5" style={{ marginTop: "10px" }}>
-        Creation date : {new Date(goodies.createdAt).toLocaleDateString()}
+        Date de création : {new Date(goodies.createdAt).toLocaleDateString()}
       </Typography>
-      {goodies.creator && (
+      {goodies.Auteur && (
         <Link
           style={{ textDecoration: "none", color: "black" }}
-          to={`/users/${goodies.creator.id}`}
+          to={`/users/${goodies.Auteur.id}`}
         >
           <Typography variant="h5" style={{ marginTop: "10px" }}>
-            Creator : {goodies.creator.pseudo}
+            Auteur : {goodies.Auteur.pseudo}
           </Typography>
         </Link>
       )}

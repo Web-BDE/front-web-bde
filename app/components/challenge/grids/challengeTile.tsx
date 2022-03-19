@@ -30,7 +30,7 @@ export default function ChallengeTile({
             {challenge.name}
           </Typography>
           <Typography sx={{ mb: 1.5 }} color="text.secondary">
-            Reward : {challenge.reward}
+            Récompense : {challenge.reward}
           </Typography>
         </CardContent>
       </Card>
