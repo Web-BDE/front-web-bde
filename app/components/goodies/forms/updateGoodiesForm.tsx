@@ -32,7 +32,7 @@ export default function UpdateGoodiesForm({
       <input type="hidden" name="kind" value="goodies" />
       <Avatar
         variant="rounded"
-        src={`${API_URL || "http://localhost:4000/"}goodies/picture/${
+        src={`${API_EXTERNAL_URL || "http://localhost:4000/"}goodies/picture/${
           goodies.imageId
         }`}
         alt={goodies.name}

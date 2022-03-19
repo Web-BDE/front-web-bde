@@ -36,9 +36,9 @@ export default function UpdateChallengeForm({
       <input type="hidden" name="kind" value="challenge" />
       <Avatar
         variant="rounded"
-        src={`${API_URL || "http://localhost:4000/"}challenge/picture/${
-          challenge.imageId
-        }`}
+        src={`${
+          API_EXTERNAL_URL || "http://localhost:4000/"
+        }challenge/picture/${challenge.imageId}`}
         alt={challenge.name}
         sx={{ width: 300, height: 300 }}
         style={{ margin: "auto" }}
