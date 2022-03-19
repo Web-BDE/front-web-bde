@@ -30,7 +30,7 @@ export default function UpdateUserForm({
     >
       <input type="hidden" name="kind" value="user" />
       <Avatar
-        src={`${API_URL || "http://localhost:4000/"}user/avatar/${
+        src={`${API_EXTERNAL_URL || "http://localhost:4000/"}user/avatar/${
           user.avatarId
         }`}
         alt={user.pseudo}
