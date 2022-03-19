@@ -99,6 +99,8 @@ const OrderDisplay = () => {
     );
   }, [shortcode]);
 
+  console.log(dates);
+
   return (
     <Container maxWidth="md">
       <Typography variant="h4">Allôs</Typography>
