@@ -14,15 +14,15 @@ export default function GoodiesDisplay({
       <Typography variant="h3" style={{ marginTop: "10px" }}>
         {goodies.name}
       </Typography>
-        <Avatar
-          variant="rounded"
-          src={`${API_URL || "http://localhost:4000/"}goodies/picture/${
-            goodies.imageId
-          }`}
-          alt={goodies.name}
-          sx={{ width: 400, height: 400 }}
-          style={{ margin: "auto" }}
-        />
+      <Avatar
+        variant="rounded"
+        src={`${API_URL || "http://localhost:4000/"}goodies/picture/${
+          goodies.imageId
+        }`}
+        alt={goodies.name}
+        sx={{ width: 400, height: 400 }}
+        style={{ margin: "auto" }}
+      />
       <Typography variant="h5" style={{ marginTop: "10px" }}>
         <b>Price : {goodies.price}</b>
       </Typography>
