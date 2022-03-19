@@ -122,19 +122,17 @@ export default function App() {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <title>Flibustech</title>
+        <link href="/assets/styles/main.css" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Petrona&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Pirata+One&display=swap" rel="stylesheet" />
         <Meta />
         <Links />
       </head>
-      <body style={{ margin: 0 }}>
+      <body style={{ margin: 0, }}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <NavBar userInfo={loaderData.userInfo} API_URL={loaderData.API_URL} />
-          <Container style={{ marginTop: "100px", marginBottom: "100px" }}>
-            <Outlet context={context} />
-          </Container>
-          <BottomNavigation />
+          <Outlet context={context} />
           <ScrollRestoration />
           <Scripts />
         </ThemeProvider>
