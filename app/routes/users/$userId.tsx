@@ -241,40 +241,42 @@ export default function User() {
   const transition = useTransition();
 
   return (
-    <Container style={{ marginTop: "50px" }} component="main" maxWidth="md">
-      <Typography variant="h4">User</Typography>
-      {generateAlert("error", loaderData.userResponse?.error)}
-      {generateAlert("error", actionData?.updateUserResponse?.error)}
-      {generateAlert("success", actionData?.updateUserResponse?.success)}
-      {generateAlert(
-        "info",
-        loaderData.userResponse?.success && !loaderData.userResponse?.user
-          ? "Sorry, we were currently unable to find the user you were looking for"
-          : undefined
-      )}
-      {loaderData.userResponse?.user && (
-        <div>
-          {displayUser(
-            loaderData.userResponse?.user,
-            actionData?.updateUserResponse?.formData,
-            userInfo?.id,
-            userInfo?.privilege,
-            API_URL
-          )}
-        </div>
-      )}
-      {transition.state === "submitting" && (
-        <CircularProgress
-          size={36}
-          sx={{
-            color: blue[500],
-            position: "absolute",
-            left: "50%",
-            marginTop: "18px",
-            marginLeft: "-18px",
-          }}
-        />
-      )}
+    <Container style={{ marginTop: "100px", marginBottom: "100px" }}>
+      <Container style={{ marginTop: "50px" }} component="main" maxWidth="md">
+        <Typography variant="h4">User</Typography>
+        {generateAlert("error", loaderData.userResponse?.error)}
+        {generateAlert("error", actionData?.updateUserResponse?.error)}
+        {generateAlert("success", actionData?.updateUserResponse?.success)}
+        {generateAlert(
+          "info",
+          loaderData.userResponse?.success && !loaderData.userResponse?.user
+            ? "Sorry, we were currently unable to find the user you were looking for"
+            : undefined
+        )}
+        {loaderData.userResponse?.user && (
+          <div>
+            {displayUser(
+              loaderData.userResponse?.user,
+              actionData?.updateUserResponse?.formData,
+              userInfo?.id,
+              userInfo?.privilege,
+              API_URL
+            )}
+          </div>
+        )}
+        {transition.state === "submitting" && (
+          <CircularProgress
+            size={36}
+            sx={{
+              color: blue[500],
+              position: "absolute",
+              left: "50%",
+              marginTop: "18px",
+              marginLeft: "-18px",
+            }}
+          />
+        )}
+      </Container>
     </Container>
   );
 }

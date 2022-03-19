@@ -1,0 +1,14 @@
+.simple_form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.simple_form__inputs {
+  display: flex;
+  flex-direction: column;
+}
+.simple_form--vertical {
+  flex-direction: column;
+}
+
+/*# sourceMappingURL=simple_form.css.map */

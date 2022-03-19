@@ -163,8 +163,10 @@ export default function Recover() {
   const [searchParams] = useSearchParams();
 
   return (
-    <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
-      {displayForms(searchParams, actionData)}
-    </Container>
+    <Container style={{ marginTop: "100px", marginBottom: "100px" }}>
+      <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
+        {displayForms(searchParams, actionData)}
+      </Container>
+    </Container >
   );
 }

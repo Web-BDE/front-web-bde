@@ -95,16 +95,18 @@ export default function Login() {
   const [searchparams] = useSearchParams();
 
   return (
-    <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
-      <Typography component="h1" variant="h5">
-        Log in
-      </Typography>
-      {generateAlert("error", actionData?.loginUser?.error)}
-      {generateAlert("success", actionData?.loginUser?.success)}
-      <LoginForm
-        formData={actionData?.loginUser?.formData}
-        redirectTo={searchparams.get("redirectTo")}
-      />
+    <Container style={{ marginTop: "100px", marginBottom: "100px" }}>
+      <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
+        <Typography component="h1" variant="h5">
+          Log in
+        </Typography>
+        {generateAlert("error", actionData?.loginUser?.error)}
+        {generateAlert("success", actionData?.loginUser?.success)}
+        <LoginForm
+          formData={actionData?.loginUser?.formData}
+          redirectTo={searchparams.get("redirectTo")}
+        />
+      </Container>
     </Container>
   );
 }

@@ -1,0 +1,7 @@
+.agenda__calendar {
+  display: flex;
+  flex-direction: column;
+  flex-flow: column wrap;
+}
+
+/*# sourceMappingURL=agenda.css.map */

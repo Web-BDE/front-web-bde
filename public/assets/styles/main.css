@@ -1,0 +1,453 @@
+@charset "UTF-8";
+/*
+html5doctor.com Reset Stylesheet
+v1.6.1
+Last Updated: 2010-09-17
+Author: Richard Clark - http://richclarkdesign.com
+Twitter: @rich_clark
+*/
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var,
+b, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: transparent;
+  font-family: "Nunito ExtraLight";
+}
+
+body {
+  line-height: 1;
+}
+
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+nav ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: "";
+  content: none;
+}
+
+a {
+  margin: 0;
+  padding: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: transparent;
+  color: #E5DECE;
+  text-decoration: none;
+}
+
+/* change colours to suit your needs */
+ins {
+  background-color: #E5DECE;
+  color: #FFFFFF;
+  text-decoration: none;
+}
+
+/* change colours to suit your needs */
+mark {
+  background-color: #E5DECE;
+  color: #FFFFFF;
+  font-style: italic;
+  font-weight: bold;
+}
+
+del {
+  text-decoration: line-through;
+}
+
+abbr[title], dfn[title] {
+  border-bottom: 1px dotted;
+  cursor: help;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* change border colour to suit your needs */
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #cccccc;
+  margin: 1em 0;
+  padding: 0;
+}
+
+input, select {
+  vertical-align: middle;
+}
+
+input, select, textarea, button {
+  font-family: "Nunito Light";
+}
+input:focus, select:focus, textarea:focus, button:focus {
+  outline: none;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background-color: #E5DECE;
+  min-height: 100vh;
+  position: relative;
+}
+
+@font-face {
+  font-family: "Pirata One";
+  src: url("/assets/fonts/PirataOne-Regular.ttf");
+}
+@font-face {
+  font-family: "Petrona";
+  src: url("/assets/fonts/Petrona-VariableFont_wght.ttf");
+}
+.action_bar {
+  display: flex;
+  align-items: center;
+}
+.action_bar__button {
+  padding: 10px 18px;
+  font-family: "Petrona";
+  font-size: 1.5rem;
+  color: #552516;
+  transition-duration: 0.1s;
+}
+.action_bar__button:hover {
+  cursor: pointer;
+  background-color: rgba(85, 37, 22, 0.1);
+}
+.action_bar__button > * {
+  fill: #552516;
+}
+
+.button {
+  background-color: transparent;
+  padding: 10px 40px;
+  border-radius: 200px;
+  border-color: #552516;
+  color: #552516;
+  font-family: "Pirata One";
+  font-size: 1.5rem;
+}
+.button:hover {
+  cursor: pointer;
+}
+
+.calendar {
+  border-collapse: collapse;
+}
+.calendar__cell {
+  font-family: "Petrona";
+  font-size: 1.2rem;
+  color: #552516;
+  padding: 30px 4px;
+  text-align: center;
+}
+.calendar__row:not(:last-child) .calendar__cell, .calendar__head .calendar__cell {
+  border-bottom: 1px solid #552516;
+}
+.calendar__head .calendar__cell {
+  background-color: #552516;
+  color: #FFFFFF;
+  padding: 20px 4px;
+}
+
+.contrasted_section {
+  display: flex;
+  align-items: center;
+  background-color: #552516;
+  padding: 40px 160px;
+}
+.contrasted_section__article {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 60px;
+  flex: 1 1 0px;
+}
+.contrasted_section__aside {
+  margin-left: 60px;
+  flex: 1 1 0px;
+}
+.contrasted_section__title {
+  font-family: "Pirata One";
+  color: #FFFFFF;
+  font-size: 2rem;
+  margin-bottom: 60px;
+  width: 100%;
+}
+.contrasted_section__text {
+  font-family: "Petrona";
+  font-size: 1.5rem;
+  text-align: justify;
+  color: #FFFFFF;
+  margin-bottom: 60px;
+  line-height: 1.8rem;
+}
+.contrasted_section__button {
+  background-color: #E5DECE;
+  padding: 15px 40px;
+  border-radius: 200px;
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+  color: #552516;
+  font-family: "Pirata One";
+  font-size: 1.5rem;
+}
+.contrasted_section__image {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 20px 60px;
+  background-color: #552516;
+  margin-top: auto;
+  box-sizing: border-box;
+}
+.footer__zonetitle {
+  font-family: "Pirata One";
+  font-size: 1.5rem;
+  color: #FFFFFF;
+  margin-bottom: 30px;
+}
+.footer__list {
+  list-style: none;
+}
+.footer__link {
+  font-family: "Petrona";
+  font-size: 1.1rem;
+}
+.footer__link::before {
+  content: "•";
+  color: #FFFFFF;
+  font-weight: bold;
+  display: inline-block;
+  width: 1rem;
+}
+.footer__image {
+  width: 270px;
+  height: 120px;
+}
+
+.header {
+  padding: 8px 20px;
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+  background-color: #E5DECE;
+  box-sizing: border-box;
+}
+.header__inner {
+  display: flex;
+  justify-content: space-between;
+}
+.header__title {
+  display: flex;
+  align-items: center;
+}
+.header__icon {
+  width: 56px;
+  height: 56px;
+}
+.header__text {
+  padding-left: 20px;
+  font-size: 1.5rem;
+  color: #552516;
+  font-family: "Pirata One";
+}
+
+.hero_section__image {
+  width: 100%;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+}
+.nav__link {
+  margin: 0 40px;
+  font-size: 1.25rem;
+  font-family: "Pirata One";
+  color: #552516;
+}
+.nav__link--selected {
+  text-decoration: underline;
+  text-underline-offset: 0.5rem;
+}
+.nav__link_icon {
+  margin-left: 20px;
+  width: 32px;
+  height: 32px;
+  box-sizing: border-box;
+}
+.nav__link_icon--selected {
+  border: 2px solid #552516;
+  border-radius: 200px;
+}
+.nav__account_icon {
+  margin: 4px;
+  fill: #552516;
+}
+
+.partnership {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 250px;
+  margin: 50px 0;
+}
+.partnership__image {
+  max-width: 200px;
+  max-height: 150px;
+  filter: sepia(13%) brightness(96%);
+}
+.partnership__name {
+  font-family: "Petrona";
+  font-size: 1.5rem;
+  color: #552516;
+  padding-top: 20px;
+}
+
+.partnership_list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.simple_form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.simple_form__inputs {
+  display: flex;
+  flex-direction: column;
+}
+.simple_form--vertical {
+  flex-direction: column;
+}
+
+.simple_input {
+  display: flex;
+  align-items: center;
+  font-family: "Petrona";
+  font-size: 1.5rem;
+  color: #552516;
+  margin: 10px 0;
+  text-align: right;
+}
+.simple_input__input {
+  border: none;
+  border-bottom: 1px solid #552516;
+  background-color: transparent;
+  margin-left: 40px;
+  width: 500px;
+  flex: 1;
+  text-align: center;
+  color: #552516;
+  font-family: "Petrona";
+  font-size: 1.4rem;
+}
+.simple_input__input--readOnly {
+  border: none;
+}
+.simple_input__label {
+  flex: 1;
+}
+
+.simple_list {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.simple_list__separator {
+  border-color: #552516;
+  margin: 0;
+}
+.simple_list__item {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 10px;
+}
+.simple_list__item--clickable {
+  transition-duration: 0.1s;
+}
+.simple_list__item--clickable:hover {
+  cursor: pointer;
+  background-color: rgba(85, 37, 22, 0.1);
+}
+.simple_list__data {
+  font-family: "Petrona";
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #552516;
+}
+.simple_list__empty {
+  font-family: "Petrona";
+  font-size: 1.25rem;
+  color: #552516;
+  text-align: center;
+}
+
+.titled_section {
+  padding: 40px 130px;
+}
+.titled_section__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 100px;
+}
+.titled_section__title {
+  font-family: "Pirata One";
+  font-size: 2rem;
+  color: #552516;
+  text-decoration: underline;
+  text-underline-offset: 0.5rem;
+}
+
+.account__empty {
+  text-align: center;
+  color: #552516;
+  font-family: "Petrona";
+  font-size: 1.25rem;
+}
+
+.agenda__calendar {
+  display: flex;
+  flex-direction: column;
+  flex-flow: column wrap;
+}
+
+/*# sourceMappingURL=main.css.map */
