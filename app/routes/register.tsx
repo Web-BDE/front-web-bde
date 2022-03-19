@@ -187,16 +187,18 @@ export default function Register() {
   const actionData = useActionData<ActionData>();
   const [searchparams] = useSearchParams();
   return (
-    <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
-      <Typography component="h1" variant="h5">
-        Inscription
-      </Typography>
-      {generateAlert("error", actionData?.registerUser?.error)}
-      {generateAlert("success", actionData?.registerUser?.success)}
-      <RegisterForm
-        formData={actionData?.registerUser?.formData}
-        redirectTo={searchparams.get("redirectTo")}
-      />
+    <Container style={{ marginTop: "100px", marginBottom: "100px" }}>
+      <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
+        <Typography component="h1" variant="h5">
+          Inscription
+        </Typography>
+        {generateAlert("error", actionData?.registerUser?.error)}
+        {generateAlert("success", actionData?.registerUser?.success)}
+        <RegisterForm
+          formData={actionData?.registerUser?.formData}
+          redirectTo={searchparams.get("redirectTo")}
+        />
+      </Container>
     </Container>
   );
 }
