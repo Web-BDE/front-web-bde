@@ -17,7 +17,8 @@ import { getSelft } from "./services/user";
 
 import { generateExpectedError, generateUnexpectedError } from "./utils/error";
 import { tryGetToken } from "./services/authentication";
-import { Container } from "@mui/material";
+import { BottomNavigation, Container, createTheme, CssBaseline, ThemeOptions } from "@mui/material";
+import { ThemeProvider } from "@emotion/react";
 
 export const meta: MetaFunction = () => {
   return { title: "Web BDE" };
@@ -66,21 +67,77 @@ export default function App() {
     userInfo: loaderData.userInfo,
     API_URL: loaderData.API_URL,
   };
+  const theme = createTheme({
+    palette: {
+      type: 'light',
+      primary: {
+        main: '#552516',
+      },
+      secondary: {
+        main: '#552516',
+      },
+      background: {
+        default: '#E5DECE',
+        paper: '#E5DECE',
+      },
+      text: {
+        primary: '#552516',
+        secondary: '#552516',
+        disabled: '#552516',
+        hint: '#552516',
+      },
+      divider: '#552516',
+
+    },
+    typography: {
+      fontFamily: '"Petrona"',
+      h1: {
+        fontFamily: '"Pirata One"',
+      },
+      h2: {
+        fontFamily: '"Pirata One"',
+      },
+      h3: {
+        fontFamily: '"Pirata One"',
+      },
+      h4: {
+        fontFamily: '"Pirata One"',
+      },
+      h5: {
+        fontFamily: '"Pirata One"',
+      },
+      h6: {
+        fontFamily: '"Pirata One"',
+      },
+      button: {
+        fontFamily: '"Pirata One"',
+        fontSize: 20,
+      },
+    },
+  } as ThemeOptions);
+
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Flibustech</title>
+        <link href="https://fonts.googleapis.com/css2?family=Petrona&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Pirata+One&display=swap" rel="stylesheet" />
         <Meta />
         <Links />
       </head>
-      <body>
-        <NavBar userInfo={loaderData.userInfo} API_URL={loaderData.API_URL} />
-        <Container style={{ marginTop: "100px", marginBottom: "100px" }}>
-          <Outlet context={context} />
-        </Container>
-        <ScrollRestoration />
-        <Scripts />
+      <body style={{ margin: 0 }}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <NavBar userInfo={loaderData.userInfo} API_URL={loaderData.API_URL} />
+          <Container style={{ marginTop: "100px", marginBottom: "100px" }}>
+            <Outlet context={context} />
+          </Container>
+          <BottomNavigation />
+          <ScrollRestoration />
+          <Scripts />
+        </ThemeProvider>
         {process.env.NODE_ENV === "development" && <LiveReload />}
       </body>
     </html>
