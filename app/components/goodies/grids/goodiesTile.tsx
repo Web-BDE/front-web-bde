@@ -15,9 +15,9 @@ export default function GoodiesTile({
         <CardContent>
           <Avatar
             variant="rounded"
-            src={`${
-              API_EXTERNAL_URL || "http://localhost:4000/"
-            }goodies/picture/${goodies.imageId}`}
+            src={`${API_URL || "http://localhost:4000/"}goodies/picture/${
+              goodies.imageId
+            }`}
             alt={goodies.name}
             sx={{ width: 260, height: 260 }}
             style={{ margin: "auto" }}

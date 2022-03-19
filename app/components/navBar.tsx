@@ -54,9 +54,9 @@ function displayAuthMenu(
             <Tooltip title="User Settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar
-                  src={`${
-                    API_EXTERNAL_URL || "http://localhost:4000/"
-                  }user/avatar/${userInfo.avatarId}`}
+                  src={`${API_URL || "http://localhost:4000/"}user/avatar/${
+                    userInfo.avatarId
+                  }`}
                   alt={userInfo.pseudo}
                 />
               </IconButton>

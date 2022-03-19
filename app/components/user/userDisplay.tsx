@@ -14,7 +14,7 @@ export default function UserDisplay({
         {user.pseudo}
       </Typography>
       <Avatar
-        src={`${API_EXTERNAL_URL || "http://localhost:4000/"}user/avatar/${
+        src={`${API_URL || "http://localhost:4000/"}user/avatar/${
           user.avatarId
         }`}
         alt={user.pseudo}

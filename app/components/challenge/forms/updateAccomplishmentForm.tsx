@@ -37,17 +37,17 @@ export default function AccomplishmentDisplay({
       </Typography>
       <div style={{ textAlign: "center" }}>
         <img
-          src={`${
-            API_EXTERNAL_URL || "http://localhost:4000/"
-          }accomplishment/proof/${accomplishment.proofId}`}
+          src={`${API_URL || "http://localhost:4000/"}accomplishment/proof/${
+            accomplishment.proofId
+          }`}
           alt=""
           width="95%"
         />
         <video
           controls
-          src={`${
-            API_EXTERNAL_URL || "http://localhost:4000/"
-          }accomplishment/proof/${accomplishment.proofId}`}
+          src={`${API_URL || "http://localhost:4000/"}accomplishment/proof/${
+            accomplishment.proofId
+          }`}
           width="95%"
         />
       </div>

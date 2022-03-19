@@ -16,7 +16,11 @@ export default function GoodiesDisplay({
       </Typography>
       <Avatar
         variant="rounded"
-        src={`${API_EXTERNAL_URL || "http://localhost:4000/"}goodies/picture/${
+<<<<<<< HEAD
+        src={`${API_URL || "http://localhost:4000/"}goodies/picture/${
+=======
+        src={`${API_URL || "http://localhost:4000/"}goodies/picture/${
+>>>>>>> 1bce5bc (fix: added a evn var if the API URL is diferent from externale source)
           goodies.imageId
         }`}
         alt={goodies.name}
