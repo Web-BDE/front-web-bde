@@ -83,7 +83,7 @@ export const action: ActionFunction = async ({ request }) => {
           {
             recoverResponse: {
               error:
-                "Invalid data provided, please check if you have fill all the requierd fields",
+                "Données invalides fournies, veuillez vérifier que vous avez compléter tous les champs",
             },
           } as ActionData,
           400
@@ -100,7 +100,7 @@ export const action: ActionFunction = async ({ request }) => {
           {
             recoverResponse: {
               error:
-                "Invalid data provided, please check if you have fill all the requierd fields",
+                "Données invalides fournies, veuillez vérifier que vous avez compléter tous les champs",
             },
           } as ActionData,
           400
@@ -120,7 +120,7 @@ export const action: ActionFunction = async ({ request }) => {
 
       return handleChangePassword(password, confirm, recoverToken);
     default:
-      throw json("Bad request method", 404);
+      throw json("Mauvais méthode dans la requête", 404);
   }
 };
 

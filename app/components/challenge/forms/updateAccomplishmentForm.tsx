@@ -68,23 +68,23 @@ export default function AccomplishmentDisplay({
         id="comment"
         error={Boolean(formData?.fieldsError?.comment)}
         helperText={formData?.fieldsError?.comment}
-        label="Comment"
+        label="Commentaires"
         name="comment"
         autoComplete="comment"
         defaultValue={formData?.fields?.comment || accomplishment.comment}
         autoFocus
       />
       <Typography variant="h5" style={{ marginTop: "10px" }}>
-        <b>Reward : {accomplishment.challenge?.reward}</b>
+        <b>Récompense : {accomplishment.challenge?.reward}</b>
       </Typography>
       <Typography variant="h5" style={{ marginTop: "10px" }}>
         <b>
-          Creation Date :
+          Date de création :
           {new Date(accomplishment.createdAt).toLocaleDateString()}
         </b>
       </Typography>
       <Typography variant="h5" style={{ marginTop: "10px" }}>
-        State :{" "}
+        Etat :{" "}
         {accomplishment.validation +
           (accomplishment.validation === "REFUSED"
             ? `, ${accomplishment.refusedComment}`
@@ -98,7 +98,7 @@ export default function AccomplishmentDisplay({
           variant="contained"
           color="primary"
         >
-          Update Accomplishment
+          Mettre à jour
         </Button>
         {transition.state === "submitting" && (
           <CircularProgress

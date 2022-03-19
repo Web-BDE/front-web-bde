@@ -62,7 +62,7 @@ export default function Challenges() {
         loaderData.challengeResponse?.success &&
           (!loaderData.challengeResponse?.challenges ||
             loaderData.challengeResponse.challenges.length === 0)
-          ? "There is currently no challenges to show"
+          ? "Il n'y a aucun challenge pour l'instant"
           : undefined
       )}
       {loaderData.challengeResponse?.challenges &&

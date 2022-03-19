@@ -38,11 +38,11 @@ export default function AccomplishmentDisplay({
         />
       </div>
       <Typography variant="h5" style={{ marginTop: "10px" }}>
-        <b>Reward : {accomplishment.challenge?.reward}</b>
+        <b>Récompense : {accomplishment.challenge?.reward}</b>
       </Typography>
       <Typography variant="h5" style={{ marginTop: "10px" }}>
         <b>
-          Creation Date :
+          Date de création :
           {new Date(accomplishment.createdAt).toLocaleDateString()}
         </b>
       </Typography>
