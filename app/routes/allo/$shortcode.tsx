@@ -3,6 +3,9 @@ import {
   Button,
   CircularProgress,
   Container,
+  Step,
+  StepLabel,
+  Stepper,
   TextField,
   Typography,
 } from "@mui/material";
@@ -40,6 +43,8 @@ enum OrderState {
   DELIVERED = "delivered",
 }
 
+const steps = ["Waiting", "In preparation", "In transit", "Delivered"];
+
 interface Payload {
   state: OrderState;
   dates: (string | null)[]; // One date per possible state
@@ -65,7 +70,7 @@ const OrderDisplay = () => {
   const actionData = useActionData<ActionData>();
   const transition = useTransition();
 
-  const [orderState, setOrderState] = useState<OrderState>(OrderState.WAITING);
+  const [orderState, setOrderState] = useState<number>(1);
   const [dates, setDates] = useState<(Date | null)[]>([]);
 
   useEffect(() => {
@@ -74,12 +79,27 @@ const OrderDisplay = () => {
       {
         onmessage(event) {
           const data: Payload = JSON.parse(event.data);
-          setOrderState(data.state);
+          setOrderState(() => {
+            switch (data.state) {
+              case "waiting":
+                return 1;
+              case "in-preparation":
+                return 2;
+              case "in-transit":
+                return 3;
+              case "delivered":
+                return 4;
+              default:
+                return 1;
+            }
+          });
           setDates(data.dates.map((d) => (d ? new Date(d) : null)));
         },
       }
     );
   }, [shortcode]);
+
+  console.log(dates);
 
   return (
     <Container maxWidth="md">
@@ -126,14 +146,18 @@ const OrderDisplay = () => {
           </Box>
         </div>
       </Form>
-      {orderState}
-      <p>
-        {dates.map((date, index) => {
-          if (date) {
-            return <p key={index}>{date.toLocaleDateString()}</p>;
-          }
-        })}
-      </p>
+      <Box sx={{ width: "100%", marginTop: "50px" }}>
+        <Stepper activeStep={orderState} alternativeLabel>
+          {steps.map((label, index) => (
+            <Step key={index}>
+              <StepLabel>
+                <Typography>{label}</Typography>
+                <Typography>{dates[index]?.toLocaleDateString()}</Typography>
+              </StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+      </Box>
     </Container>
   );
 };
