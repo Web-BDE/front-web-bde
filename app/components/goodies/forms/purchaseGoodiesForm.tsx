@@ -25,7 +25,7 @@ export default function PurchaseGoodiesForm({
           name="purchase"
           value="purchase"
         >
-          Purchase
+          Acheter
         </Button>
         {transition.state === "submitting" && (
           <CircularProgress

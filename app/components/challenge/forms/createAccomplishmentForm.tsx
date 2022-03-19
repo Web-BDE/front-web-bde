@@ -41,7 +41,7 @@ export default function CreateAccomplishmentForm({
         margin="normal"
         fullWidth
         id="comment"
-        label="comment"
+        label="Commentaire"
         name="comment"
         autoComplete="comment"
         autoFocus
@@ -57,7 +57,7 @@ export default function CreateAccomplishmentForm({
           variant="contained"
           color="primary"
         >
-          Submit accomplishment
+          Soumettre l'accomplissement
         </Button>
         {transition.state === "submitting" && (
           <CircularProgress

@@ -30,7 +30,7 @@ export default function UpdateUserForm({
     >
       <input type="hidden" name="kind" value="user" />
       <Avatar
-        src={`${API_EXTERNAL_URL || "http://localhost:4000/"}user/avatar/${
+        src={`${API_URL || "http://localhost:4000/"}user/avatar/${
           user.avatarId
         }`}
         alt={user.pseudo}
@@ -55,7 +55,7 @@ export default function UpdateUserForm({
         id="pseudo"
         error={Boolean(formData?.fieldsError?.pseudo)}
         helperText={formData?.fieldsError?.pseudo}
-        label="Pseudo"
+        label="Pseudonyme"
         name="pseudo"
         autoComplete="pseudo"
         defaultValue={formData?.fields?.pseudo || user.pseudo}
@@ -67,7 +67,7 @@ export default function UpdateUserForm({
           margin="normal"
           fullWidth
           name="name"
-          label="Name"
+          label="Nom"
           id="name"
           defaultValue={formData?.fields?.name || user.name}
           error={Boolean(formData?.fieldsError?.name)}
@@ -78,7 +78,7 @@ export default function UpdateUserForm({
           margin="normal"
           fullWidth
           name="surname"
-          label="Surname"
+          label="Prénom"
           id="surname"
           defaultValue={formData?.fields?.surname || user.surname}
           error={Boolean(formData?.fieldsError?.surname)}
@@ -91,7 +91,7 @@ export default function UpdateUserForm({
           margin="normal"
           fullWidth
           name="wallet"
-          label="Wallet"
+          label="Porte-monnaie"
           id="wallet"
           type="number"
           defaultValue={formData?.fields?.wallet || user.wallet}
@@ -119,7 +119,7 @@ export default function UpdateUserForm({
           variant="contained"
           color="primary"
         >
-          Update
+          Mettre à jour
         </Button>
         {transition.state === "submitting" && (
           <CircularProgress

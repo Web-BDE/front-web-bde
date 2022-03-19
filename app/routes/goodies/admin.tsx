@@ -77,21 +77,21 @@ export const loader: LoaderFunction = async ({ request }) => {
 //Validator for price fiels
 function validatePrice(price: number) {
   if (price < 0) {
-    return "Price must be positive";
+    return "Price doit être positif";
   }
 }
 
 //Validator for buy limit field
 function validateBuyLimit(buyLimit: number) {
   if (buyLimit < 1) {
-    return "Buy limit must be more than 0";
+    return "Buy limit doit être positif";
   }
 }
 
 //Validator for buy limit field
 function validateStock(stock: number) {
   if (stock < 1) {
-    return "Stock must be more than 0";
+    return "Stock doit être positif";
   }
 }
 
@@ -189,7 +189,7 @@ export const action: ActionFunction = async ({ request }) => {
           {
             createGoodiesResponse: {
               error:
-                "Invalid data provided, please check if you have fill all the requierd fields",
+                "Données invalides fournies, veuillez vérifier que vous avez compléter tous les champs",
             },
           } as ActionData,
           400
@@ -207,7 +207,7 @@ export const action: ActionFunction = async ({ request }) => {
       );
 
     default:
-      throw json("Bad request method", 404);
+      throw json("Mauvais méthode dans la requête", 404);
   }
 };
 

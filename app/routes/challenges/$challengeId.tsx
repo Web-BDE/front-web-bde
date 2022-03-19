@@ -243,16 +243,16 @@ async function handleAccomplishmentUpdate(
 }
 
 //Validator for field reward
-function validateReward(reward: number) {
+function validateRécompense(reward: number) {
   if (reward < 0) {
-    return "Reward must be positive";
+    return "La récompense doit être positive";
   }
 }
 
 //Validator for buy limit field
 function validateMaxAtempts(maxAtempts: number) {
   if (maxAtempts < 1) {
-    return "Max Atempts must be more than 0";
+    return "le nombre maximum d'essais doit être positif";
   }
 }
 
@@ -268,7 +268,7 @@ async function handleChallengeUpdate(
   //Check fields format errors
   const fields = { name, description, reward, maxAtempts, picture };
   const fieldsError = {
-    reward: validateReward(reward),
+    reward: validateRécompense(reward),
     maxAtempts: validateMaxAtempts(maxAtempts),
   };
 
@@ -371,7 +371,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         return json(
           {
             createAccomplishmentResponse: {
-              error: "Something went wrong, please try again",
+              error: "Quelque chose s'est mal passé, veuillez réessayer",
             },
           } as ActionData,
           500
@@ -409,7 +409,7 @@ export const action: ActionFunction = async ({ request, params }) => {
               {
                 updateAccomplishmentResponse: {
                   error:
-                    "Invalid data provided, please check if you have fill all the requierd fields",
+                    "Données invalides fournies, veuillez vérifier que vous avez compléter tous les champs",
                 },
               } as ActionData,
               400
@@ -443,7 +443,7 @@ export const action: ActionFunction = async ({ request, params }) => {
               {
                 updateChallengeResponse: {
                   error:
-                    "Invalid data provided, please check if you have fill all the requierd fields",
+                    "Données invalides fournies, veuillez vérifier que vous avez compléter tous les champs",
                 },
               } as ActionData,
               400
@@ -507,11 +507,11 @@ export const action: ActionFunction = async ({ request, params }) => {
       }
 
     default:
-      throw json("Bad request method", 404);
+      throw json("Mauvais méthode dans la requête", 404);
   }
 };
 
-//If challenge creator is self transform normal inputs into a form to update it
+//If challenge Auteur is self transform normal inputs into a form to update it
 function displayChallenge(
   challenge: Challenge,
   formData: {
@@ -521,7 +521,7 @@ function displayChallenge(
   userId?: number,
   API_URL?: string
 ) {
-  if (userId === challenge.creatorId || userId === challenge.creator?.id) {
+  if (userId === challenge.AuteurId || userId === challenge.Auteur?.id) {
     return (
       <Container>
         <UpdateChallengeForm
