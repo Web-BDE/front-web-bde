@@ -53,7 +53,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   if (token) {
     return {
       userInfo: (await getSelft(token))?.user,
-      API_URL: process.env["API_URL"],
+      API_URL: process.env["API_EXTERNAL_URL"],
     } as LoaderData;
   }
 
