@@ -238,7 +238,7 @@ export default function ShopAdmin() {
           loaderData.undeliveredPurchaseResponse?.success &&
             (!loaderData.undeliveredPurchaseResponse?.purchases ||
               loaderData.undeliveredPurchaseResponse.purchases.length === 0)
-            ? "There is currently no purchases to show to show"
+            ? "Il n'a actuellement aucune commande en cours"
             : undefined
         )}
         {loaderData.undeliveredPurchaseResponse.purchases &&

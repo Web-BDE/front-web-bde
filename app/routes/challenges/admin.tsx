@@ -270,7 +270,7 @@ export const action: ActionFunction = async ({ request }) => {
       );
 
     default:
-      throw json("Mauvais méthode dans la requête", 404);
+      throw json("Bad request method", 404);
   }
 };
 
@@ -309,7 +309,7 @@ export default function ChallengesAdmin() {
           loaderData.accomplishmentResponse?.success &&
             (!loaderData.accomplishmentResponse?.accomplishments ||
               loaderData.accomplishmentResponse.accomplishments.length === 0)
-            ? "There is currently no accomplishments to show"
+            ? "Il n'y a actuellement aucun accomplissement"
             : undefined
         )}
         {loaderData.accomplishmentResponse?.accomplishments &&

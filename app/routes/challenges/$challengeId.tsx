@@ -507,7 +507,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       }
 
     default:
-      throw json("Mauvais méthode dans la requête", 404);
+      throw json("Bad request method", 404);
   }
 };
 
@@ -565,7 +565,7 @@ export default function Challenge() {
           "info",
           loaderData.challengeResponse?.success &&
             !loaderData.challengeResponse?.challenge
-            ? "Sorry, we were currently unable to find the challenge you were looking for"
+            ? "Désolé, impossible de trouver le challenge que vous cherchez"
             : undefined
         )}
         {loaderData.challengeResponse?.challenge && (
@@ -622,7 +622,7 @@ export default function Challenge() {
           loaderData.accomplishmentResponse?.success &&
             (!loaderData.accomplishmentResponse?.accomplishments ||
               loaderData.accomplishmentResponse.accomplishments.length === 0)
-            ? "There is currently no accomplishments to show"
+            ? "Il n'y a actuellement aucun accomplissement"
             : undefined
         )}
         {loaderData.accomplishmentResponse?.accomplishments &&
