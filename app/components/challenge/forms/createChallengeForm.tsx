@@ -24,7 +24,6 @@ export default function CreateChallengeForm({
         <b>Miniature</b>
       </Typography>
       <input
-        required
         autoComplete="picture"
         accept="image/*"
         type="file"

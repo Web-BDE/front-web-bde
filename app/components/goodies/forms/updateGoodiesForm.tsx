@@ -41,7 +41,6 @@ export default function UpdateGoodiesForm({
       />
       <div style={{ textAlign: "center" }}>
         <input
-          required
           autoComplete="picture"
           accept="image/*"
           type="file"

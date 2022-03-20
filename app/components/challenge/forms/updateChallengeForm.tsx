@@ -45,7 +45,6 @@ export default function UpdateChallengeForm({
       />
       <div style={{ textAlign: "center" }}>
         <input
-          required
           autoComplete="picture"
           accept="image/*"
           type="file"
