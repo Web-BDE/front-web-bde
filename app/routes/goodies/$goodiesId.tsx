@@ -154,21 +154,21 @@ async function handleCreatePurchase(token: string, goodiesId: number) {
 //Validator for price fiels
 function validatePrice(price: number) {
   if (price < 0) {
-    return "Price must be positive";
+    return "Le prix doit être";
   }
 }
 
 //Validator for buy limit field
 function validateBuyLimit(buyLimit: number) {
   if (buyLimit < 1) {
-    return "Buy limit must be more than 0";
+    return "La quantité doit être supérieur à 0";
   }
 }
 
 //Validator for buy limit field
 function validateStock(stock: number) {
   if (stock < 1) {
-    return "Stock must be more than 0";
+    return "Le stock doit être supérieur à 0";
   }
 }
 
@@ -300,7 +300,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         return json(
           {
             deleteGoodiesResponse: {
-              error: "There was an error, please try again",
+              error: "Il y a eu une erreur, veuillez réessayer",
             },
           } as ActionData,
           500
@@ -329,7 +329,7 @@ export const action: ActionFunction = async ({ request, params }) => {
               {
                 updateGoodiesResponse: {
                   error:
-                    "Invalid data provided, please check if you have fill all the requierd fields",
+                    "Données invalides fournies, veuillez vérifier que vous avez compléter tous les champs",
                 },
               } as ActionData,
               400
@@ -367,7 +367,7 @@ export const action: ActionFunction = async ({ request, params }) => {
               {
                 deliverGoodiesResponse: {
                   error:
-                    "Invalid data provided, please check if you have fill all the requierd fields",
+                    "Données invalides fournies, veuillez vérifier que vous avez compléter tous les champs",
                 },
               } as ActionData,
               400
@@ -392,7 +392,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         return json(
           {
             deleteGoodiesResponse: {
-              error: "There was an error, please try again",
+              error: "Il y a eu une erreur, veuillez réessayer",
             },
           } as ActionData,
           500
@@ -429,11 +429,11 @@ export const action: ActionFunction = async ({ request, params }) => {
       }
 
     default:
-      throw json("Bad request method", 404);
+      throw json("Mauvais méthode dans la requête", 404);
   }
 };
 
-// For the creator of the goodies, replace displays by inputs
+// For the Auteur of the goodies, replace displays by inputs
 function displayGoodies(
   goodies: Goodies,
   formData: {
@@ -443,7 +443,7 @@ function displayGoodies(
   userId?: number,
   API_URL?: string
 ) {
-  if (goodies?.creatorId === userId || goodies.creator?.id === userId) {
+  if (goodies?.AuteurId === userId || goodies.Auteur?.id === userId) {
     return (
       <div>
         <UpdateGoodiesForm
@@ -484,7 +484,7 @@ export default function Goodies() {
           "info",
           loaderData.goodiesResponse?.success &&
             !loaderData.goodiesResponse?.goodies
-            ? "Sorry, we were currently unable to find the goodies you were looking for"
+            ? "Nous n'avons pas réussi à trouver le goodies que vous demandiez"
             : undefined
         )}
         {loaderData.goodiesResponse?.goodies && (
@@ -519,7 +519,7 @@ export default function Goodies() {
           loaderData.purchaseResponse?.success &&
             (!loaderData.purchaseResponse?.purchases ||
               loaderData.purchaseResponse.purchases.length === 0)
-            ? "There is currently no purchases to show"
+            ? "Il n'y a aucun achat à afficher"
             : undefined
         )}
         {loaderData.purchaseResponse?.purchases &&

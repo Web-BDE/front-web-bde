@@ -14,7 +14,7 @@ export default function UserDisplay({
         {user.pseudo}
       </Typography>
       <Avatar
-        src={`${API_URL || "http://localhost:4000/"}user/avatar/${
+        src={`${API_EXTERNAL_URL || "http://localhost:4000/"}user/avatar/${
           user.avatarId
         }`}
         alt={user.pseudo}
@@ -23,12 +23,12 @@ export default function UserDisplay({
       />
       {user.name && (
         <Typography variant="h5" style={{ marginTop: "10px" }}>
-          <b>Name : {user.name}</b>
+          <b>Nom : {user.name}</b>
         </Typography>
       )}
       {user.surname && (
         <Typography variant="h5" style={{ marginTop: "10px" }}>
-          <b>Surname : {user.surname}</b>
+          <b>Prénom : {user.surname}</b>
         </Typography>
       )}
     </div>

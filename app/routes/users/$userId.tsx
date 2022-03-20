@@ -90,7 +90,7 @@ function validateEmail(email: string) {
 //Validator for pseudo field
 function validatePseudo(pseudo: string) {
   if (pseudo.length < 3) {
-    return "Pseudo is too small";
+    return "Le pseudonyme doit contenir au moins 4 caractères";
   }
 }
 
@@ -159,7 +159,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   if (!params.userId) {
     return json(
       {
-        updateUserResponse: { error: "Invalid user query" },
+        updateUserResponse: { error: "Requête utilisateur invalide" },
       } as ActionData,
       404
     );
@@ -190,7 +190,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       {
         updateUserResponse: {
           error:
-            "Invalid data provided, please check if you have fill all the requierd fields",
+            "Les données spécifiées sont invalide, veuillez vérifier leur conformité",
         },
       } as ActionData,
       400
@@ -209,7 +209,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   );
 };
 
-// For the creator of the user, replace displays by inputs
+// For the Auteur of the user, replace displays by inputs
 function displayUser(
   user: User,
   formData?: UpdateUserFormData,
@@ -242,14 +242,14 @@ export default function User() {
 
   return (
     <Container style={{ marginTop: "50px" }} component="main" maxWidth="md">
-      <Typography variant="h4">User</Typography>
+      <Typography variant="h4">Utilisateur</Typography>
       {generateAlert("error", loaderData.userResponse?.error)}
       {generateAlert("error", actionData?.updateUserResponse?.error)}
       {generateAlert("success", actionData?.updateUserResponse?.success)}
       {generateAlert(
         "info",
         loaderData.userResponse?.success && !loaderData.userResponse?.user
-          ? "Sorry, we were currently unable to find the user you were looking for"
+          ? "Nous ne trouvons pas d'utilisateur associé"
           : undefined
       )}
       {loaderData.userResponse?.user && (
