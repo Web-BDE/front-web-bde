@@ -65,7 +65,9 @@ export const action: ActionFunction = async ({ request }) => {
       if (typeof redirectTo !== "string") {
         return json(
           {
-            loginUser: { error: "Quelque chose s'est mal passé, veuillez réessayer" },
+            loginUser: {
+              error: "Quelque chose s'est mal passé, veuillez réessayer",
+            },
           } as ActionData,
           500
         );

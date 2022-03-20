@@ -35,7 +35,7 @@ export default function LoginForm({
         margin="normal"
         required
         fullWidth
-        name="Mot de passe"
+        name="password"
         label="Password"
         type="password"
         id="password"
