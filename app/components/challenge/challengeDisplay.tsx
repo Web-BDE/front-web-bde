@@ -34,9 +34,9 @@ export default function ChallengeDisplay({
       <Typography variant="h5" style={{ marginTop: "10px" }}>
         Date de création : {new Date(challenge.createdAt).toLocaleDateString()}
       </Typography>
-      {challenge.Auteur && (
+      {challenge.creator && (
         <Typography variant="h5" style={{ marginTop: "10px" }}>
-          Auteur : {challenge.Auteur.pseudo}
+          Auteur : {challenge.creator.pseudo}
         </Typography>
       )}
     </div>

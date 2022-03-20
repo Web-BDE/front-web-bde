@@ -118,9 +118,9 @@ export default function UpdateGoodiesForm({
       <Typography variant="h6" align="center" style={{ marginTop: "10px" }}>
         Date de création : {new Date(goodies.createdAt).toLocaleDateString()}
       </Typography>
-      {goodies.Auteur && (
+      {goodies.creator && (
         <Typography variant="h6" align="center" style={{ marginTop: "10px" }}>
-          Auteur : {goodies.Auteur.pseudo}
+          Auteur : {goodies.creator.pseudo}
         </Typography>
       )}
       <Box>

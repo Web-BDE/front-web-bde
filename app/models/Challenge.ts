@@ -6,8 +6,8 @@ export type Challenge = {
   maxAtempts: number;
   imageId: string;
   createdAt: string; //But should be converted as Date
-  AuteurId?: number;
-  Auteur?: { id: number; pseudo: string };
+  creatorId?: number;
+  creator?: { id: number; pseudo: string };
 };
 
 export type ChallengeInfo = {

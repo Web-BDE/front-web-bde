@@ -443,7 +443,7 @@ function displayGoodies(
   userId?: number,
   API_URL?: string
 ) {
-  if (goodies?.AuteurId === userId || goodies.Auteur?.id === userId) {
+  if (goodies?.creatorId === userId || goodies.creator?.id === userId) {
     return (
       <div>
         <UpdateGoodiesForm

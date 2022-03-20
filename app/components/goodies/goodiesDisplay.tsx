@@ -38,13 +38,13 @@ export default function GoodiesDisplay({
       <Typography variant="h5" style={{ marginTop: "10px" }}>
         Date de création : {new Date(goodies.createdAt).toLocaleDateString()}
       </Typography>
-      {goodies.Auteur && (
+      {goodies.creator && (
         <Link
           style={{ textDecoration: "none", color: "black" }}
-          to={`/users/${goodies.Auteur.id}`}
+          to={`/users/${goodies.creator.id}`}
         >
           <Typography variant="h5" style={{ marginTop: "10px" }}>
-            Auteur : {goodies.Auteur.pseudo}
+            Créateur : {goodies.creator.pseudo}
           </Typography>
         </Link>
       )}

@@ -521,7 +521,7 @@ function displayChallenge(
   userId?: number,
   API_URL?: string
 ) {
-  if (userId === challenge.AuteurId || userId === challenge.Auteur?.id) {
+  if (userId === challenge.creatorId || userId === challenge.creator?.id) {
     return (
       <Container>
         <UpdateChallengeForm

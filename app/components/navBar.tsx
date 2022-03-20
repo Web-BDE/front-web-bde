@@ -48,7 +48,7 @@ function displayAuthMenu(
             sx={{ flexGrow: 1 }}
             style={{ marginRight: "50px", marginTop: "2px" }}
           >
-            Port-monnaie : <b>{userInfo.wallet}</b>
+            Flibustokens : <b>{userInfo.wallet}</b>
           </Typography>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="User Settings">
@@ -122,19 +122,19 @@ export default function NavBar({
   if (userInfo) {
     leftLinks.push(
       {
-        name: "Home",
+        name: "Accueil",
         link: "/",
       },
       {
-        name: "Challenges",
+        name: "Défis",
         link: "/challenges",
       },
       {
-        name: "Shop",
+        name: "Boutique",
         link: "/goodies",
       },
       {
-        name: "Users",
+        name: "Leaderboards",
         link: "/users",
       },
       {
@@ -145,13 +145,13 @@ export default function NavBar({
 
     if (userInfo?.privilege && userInfo?.privilege > 0) {
       leftLinks.push(
-        { name: "Challenge Admin", link: "/challenges/admin" },
-        { name: "Shop Admin", link: "/goodies/admin" }
+        { name: "Défis Admin", link: "/challenges/admin" },
+        { name: "Boutique Admin", link: "/goodies/admin" }
       );
     }
   } else {
     leftLinks.push({
-      name: "Home",
+      name: "Accueil",
       link: "/",
     });
   }

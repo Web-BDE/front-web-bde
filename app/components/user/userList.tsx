@@ -26,9 +26,9 @@ export default function UserList({
           <TableRow>
             <TableCell align="center">Avatar</TableCell>
             <TableCell align="center">Pseudo</TableCell>
-            <TableCell align="center">Name</TableCell>
-            <TableCell align="center">Surname</TableCell>
-            <TableCell align="center">Total earned</TableCell>
+            <TableCell align="center">Prénom</TableCell>
+            <TableCell align="center">Nom</TableCell>
+            <TableCell align="center">Total de points</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
