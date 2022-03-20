@@ -8,7 +8,7 @@ import TitledSection from "~/components/titledSection";
 export default function Index() {
   return (
     <>
-      <HeroSection imgSrc="/assets/images/flibustech_hero.png" alt="Piratech team" />
+      <HeroSection imgSrc="/assets/images/flibustech_hero.jpg" alt="Piratech team" />
       <ContrastedSection
         title="Qui sommes-nous ?"
         /* button={{
