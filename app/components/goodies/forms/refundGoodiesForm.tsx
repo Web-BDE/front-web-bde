@@ -27,7 +27,7 @@ export default function RefundGoodiesForm({
           id="refund"
           value="1"
         >
-          Remboursement
+          Refund
         </Button>
         {transition.state === "submitting" && (
           <CircularProgress

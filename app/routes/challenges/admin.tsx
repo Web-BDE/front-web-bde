@@ -99,16 +99,16 @@ async function handleValidateAccomplishment(
 }
 
 //Validator for field reward
-function validateRécompense(reward: number) {
+function validateReward(reward: number) {
   if (reward < 0) {
-    return "Récompense doit être positif";
+    return "Reward must be positive";
   }
 }
 
 //Validator for field reward
 function validateMaxAtempts(maxAtempts: number) {
   if (maxAtempts < 1) {
-    return "Max Atempts doit être positif";
+    return "Max Atempts must be more than 0";
   }
 }
 
@@ -123,7 +123,7 @@ export async function handleChallengeCreation(
   //Check fields format errors
   const fields = { name, description, reward, maxAtempts, picture };
   const fieldsError = {
-    reward: validateRécompense(reward),
+    reward: validateReward(reward),
     maxAtempts: validateMaxAtempts(maxAtempts),
   };
 
@@ -219,7 +219,7 @@ export const action: ActionFunction = async ({ request }) => {
         return json(
           {
             validateAccomplishmentResponse: {
-              error: "Il y a eu une erreur, veuillez réessayer",
+              error: "There was an error, please try again",
             },
           } as ActionData,
           500
@@ -253,7 +253,7 @@ export const action: ActionFunction = async ({ request }) => {
           {
             createChallengeResponse: {
               error:
-                "Données invalides fournies, veuillez vérifier que vous avez compléter tous les champs",
+                "Invalid data provided, please check if you have fill all the requierd fields",
             },
           } as ActionData,
           400
@@ -270,7 +270,7 @@ export const action: ActionFunction = async ({ request }) => {
       );
 
     default:
-      throw json("Mauvais méthode dans la requête", 404);
+      throw json("Bad request method", 404);
   }
 };
 

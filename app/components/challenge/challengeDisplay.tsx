@@ -15,28 +15,28 @@ export default function ChallengeDisplay({
       </Typography>
       <Avatar
         variant="rounded"
-        src={`${
-          API_EXTERNAL_URL || "http://localhost:4000/"
-        }challenge/picture/${challenge.imageId}`}
+        src={`${API_URL || "http://localhost:4000/"}challenge/picture/${
+          challenge.imageId
+        }`}
         alt={challenge.name}
         sx={{ width: 300, height: 300 }}
         style={{ margin: "auto" }}
       />
       <Typography variant="h5" style={{ marginTop: "10px" }}>
-        <b>Récompense : {challenge.reward}</b>
+        <b>Reward : {challenge.reward}</b>
       </Typography>
       <Typography variant="h5" style={{ marginTop: "10px" }}>
-        <b>Nombre d'essais maximal : {challenge.maxAtempts}</b>
+        <b>Max Atempts : {challenge.maxAtempts}</b>
       </Typography>
       <Typography variant="body1" style={{ marginTop: "10px" }}>
         {challenge.description}
       </Typography>
       <Typography variant="h5" style={{ marginTop: "10px" }}>
-        Date de création : {new Date(challenge.createdAt).toLocaleDateString()}
+        Creation date : {new Date(challenge.createdAt).toLocaleDateString()}
       </Typography>
-      {challenge.Auteur && (
+      {challenge.creator && (
         <Typography variant="h5" style={{ marginTop: "10px" }}>
-          Auteur : {challenge.Auteur.pseudo}
+          Creator : {challenge.creator.pseudo}
         </Typography>
       )}
     </div>

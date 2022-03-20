@@ -23,26 +23,26 @@ export default function AccomplishmentDisplay({
       </Typography>
       <div style={{ textAlign: "center" }}>
         <img
-          src={`${
-            API_EXTERNAL_URL || "http://localhost:4000/"
-          }accomplishment/proof/${accomplishment.proofId}`}
+          src={`${API_URL || "http://localhost:4000/"}accomplishment/proof/${
+            accomplishment.proofId
+          }`}
           alt=""
           width="95%"
         />
         <video
           controls
-          src={`${
-            API_EXTERNAL_URL || "http://localhost:4000/"
-          }accomplishment/proof/${accomplishment.proofId}`}
+          src={`${API_URL || "http://localhost:4000/"}accomplishment/proof/${
+            accomplishment.proofId
+          }`}
           width="95%"
         />
       </div>
       <Typography variant="h5" style={{ marginTop: "10px" }}>
-        <b>Récompense : {accomplishment.challenge?.reward}</b>
+        <b>Reward : {accomplishment.challenge?.reward}</b>
       </Typography>
       <Typography variant="h5" style={{ marginTop: "10px" }}>
         <b>
-          Date de création :
+          Creation Date :
           {new Date(accomplishment.createdAt).toLocaleDateString()}
         </b>
       </Typography>

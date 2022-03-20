@@ -16,12 +16,12 @@ import { User } from "~/models/User";
 export default function UpdateChallengeForm({
   challenge,
   formData,
-  Auteur,
+  creator,
   API_URL,
 }: {
   challenge: Challenge;
   formData?: CreateChallengeFormData;
-  Auteur?: User;
+  creator?: User;
   API_URL?: string;
 }) {
   const transition = useTransition();
@@ -36,9 +36,9 @@ export default function UpdateChallengeForm({
       <input type="hidden" name="kind" value="challenge" />
       <Avatar
         variant="rounded"
-        src={`${
-          API_EXTERNAL_URL || "http://localhost:4000/"
-        }challenge/picture/${challenge.imageId}`}
+        src={`${API_URL || "http://localhost:4000/"}challenge/picture/${
+          challenge.imageId
+        }`}
         alt={challenge.name}
         sx={{ width: 300, height: 300 }}
         style={{ margin: "auto" }}
@@ -75,7 +75,7 @@ export default function UpdateChallengeForm({
         helperText={formData?.fieldsError?.description}
         name="description"
         defaultValue={formData?.fields?.description || challenge.description}
-        label="Description"
+        label="description"
         id="description"
       />
       <div style={{ display: "flex" }}>
@@ -85,7 +85,7 @@ export default function UpdateChallengeForm({
           required
           fullWidth
           name="reward"
-          label="Récompense"
+          label="Reward"
           type="number"
           id="reward"
           defaultValue={formData?.fields?.reward || challenge.reward}
@@ -98,7 +98,7 @@ export default function UpdateChallengeForm({
           required
           fullWidth
           name="max-atempts"
-          label="Nombre maximum d'essais"
+          label="Max atempts"
           type="number"
           id="max-atempts"
           defaultValue={formData?.fields?.maxAtempts || challenge.maxAtempts}
@@ -107,11 +107,11 @@ export default function UpdateChallengeForm({
         />
       </div>
       <Typography variant="h6" align="center" style={{ marginTop: "10px" }}>
-        Date de création : {new Date(challenge.createdAt).toLocaleDateString()}
+        Creation date : {new Date(challenge.createdAt).toLocaleDateString()}
       </Typography>
-      {Auteur && (
+      {creator && (
         <Typography variant="h6" align="center" style={{ marginTop: "10px" }}>
-          Auteur : {Auteur?.pseudo}
+          Creator : {creator?.pseudo}
         </Typography>
       )}
       <Box>
@@ -122,7 +122,7 @@ export default function UpdateChallengeForm({
           variant="contained"
           color="primary"
         >
-          Mettre à jour
+          Update Challenge
         </Button>
         {transition.state === "submitting" && (
           <CircularProgress
