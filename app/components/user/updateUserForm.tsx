@@ -15,10 +15,12 @@ export default function UpdateUserForm({
   user,
   formData,
   API_URL,
+  userInfo,
 }: {
   user: User;
   formData?: UpdateUserFormData;
   API_URL?: string;
+  userInfo?: User;
 }) {
   const transition = useTransition();
 
@@ -91,6 +93,7 @@ export default function UpdateUserForm({
           margin="normal"
           fullWidth
           name="wallet"
+          disabled={!userInfo || userInfo?.privilege < 1}
           label="Porte-monnaie"
           id="wallet"
           type="number"
@@ -103,6 +106,7 @@ export default function UpdateUserForm({
           margin="normal"
           fullWidth
           name="privilege"
+          disabled={!userInfo || userInfo?.privilege < 1}
           label="Privilege"
           type="number"
           id="privilege"

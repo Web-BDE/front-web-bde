@@ -215,12 +215,18 @@ function displayUser(
   formData?: UpdateUserFormData,
   userId?: number,
   userPrivilege?: number,
-  API_URL?: string
+  API_URL?: string,
+  userInfo?: User
 ) {
   if (user.id === userId || (userPrivilege && userPrivilege >= 2)) {
     return (
       <div>
-        <UpdateUserForm API_URL={API_URL} user={user} formData={formData} />
+        <UpdateUserForm
+          userInfo={userInfo}
+          API_URL={API_URL}
+          user={user}
+          formData={formData}
+        />
       </div>
     );
   } else {
@@ -232,7 +238,7 @@ function displayUser(
   }
 }
 
-export default function User() {
+export default function UserInfoDisplay() {
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
 
@@ -260,7 +266,8 @@ export default function User() {
               actionData?.updateUserResponse?.formData,
               userInfo?.id,
               userInfo?.privilege,
-              API_URL
+              API_URL,
+              userInfo
             )}
           </div>
         )}

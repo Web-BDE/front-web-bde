@@ -38,7 +38,7 @@ function displayAuthMenu(
     );
   } else {
     const transition = useTransition();
-
+    console.log(userInfo);
     return (
       <div>
         <Grid container>

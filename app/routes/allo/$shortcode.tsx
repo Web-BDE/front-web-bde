@@ -99,10 +99,8 @@ const OrderDisplay = () => {
     );
   }, [shortcode]);
 
-  console.log(dates);
-
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="md" sx={{ marginTop: "100px" }}>
       <Typography variant="h4">Allôs</Typography>
       {generateAlert("error", actionData?.error)}
       <Form method="post" action={`/allo/${shortcode}/`}>
@@ -116,6 +114,7 @@ const OrderDisplay = () => {
             name="shortcode"
             autoComplete="shortcode"
             autoFocus
+            required
             defaultValue={actionData?.formData?.fields?.shortcode}
             error={Boolean(actionData?.formData?.fieldsError?.shortcode)}
             helperText={actionData?.formData?.fieldsError?.shortcode}
