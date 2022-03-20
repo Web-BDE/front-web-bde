@@ -43,9 +43,9 @@ export default function UserList({
                   style={{ textDecoration: "none", color: "black" }}
                 >
                   <Avatar
-                    src={`${API_URL || "http://localhost:4000/"}user/avatar/${
-                      user.avatarId
-                    }`}
+                    src={`${
+                      API_EXTERNAL_URL || "http://localhost:4000/"
+                    }user/avatar/${user.avatarId}`}
                     alt={user.pseudo}
                     sx={{ width: 150, height: 150 }}
                     style={{ margin: "auto" }}
