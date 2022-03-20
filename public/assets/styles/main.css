@@ -452,6 +452,19 @@ input:focus, select:focus, textarea:focus, button:focus {
 }
 
 @media (max-width: 500px) {
+  .contrasted_section {
+    padding: 40px 10%;
+    flex-direction: column;
+  }
+
+  .contrasted_section__article {
+    margin-right: 0;
+  }
+
+  .contrasted_section__aside {
+    margin-left: 0;
+  }
+
   .footer {
     flex-direction: column;
   }
