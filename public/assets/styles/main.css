@@ -228,6 +228,7 @@ input:focus, select:focus, textarea:focus, button:focus {
 .footer {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   justify-content: space-around;
   padding: 20px 60px;
   background-color: #552516;
@@ -449,5 +450,11 @@ input:focus, select:focus, textarea:focus, button:focus {
   flex-direction: column;
   flex-flow: column wrap;
 }
+
+@media (max-width: 500px) {
+  .footer {
+    flex-direction: column;
+  }
+} 
 
 /*# sourceMappingURL=main.css.map */
