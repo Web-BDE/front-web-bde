@@ -32,7 +32,7 @@ export default function UpdateGoodiesForm({
       <input type="hidden" name="kind" value="goodies" />
       <Avatar
         variant="rounded"
-        src={`${API_URL || "http://localhost:4000/"}goodies/picture/${
+        src={`${API_EXTERNAL_URL || "http://localhost:4000/"}goodies/picture/${
           goodies.imageId
         }`}
         alt={goodies.name}
@@ -57,7 +57,7 @@ export default function UpdateGoodiesForm({
         id="name"
         error={Boolean(formData?.fieldsError?.name)}
         helperText={formData?.fieldsError?.name}
-        label="Name"
+        label="Nom"
         name="name"
         autoComplete="name"
         defaultValue={formData?.fields?.name || goodies.name}
@@ -71,7 +71,7 @@ export default function UpdateGoodiesForm({
         helperText={formData?.fieldsError?.description}
         name="description"
         defaultValue={formData?.fields?.description || goodies.description}
-        label="description"
+        label="Description"
         id="description"
       />
       <TextField
@@ -83,7 +83,7 @@ export default function UpdateGoodiesForm({
         helperText={formData?.fieldsError?.price}
         name="price"
         defaultValue={formData?.fields?.price || goodies.price}
-        label="price"
+        label="Prix"
         type="number"
         id="price"
       />
@@ -94,7 +94,7 @@ export default function UpdateGoodiesForm({
           required
           fullWidth
           name="buy-limit"
-          label="Buy Limit"
+          label="Limite d'achat"
           type="number"
           id="buy-limit"
           defaultValue={formData?.fields?.buyLimit || goodies.buyLimit}
@@ -116,11 +116,11 @@ export default function UpdateGoodiesForm({
         />
       </div>
       <Typography variant="h6" align="center" style={{ marginTop: "10px" }}>
-        Creation date : {new Date(goodies.createdAt).toLocaleDateString()}
+        Date de création : {new Date(goodies.createdAt).toLocaleDateString()}
       </Typography>
-      {goodies.creator && (
+      {goodies.Auteur && (
         <Typography variant="h6" align="center" style={{ marginTop: "10px" }}>
-          Creator : {goodies.creator.pseudo}
+          Auteur : {goodies.Auteur.pseudo}
         </Typography>
       )}
       <Box>
@@ -131,7 +131,7 @@ export default function UpdateGoodiesForm({
           variant="contained"
           color="primary"
         >
-          Update Goodies
+          Mettre à jour
         </Button>
         {transition.state === "submitting" && (
           <CircularProgress

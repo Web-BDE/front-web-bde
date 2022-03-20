@@ -23,7 +23,7 @@ export default function RegisterForm({
           margin="normal"
           fullWidth
           name="name"
-          label="name"
+          label="Nom"
           type="name"
           id="name"
           defaultValue={formData?.fields?.name}
@@ -35,7 +35,7 @@ export default function RegisterForm({
           margin="normal"
           fullWidth
           name="surname"
-          label="surname"
+          label="Prénom"
           type="surname"
           id="surname"
           defaultValue={formData?.fields?.surname}
@@ -49,7 +49,7 @@ export default function RegisterForm({
         required
         fullWidth
         id="email"
-        label="Email Address"
+        label="Adresse mail"
         name="email"
         autoComplete="email"
         autoFocus
@@ -63,7 +63,7 @@ export default function RegisterForm({
         required
         fullWidth
         name="password"
-        label="Password"
+        label="Mot de passe"
         type="password"
         id="password"
         error={Boolean(formData?.fieldsError?.password)}
@@ -75,7 +75,7 @@ export default function RegisterForm({
         required
         fullWidth
         name="confirm-password"
-        label="Confirm password"
+        label="Confirmation mot de passe"
         type="password"
         id="confirm-password"
         error={Boolean(formData?.fieldsError?.confirm)}
@@ -87,7 +87,7 @@ export default function RegisterForm({
         required
         fullWidth
         name="pseudo"
-        label="pseudo"
+        label="Pseudonyme"
         type="pseudo"
         id="pseudo"
         defaultValue={formData?.fields?.pseudo}
@@ -102,7 +102,7 @@ export default function RegisterForm({
           variant="contained"
           color="primary"
         >
-          Register
+          S'inscrire
         </Button>
         {transition.state === "submitting" && (
           <CircularProgress
@@ -119,7 +119,7 @@ export default function RegisterForm({
       </Box>
       <Grid container>
         <Grid item>
-          <Link to="/login">{"Already have an account ? Sign in"}</Link>
+          <Link to="/login">{"Vous avez déjà un compte ? Se connecter"}</Link>
         </Grid>
       </Grid>
     </Form>
