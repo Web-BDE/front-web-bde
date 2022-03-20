@@ -43,7 +43,7 @@ enum OrderState {
   DELIVERED = "delivered",
 }
 
-const steps = ["Waiting", "In preparation", "In transit", "Delivered"];
+const steps = ["En attente", "En preparation", "En livraison", "Livré"];
 
 interface Payload {
   state: OrderState;
@@ -112,7 +112,7 @@ const OrderDisplay = () => {
             margin="normal"
             fullWidth
             id="shortcode"
-            label="Search for your Allô"
+            label="Chercher vos Allôs"
             name="shortcode"
             autoComplete="shortcode"
             autoFocus

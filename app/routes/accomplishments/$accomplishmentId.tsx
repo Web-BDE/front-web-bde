@@ -277,7 +277,7 @@ export default function Accomplishment() {
         "info",
         loaderData.accomplishmentResponse?.success &&
           !loaderData.accomplishmentResponse?.accomplishment
-          ? "Sorry, we were currently unable to find the accomplishment you were looking for"
+          ? "Désolé, impossible de trouver l'accomplissement de défi que vous cherchez"
           : undefined
       )}
       {loaderData.accomplishmentResponse?.accomplishment && (
