@@ -57,7 +57,7 @@ export default function Users() {
         loaderData.userResponse?.success &&
           (!loaderData.userResponse?.users ||
             loaderData.userResponse?.users.length === 0)
-          ? "Il n'y a aucun utilisateur à afficher"
+          ? "There is currently no users to show"
           : undefined
       )}
       {loaderData.userResponse?.users &&

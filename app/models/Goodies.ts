@@ -8,8 +8,8 @@ export type Goodies = {
   stock: number;
   bought: number;
   createdAt: string; //But should be converted as Date
-  AuteurId?: number;
-  Auteur?: { id: number; pseudo: string };
+  creatorId?: number;
+  creator?: { id: number; pseudo: string };
 };
 
 export type GoodiesInfo = {

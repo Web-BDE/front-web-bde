@@ -38,7 +38,7 @@ export default function CreateGoodiesForm({
         required
         fullWidth
         id="name"
-        label="Nom"
+        label="Name"
         name="name"
         autoComplete="name"
         autoFocus
@@ -51,7 +51,7 @@ export default function CreateGoodiesForm({
         margin="normal"
         fullWidth
         name="description"
-        label="Description"
+        label="description"
         id="description"
         defaultValue={formData?.fields?.description}
         error={Boolean(formData?.fieldsError?.description)}
@@ -63,7 +63,7 @@ export default function CreateGoodiesForm({
         required
         fullWidth
         name="price"
-        label="Prix"
+        label="price"
         type="number"
         id="price"
         defaultValue={formData?.fields?.price || 0}
@@ -77,7 +77,7 @@ export default function CreateGoodiesForm({
           required
           fullWidth
           name="buy-limit"
-          label="Limite d'achat"
+          label="Buy Limit"
           type="number"
           id="buy-limit"
           defaultValue={formData?.fields?.buyLimit || 1}
@@ -106,7 +106,7 @@ export default function CreateGoodiesForm({
           variant="contained"
           color="primary"
         >
-          Créer
+          Create Goodies
         </Button>
         {transition.state === "submitting" && (
           <CircularProgress

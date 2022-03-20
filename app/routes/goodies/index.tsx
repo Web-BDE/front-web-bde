@@ -56,7 +56,7 @@ export default function Shop() {
         loaderData.goodiesResponse?.success &&
           (!loaderData.goodiesResponse?.goodies ||
             loaderData.goodiesResponse.goodies.length === 0)
-          ? "Il n'y a pas de goodies pour l'instant"
+          ? "There is currently no goodies to show"
           : undefined
       )}
       {loaderData.goodiesResponse?.goodies &&

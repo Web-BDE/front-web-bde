@@ -50,7 +50,7 @@ export default function CreateChallengeForm({
         margin="normal"
         fullWidth
         name="description"
-        label="Description"
+        label="description"
         id="description"
         defaultValue={formData?.fields?.description}
         error={Boolean(formData?.fieldsError?.description)}
@@ -63,7 +63,7 @@ export default function CreateChallengeForm({
           required
           fullWidth
           name="reward"
-          label="Récompense"
+          label="Reward"
           type="number"
           id="reward"
           defaultValue={formData?.fields?.reward || 0}

@@ -22,7 +22,7 @@ export default function LoginForm({
         required
         fullWidth
         id="email"
-        label="Adresse email"
+        label="Email Address"
         name="email"
         autoComplete="email"
         autoFocus
@@ -35,7 +35,7 @@ export default function LoginForm({
         margin="normal"
         required
         fullWidth
-        name="Mot de passe"
+        name="password"
         label="Password"
         type="password"
         id="password"
@@ -51,7 +51,7 @@ export default function LoginForm({
           variant="contained"
           color="primary"
         >
-          Connexion
+          Sign In
         </Button>
         {transition.state === "submitting" && (
           <CircularProgress
@@ -68,10 +68,10 @@ export default function LoginForm({
       </Box>
       <Grid justifyContent="space-between" container>
         <Grid item>
-          <Link to="/register">{"S'enregister"}</Link>
+          <Link to="/register">{"Sign Up"}</Link>
         </Grid>
         <Grid item>
-          <Link to="/recover">{"Mot de passe oublié ?"}</Link>
+          <Link to="/recover">{"Recover Password"}</Link>
         </Grid>
       </Grid>
     </Form>

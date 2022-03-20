@@ -23,7 +23,7 @@ export default function DeleteGoodiesForm({
           variant="contained"
           color="primary"
         >
-          Supprimer
+          Delete Goodies
         </Button>
         {transition.state === "submitting" && (
           <CircularProgress

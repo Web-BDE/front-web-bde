@@ -23,7 +23,7 @@ export default function DeleteChallengeForm({
           variant="contained"
           color="primary"
         >
-          Supprimer
+          Delete
         </Button>
         {transition.state === "submitting" && (
           <CircularProgress

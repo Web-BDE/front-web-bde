@@ -26,12 +26,12 @@ function displayAuthMenu(
       <div>
         <Link style={{ textDecoration: "none", color: "white" }} to="/login">
           <Button color="inherit" variant="text">
-            Connexion
+            Login
           </Button>
         </Link>
         <Link style={{ textDecoration: "none", color: "white" }} to="/register">
           <Button color="inherit" variant="text">
-            Inscription
+            Register
           </Button>
         </Link>
       </div>
@@ -48,15 +48,15 @@ function displayAuthMenu(
             sx={{ flexGrow: 1 }}
             style={{ marginRight: "50px", marginTop: "2px" }}
           >
-            Port-monnaie : <b>{userInfo.wallet}</b>
+            Wallet : <b>{userInfo.wallet}</b>
           </Typography>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="User Settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar
-                  src={`${
-                    API_EXTERNAL_URL || "http://localhost:4000/"
-                  }user/avatar/${userInfo.avatarId}`}
+                  src={`${API_URL || "http://localhost:4000/"}user/avatar/${
+                    userInfo.avatarId
+                  }`}
                   alt={userInfo.pseudo}
                 />
               </IconButton>
@@ -86,7 +86,7 @@ function displayAuthMenu(
                   style={{ textDecoration: "none", color: "inherit" }}
                 >
                   <Button color="inherit" variant="text">
-                    Profil
+                    Profile
                   </Button>
                 </Link>
               </MenuItem>
@@ -98,7 +98,7 @@ function displayAuthMenu(
                     color="inherit"
                     variant="text"
                   >
-                    Déconnexion
+                    Logout
                   </Button>
                 </Form>
               </MenuItem>

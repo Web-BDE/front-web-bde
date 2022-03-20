@@ -65,7 +65,7 @@ export const action: ActionFunction = async ({ request }) => {
       if (typeof redirectTo !== "string") {
         return json(
           {
-            loginUser: { error: "Quelque chose s'est mal passé, veuillez réessayer" },
+            loginUser: { error: "Something went wrong, please try again" },
           } as ActionData,
           500
         );
@@ -76,7 +76,7 @@ export const action: ActionFunction = async ({ request }) => {
           {
             loginUser: {
               error:
-                "Données invalides fournies, veuillez vérifier que vous avez compléter tous les champs",
+                "Invalid data provided, please check if you have fill all the requierd fields",
             },
           } as ActionData,
           400
@@ -86,7 +86,7 @@ export const action: ActionFunction = async ({ request }) => {
       return await handleLogin(email, password, redirectTo);
 
     default:
-      throw json("Mauvais méthode dans la requête", 404);
+      throw json("Bad request method", 404);
   }
 };
 
@@ -97,7 +97,7 @@ export default function Login() {
   return (
     <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
       <Typography component="h1" variant="h5">
-        Connection
+        Log in
       </Typography>
       {generateAlert("error", actionData?.loginUser?.error)}
       {generateAlert("success", actionData?.loginUser?.success)}

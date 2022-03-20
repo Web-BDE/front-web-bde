@@ -142,7 +142,7 @@ export const action: ActionFunction = async ({ request }) => {
       if (typeof redirectTo !== "string") {
         return json(
           {
-            registerUser: { error: "Il y a eu une erreur, veuillez réessayer" },
+            registerUser: { error: "There was an error, please try again" },
           } as ActionData,
           500
         );
@@ -161,7 +161,7 @@ export const action: ActionFunction = async ({ request }) => {
           {
             registerUser: {
               error:
-                "Données invalides fournies, veuillez vérifier que vous avez compléter tous les champs",
+                "Invalid data provided, please check if you have fill all the requierd fields",
             },
           } as ActionData,
           400
@@ -179,7 +179,7 @@ export const action: ActionFunction = async ({ request }) => {
       );
 
     default:
-      throw json("Mauvais méthode dans la requête", 404);
+      throw json("Bad request method", 404);
   }
 };
 
@@ -189,7 +189,7 @@ export default function Register() {
   return (
     <Container component="main" maxWidth="xs" style={{ marginTop: "50px" }}>
       <Typography component="h1" variant="h5">
-        Inscription
+        Register
       </Typography>
       {generateAlert("error", actionData?.registerUser?.error)}
       {generateAlert("success", actionData?.registerUser?.success)}
