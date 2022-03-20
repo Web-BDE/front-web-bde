@@ -152,7 +152,7 @@ const OrderDisplay = () => {
             <Step key={index}>
               <StepLabel>
                 <Typography>{label}</Typography>
-                <Typography>{dates[index]?.toLocaleDateString()}</Typography>
+                <Typography>{dates[index]?.toLocaleTimeString()}</Typography>
               </StepLabel>
             </Step>
           ))}
