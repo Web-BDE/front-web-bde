@@ -162,7 +162,7 @@ async function handleAccomplishmentCreation(
 
   const { code, ...createAccomplishmentResponse } = await createAccomplishment(
     token,
-    fields,
+    { comment },
     challengeId
   );
 
@@ -401,6 +401,8 @@ export const action: ActionFunction = async ({ request, params }) => {
       //Accomplishment creation
       const comment = form.get("comment");
       const proof = form.get("proof");
+
+      console.log(comment);
 
       if (
         typeof comment !== "string" ||

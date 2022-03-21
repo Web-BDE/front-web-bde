@@ -247,10 +247,14 @@ function displayAccomplishment(
           accomplishment={accomplishment}
           formData={formData?.deleteForm}
         />
-        <ValidateAccomplishmentForm
-          formData={formData.validateForm}
-          accomplishment={accomplishment}
-        />
+        {userPrivilege && userPrivilege >= 1 ? (
+          <ValidateAccomplishmentForm
+            formData={formData.validateForm}
+            accomplishment={accomplishment}
+          />
+        ) : (
+          ""
+        )}
       </Container>
     );
   } else {

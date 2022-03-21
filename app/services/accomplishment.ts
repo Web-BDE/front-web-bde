@@ -24,7 +24,7 @@ export async function createAccomplishment(
       accomplishmentId: number;
     }>(
       `/accomplishment${searchParams}`,
-      { info: accomplishmentInfo, challengeId },
+      { comment: accomplishmentInfo.comment },
       {
         headers: buildAxiosHeaders(token),
       }
