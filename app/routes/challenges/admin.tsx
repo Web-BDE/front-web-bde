@@ -117,7 +117,7 @@ export async function handleChallengeCreation(
   name: string,
   reward: number,
   maxAtempts: number,
-  picture?: NodeOnDiskFile,
+  picture?: Blob,
   description?: string
 ) {
   //Check fields format errors
@@ -181,9 +181,8 @@ export const action: ActionFunction = async ({ request }) => {
   //User need to be logged in
   const token = await requireAuth(request, `/challenges/admin`);
 
-  const uploadHandler = unstable_createFileUploadHandler({
+  const uploadHandler = unstable_createMemoryUploadHandler({
     maxFileSize: 6_000_000,
-    file: ({ filename }) => filename,
   });
 
   //Declare all fields
@@ -239,7 +238,6 @@ export const action: ActionFunction = async ({ request }) => {
       const reward = form.get("reward");
       const maxAtempts = form.get("max-atempts");
       const picture = form.get("picture");
-      console.log(picture);
 
       //Check for undefined values
       if (
@@ -247,7 +245,7 @@ export const action: ActionFunction = async ({ request }) => {
         (typeof description !== "string" && description !== null) ||
         typeof reward !== "string" ||
         typeof maxAtempts !== "string" ||
-        (!(picture instanceof NodeOnDiskFile) && picture !== null)
+        (!(picture instanceof Blob) && picture !== null)
       ) {
         return json(
           {
@@ -265,7 +263,7 @@ export const action: ActionFunction = async ({ request }) => {
         name,
         parseInt(reward),
         parseInt(maxAtempts),
-        picture?.size ? picture : undefined,
+        picture?.name ? picture : undefined,
         description ? description : undefined
       );
 

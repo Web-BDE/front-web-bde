@@ -103,7 +103,7 @@ async function handleCreateGoodies(
   price: number,
   buyLimit: number,
   stock: number,
-  picture: NodeOnDiskFile,
+  picture: Blob,
   description?: string
 ) {
   const fields = {
@@ -168,7 +168,7 @@ export const action: ActionFunction = async ({ request }) => {
       const token = await requireAuth(request, "/goodies/admin");
       const form = await unstable_parseMultipartFormData(
         request,
-        unstable_createFileUploadHandler({ maxFileSize: 6_000_000 })
+        unstable_createMemoryUploadHandler({ maxFileSize: 6_000_000 })
       );
       //Goodies fields
       const name = form.get("name");
@@ -185,7 +185,7 @@ export const action: ActionFunction = async ({ request }) => {
         typeof price !== "string" ||
         typeof buyLimit !== "string" ||
         typeof stock !== "string" ||
-        !(picture instanceof NodeOnDiskFile)
+        !(picture instanceof Blob)
       ) {
         return json(
           {

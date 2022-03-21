@@ -104,7 +104,7 @@ async function handleUpdateUser(
   wallet: number,
   privilege: number,
   userId: number,
-  avatar?: NodeOnDiskFile
+  avatar?: Blob
 ) {
   const fields = {
     pseudo,
@@ -180,7 +180,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   const form = await unstable_parseMultipartFormData(
     request,
-    unstable_createFileUploadHandler({ maxFileSize: 6_000_000 })
+    unstable_createMemoryUploadHandler({ maxFileSize: 6_000_000 })
   );
   const pseudo = form.get("pseudo");
   const name = form.get("name");
@@ -215,7 +215,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     parseInt(wallet),
     parseInt(privilege),
     parseInt(params.userId),
-    avatar?.size ? avatar : undefined
+    avatar?.name ? avatar : undefined
   );
 };
 

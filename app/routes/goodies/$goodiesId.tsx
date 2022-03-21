@@ -181,7 +181,7 @@ async function handleUpdateGoodies(
   buyLimit: number,
   stock: number,
   goodiesId: number,
-  picture?: NodeOnDiskFile,
+  picture?: Blob,
   description?: string
 ) {
   const fields = {
@@ -301,7 +301,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   //Initialize form fields
   const form = await unstable_parseMultipartFormData(
     request,
-    unstable_createFileUploadHandler({ maxFileSize: 6_000_000 })
+    unstable_createMemoryUploadHandler({ maxFileSize: 6_000_000 })
   );
 
   const kind = form.get("kind");
@@ -337,7 +337,7 @@ export const action: ActionFunction = async ({ request, params }) => {
             typeof price !== "string" ||
             typeof buyLimit !== "string" ||
             typeof stock !== "string" ||
-            (!(picture instanceof NodeOnDiskFile) && picture !== null)
+            (!(picture instanceof Blob) && picture !== null)
           ) {
             return json(
               {
@@ -357,7 +357,7 @@ export const action: ActionFunction = async ({ request, params }) => {
             parseInt(buyLimit),
             parseInt(stock),
             parseInt(params.goodiesId),
-            picture?.size ? picture : undefined,
+            picture?.name ? picture : undefined,
             description ? description : undefined
           );
         case "purchase":
