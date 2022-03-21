@@ -189,8 +189,6 @@ export const action: ActionFunction = async ({ request, params }) => {
   const privilege = form.get("privilege");
   const avatar = form.get("avatar");
 
-  console.log(privilege, wallet, pseudo);
-
   if (
     typeof pseudo !== "string" ||
     (typeof name !== "string" && name !== null) ||

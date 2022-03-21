@@ -26,7 +26,6 @@ export default function AccomplishmentDisplay({
   API_URL?: string;
 }) {
   const transition = useTransition();
-  console.log(accomplishment);
   return (
     <Form
       method="patch"

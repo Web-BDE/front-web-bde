@@ -402,8 +402,6 @@ export const action: ActionFunction = async ({ request, params }) => {
       const comment = form.get("comment");
       const proof = form.get("proof");
 
-      console.log(comment);
-
       if (
         typeof comment !== "string" ||
         (!(proof instanceof NodeOnDiskFile) && proof !== null)

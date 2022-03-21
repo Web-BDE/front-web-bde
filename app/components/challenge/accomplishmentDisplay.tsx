@@ -16,7 +16,6 @@ export default function AccomplishmentDisplay({
   validateFormData?: ValidateAccomplishmentFormData;
   API_URL?: string;
 }) {
-  console.log(accomplishment);
   return (
     <div>
       <Typography variant="h3" style={{ marginTop: "10px" }}>
