@@ -65,7 +65,7 @@ export default function UserList({
                   style={{ textDecoration: "none", color: "black" }}
                   to={`/users/${user.id}`}
                 >
-                  <b>{user.name}</b>
+                  <b>{user.surname}</b>
                 </Link>
               </TableCell>
               <TableCell align="center">
@@ -73,7 +73,7 @@ export default function UserList({
                   style={{ textDecoration: "none", color: "black" }}
                   to={`/users/${user.id}`}
                 >
-                  <b>{user.surname}</b>
+                  <b>{user.name}</b>
                 </Link>
               </TableCell>
               <TableCell align="center">
