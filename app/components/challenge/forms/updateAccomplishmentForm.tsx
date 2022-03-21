@@ -56,7 +56,7 @@ export default function AccomplishmentDisplay({
         <input
           required
           autoComplete="proof"
-          accept="image/*, video/*"
+          accept="image/png, image/jpeg, image/gif, image/svg, video/mp4, video/webm, video/ogg"
           type="file"
           name="proof"
           id="proof"

@@ -42,7 +42,7 @@ export default function UpdateUserForm({
       <div style={{ textAlign: "center" }}>
         <input
           autoComplete="avatar"
-          accept="image/*"
+          accept="image/png, image/jpeg, image/gif, image/svg"
           type="file"
           name="avatar"
           id="avatar"

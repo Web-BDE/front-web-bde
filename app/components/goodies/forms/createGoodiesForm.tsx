@@ -27,7 +27,7 @@ export default function CreateGoodiesForm({
       <input
         required
         autoComplete="picture"
-        accept="image/*"
+        accept="image/png, image/jpeg, image/gif, image/svg"
         type="file"
         name="picture"
         id="picture"
