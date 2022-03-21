@@ -28,7 +28,7 @@ async function handleLogin(
   password: string,
   redirectTo: string
 ) {
-  const fields = { email };
+  const fields = { email: email.trim() };
 
   const { code, ...loginResult } = await loginUser({ ...fields, password });
 

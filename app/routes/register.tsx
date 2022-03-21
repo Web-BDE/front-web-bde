@@ -87,7 +87,7 @@ async function handleRegister(
   surname?: string
 ) {
   const fields = {
-    email,
+    email: email.trim(),
     pseudo,
     name,
     surname,
