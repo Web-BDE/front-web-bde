@@ -110,7 +110,7 @@ const OrderDisplay = () => {
             margin="normal"
             fullWidth
             id="shortcode"
-            label="Chercher votre Allô"
+            label="Cherchez votre Allô via le code dans le lien"
             name="shortcode"
             autoComplete="shortcode"
             autoFocus
