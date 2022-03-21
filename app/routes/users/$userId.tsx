@@ -101,9 +101,9 @@ async function handleUpdateUser(
   pseudo: string,
   name: string | null,
   surname: string | null,
-  wallet: number,
-  privilege: number,
   userId: number,
+  wallet?: number,
+  privilege?: number,
   avatar?: Blob
 ) {
   const fields = {
@@ -193,8 +193,8 @@ export const action: ActionFunction = async ({ request, params }) => {
     typeof pseudo !== "string" ||
     (typeof name !== "string" && name !== null) ||
     (typeof surname !== "string" && surname !== null) ||
-    typeof wallet !== "string" ||
-    typeof privilege !== "string" ||
+    (typeof wallet !== "string" && wallet !== null) ||
+    (typeof privilege !== "string" && privilege !== null) ||
     (!(avatar instanceof NodeOnDiskFile) && avatar !== null)
   ) {
     return json(
@@ -212,9 +212,9 @@ export const action: ActionFunction = async ({ request, params }) => {
     pseudo,
     name,
     surname,
-    parseInt(wallet),
-    parseInt(privilege),
     parseInt(params.userId),
+    wallet ? parseInt(wallet) : undefined,
+    privilege ? parseInt(privilege) : undefined,
     avatar?.name ? avatar : undefined
   );
 };

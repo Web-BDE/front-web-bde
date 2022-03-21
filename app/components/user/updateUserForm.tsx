@@ -91,10 +91,10 @@ export default function UpdateUserForm({
           variant="outlined"
           margin="normal"
           fullWidth
-          name="wallet"
+          name={!userInfo || userInfo?.privilege < 1 ? "" : "wallet"}
           disabled={!userInfo || userInfo?.privilege < 1}
           label="Porte-monnaie"
-          id="wallet"
+          id={!userInfo || userInfo?.privilege < 1 ? "" : "wallet"}
           type="number"
           defaultValue={formData?.fields?.wallet || user.wallet}
           error={Boolean(formData?.fieldsError?.wallet)}
@@ -104,11 +104,11 @@ export default function UpdateUserForm({
           variant="outlined"
           margin="normal"
           fullWidth
-          name="privilege"
+          name={!userInfo || userInfo?.privilege < 1 ? "" : "privilege"}
           disabled={!userInfo || userInfo?.privilege < 1}
           label="Privilege"
           type="number"
-          id="privilege"
+          id={!userInfo || userInfo?.privilege < 1 ? "" : "privilege"}
           defaultValue={formData?.fields?.privilege || user.privilege}
           error={Boolean(formData?.fieldsError?.privilege)}
           helperText={formData?.fieldsError?.privilege}
