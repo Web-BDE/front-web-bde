@@ -232,7 +232,8 @@ function displayAccomplishment(
     validateForm?: ValidateAccomplishmentFormData;
   },
   userId?: number,
-  userPrivilege?: number
+  userPrivilege?: number,
+  API_URL?: string
 ) {
   if (userId === accomplishment.userId || userId === accomplishment.user?.id) {
     return (
@@ -240,6 +241,7 @@ function displayAccomplishment(
         <UpdateAccomplishmentForm
           accomplishment={accomplishment}
           formData={formData?.updateForm}
+          API_URL={API_URL}
         />
         <DeleteAccomplishmentForm
           accomplishment={accomplishment}
@@ -258,6 +260,7 @@ function displayAccomplishment(
           validateFormData={formData.validateForm}
           userPrivilege={userPrivilege}
           accomplishment={accomplishment}
+          API_URL={API_URL}
         />
       </Container>
     );
@@ -268,14 +271,14 @@ export default function Accomplishment() {
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
 
-  const { userInfo } = useOutletContext<ContextData>();
+  const { userInfo, API_URL } = useOutletContext<ContextData>();
 
   const transition = useTransition();
 
   return (
     <Container style={{ marginTop: "50px" }} maxWidth="md">
       <Typography textAlign="center" variant="h4">
-        Accomplishment
+        Soumission de défi
       </Typography>
       {generateAlert("error", loaderData.accomplishmentResponse?.error)}
       {generateAlert("error", actionData?.updateAccomplishmentResponse?.error)}
@@ -304,7 +307,8 @@ export default function Accomplishment() {
               deleteForm: actionData?.deleteAccomplishmentResponse?.formData,
             },
             userInfo?.id,
-            userInfo?.privilege
+            userInfo?.privilege,
+            API_URL
           )}
         </Container>
       )}
