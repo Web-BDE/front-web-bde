@@ -48,7 +48,7 @@ export default function Shop() {
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
       <Typography style={{ textAlign: "center" }} variant="h2">
-        Shop
+        Boutique
       </Typography>
       {generateAlert("error", loaderData.goodiesResponse?.error)}
       {generateAlert(

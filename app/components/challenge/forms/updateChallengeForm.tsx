@@ -60,7 +60,7 @@ export default function UpdateChallengeForm({
         id="name"
         error={Boolean(formData?.fieldsError?.name)}
         helperText={formData?.fieldsError?.name}
-        label="Name"
+        label="Nom"
         name="name"
         autoComplete="name"
         defaultValue={formData?.fields?.name || challenge.name}
@@ -110,7 +110,7 @@ export default function UpdateChallengeForm({
       </Typography>
       {Auteur && (
         <Typography variant="h6" align="center" style={{ marginTop: "10px" }}>
-          Auteur : {Auteur?.pseudo}
+          Créateur : {Auteur?.pseudo}
         </Typography>
       )}
       <Box>

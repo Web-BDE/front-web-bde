@@ -54,7 +54,7 @@ export default function Challenges() {
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
       <Typography style={{ textAlign: "center" }} variant="h2">
-        Challenges
+        Liste des Défis
       </Typography>
       {generateAlert("error", loaderData.challengeResponse?.error)}
       {generateAlert(

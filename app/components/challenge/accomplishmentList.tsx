@@ -22,8 +22,8 @@ export default function AccomplishmentList({
         <TableHead>
           <TableRow>
             <TableCell align="center">Date</TableCell>
-            <TableCell align="center">Comment</TableCell>
-            <TableCell align="center">State</TableCell>
+            <TableCell align="center">Commentaire</TableCell>
+            <TableCell align="center">État</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

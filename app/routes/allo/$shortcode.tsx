@@ -110,7 +110,7 @@ const OrderDisplay = () => {
             margin="normal"
             fullWidth
             id="shortcode"
-            label="Chercher vos Allôs"
+            label="Chercher votre Allô"
             name="shortcode"
             autoComplete="shortcode"
             autoFocus
@@ -128,7 +128,7 @@ const OrderDisplay = () => {
               color="primary"
               sx={{ width: 100 }}
             >
-              Search
+              Rechercher
             </Button>
             {transition.state === "submitting" && (
               <CircularProgress

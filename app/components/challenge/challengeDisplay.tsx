@@ -36,7 +36,7 @@ export default function ChallengeDisplay({
       </Typography>
       {challenge.creator && (
         <Typography variant="h5" style={{ marginTop: "10px" }}>
-          Auteur : {challenge.creator.pseudo}
+          Créateur : {challenge.creator.pseudo}
         </Typography>
       )}
     </div>

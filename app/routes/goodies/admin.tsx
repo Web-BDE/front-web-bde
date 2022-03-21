@@ -221,7 +221,7 @@ export default function ShopAdmin() {
   return (
     <Container>
       <Container component="main" maxWidth="md" style={{ marginTop: "50px" }}>
-        <Typography variant="h4">Create Goodies</Typography>
+        <Typography variant="h4">Créer un Goodies</Typography>
         {generateAlert("error", actionData?.createGoodiesResponse?.error)}
         {generateAlert("success", actionData?.createGoodiesResponse?.success)}
         <CreateGoodiesForm
@@ -231,7 +231,7 @@ export default function ShopAdmin() {
       </Container>
       <div style={{ marginTop: "50px" }}>
         <Typography textAlign="center" variant="h4">
-          Undelivered Purchases
+          Achat non livrés
         </Typography>
         {generateAlert(
           "info",

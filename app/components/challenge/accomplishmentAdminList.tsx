@@ -21,7 +21,7 @@ export default function AccomplishmentAdminList({
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell align="center">User</TableCell>
+            <TableCell align="center">Utilisateur</TableCell>
             <TableCell align="center">Challenge</TableCell>
             <TableCell align="center">Date</TableCell>
           </TableRow>

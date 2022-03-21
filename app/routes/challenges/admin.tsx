@@ -178,7 +178,6 @@ export async function handleChallengeCreation(
 export const action: ActionFunction = async ({ request }) => {
   //User need to be logged in
   const token = await requireAuth(request, `/challenges/admin`);
-  console.log("form");
 
   const uploadHandler = unstable_createFileUploadHandler({
     maxFileSize: 100_000_000,
@@ -187,8 +186,6 @@ export const action: ActionFunction = async ({ request }) => {
 
   //Declare all fields
   const form = await unstable_parseMultipartFormData(request, uploadHandler);
-
-  console.log(form);
 
   //Validation request
   switch (request.method) {
@@ -284,7 +281,7 @@ export default function ChallengesAdmin() {
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
       <Container maxWidth="md">
-        <Typography variant="h4">Create Challenge</Typography>
+        <Typography variant="h4">Créer un défi</Typography>
         {generateAlert("error", actionData?.createChallengeResponse?.error)}
         {generateAlert("success", actionData?.createChallengeResponse?.success)}
         <CreateChallengeForm
@@ -294,7 +291,7 @@ export default function ChallengesAdmin() {
       </Container>
       <Container style={{ marginTop: "50px" }}>
         <Typography marginBottom={"50px"} textAlign="center" variant="h4">
-          Pending Accomplishments
+          Défis à valider
         </Typography>
         {generateAlert(
           "error",

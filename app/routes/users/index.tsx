@@ -47,44 +47,42 @@ export default function Users() {
   const transition = useTransition();
 
   return (
-    <Container style={{ marginTop: "100px", marginBottom: "100px" }}>
-      <Container component="main" style={{ marginTop: "50px" }}>
-        <Typography style={{ textAlign: "center" }} variant="h2">
-          Liste des utilisateurs
-        </Typography>
-        {generateAlert("error", loaderData.userResponse?.error)}
-        {generateAlert(
-          "info",
-          loaderData.userResponse?.success &&
-            (!loaderData.userResponse?.users ||
-              loaderData.userResponse?.users.length === 0)
-            ? "Il n'y a aucun utilisateur à afficher"
-            : undefined
+    <Container component="main" style={{ marginTop: "50px" }}>
+      <Typography style={{ textAlign: "center" }} variant="h2">
+        Leaderboard
+      </Typography>
+      {generateAlert("error", loaderData.userResponse?.error)}
+      {generateAlert(
+        "info",
+        loaderData.userResponse?.success &&
+          (!loaderData.userResponse?.users ||
+            loaderData.userResponse?.users.length === 0)
+          ? "Il n'y a aucun utilisateur à afficher"
+          : undefined
+      )}
+      {loaderData.userResponse?.users &&
+        loaderData.userResponse?.users.length !== 0 && (
+          <div style={{ marginTop: "50px" }}>
+            <UserList
+              API_URL={API_URL}
+              users={loaderData.userResponse.users.sort(
+                (a, b) => b.totalEarnedPoints - a.totalEarnedPoints
+              )}
+            />
+          </div>
         )}
-        {loaderData.userResponse?.users &&
-          loaderData.userResponse?.users.length !== 0 && (
-            <div style={{ marginTop: "50px" }}>
-              <UserList
-                API_URL={API_URL}
-                users={loaderData.userResponse.users.sort(
-                  (a, b) => b.totalEarnedPoints - a.totalEarnedPoints
-                )}
-              />
-            </div>
-          )}
-        {transition.state === "submitting" && (
-          <CircularProgress
-            size={36}
-            sx={{
-              color: blue[500],
-              position: "absolute",
-              left: "50%",
-              marginTop: "18px",
-              marginLeft: "-18px",
-            }}
-          />
-        )}
-      </Container>
+      {transition.state === "submitting" && (
+        <CircularProgress
+          size={36}
+          sx={{
+            color: blue[500],
+            position: "absolute",
+            left: "50%",
+            marginTop: "18px",
+            marginLeft: "-18px",
+          }}
+        />
+      )}
     </Container>
   );
 }

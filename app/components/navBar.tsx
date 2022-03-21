@@ -38,7 +38,6 @@ function displayAuthMenu(
     );
   } else {
     const transition = useTransition();
-    console.log(userInfo);
     return (
       <div>
         <Grid container>
@@ -80,20 +79,38 @@ function displayAuthMenu(
               <MenuItem key="1">
                 <Typography>{userInfo.pseudo}</Typography>
               </MenuItem>
-              <MenuItem key="2" onClick={handleCloseUserMenu}>
+              <MenuItem
+                sx={{ margin: "0", padding: "0" }}
+                key="2"
+                onClick={handleCloseUserMenu}
+              >
                 <Link
                   to={`/users/${userInfo.id}`}
-                  style={{ textDecoration: "none", color: "inherit" }}
+                  style={{
+                    textDecoration: "none",
+                    color: "inherit",
+                    width: "100%",
+                    textAlign: "center",
+                  }}
                 >
-                  <Button color="inherit" variant="text">
+                  <Button fullWidth color="inherit" variant="text">
                     Profil
                   </Button>
                 </Link>
               </MenuItem>
-              <MenuItem key="3" onClick={handleCloseUserMenu}>
-                <Form method="post" action="/logout">
+              <MenuItem
+                key="3"
+                onClick={handleCloseUserMenu}
+                sx={{ margin: "0", padding: "0" }}
+              >
+                <Form
+                  method="post"
+                  action="/logout"
+                  style={{ width: "100%", textAlign: "center" }}
+                >
                   <Button
                     disabled={transition.state === "submitting"}
+                    fullWidth
                     type="submit"
                     color="inherit"
                     variant="text"

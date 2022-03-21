@@ -507,7 +507,7 @@ export default function Goodies() {
       </Container>
       <Container style={{ marginTop: "50px" }}>
         <Typography textAlign="center" variant="h4">
-          Undelivered purchases
+          Achats non livrés pour ce Goodies
         </Typography>
         {generateAlert("error", loaderData.purchaseResponse?.error)}
         {generateAlert("error", actionData?.purchaseGoodiesResponse?.error)}

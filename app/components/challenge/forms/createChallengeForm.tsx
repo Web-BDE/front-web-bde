@@ -36,7 +36,7 @@ export default function CreateChallengeForm({
         required
         fullWidth
         id="name"
-        label="Name"
+        label="Nom"
         name="name"
         autoComplete="name"
         autoFocus
@@ -75,7 +75,7 @@ export default function CreateChallengeForm({
           required
           fullWidth
           name="max-atempts"
-          label="Max atempts"
+          label="Nombre d'éssais maximum"
           type="number"
           id="max-atempts"
           defaultValue={formData?.fields?.maxAtempts || 3}

@@ -211,8 +211,6 @@ export async function putProof(
 
     const multipartHeaders = formData.getHeaders();
 
-    console.log(multipartHeaders);
-
     const reply = await axios.put<{
       message: string;
       accomplishment: Accomplishment;

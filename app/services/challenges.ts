@@ -183,8 +183,6 @@ export async function putChallengePicture(
 
     const multipartHeaders = formData.getHeaders();
 
-    console.log(multipartHeaders);
-
     const reply = await axios.put<{
       message: string;
       challenge: Challenge;

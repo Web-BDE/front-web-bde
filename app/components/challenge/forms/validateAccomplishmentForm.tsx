@@ -25,7 +25,7 @@ export default function ValidateAccomplishmentForm({
         margin="normal"
         fullWidth
         id="refused-comment"
-        label="Refuse refusedComment"
+        label="Commentaire en cas de refus"
         name="refused-comment"
         autoComplete="refused-comment"
         autoFocus
@@ -43,7 +43,7 @@ export default function ValidateAccomplishmentForm({
         id="validation"
         value="ACCEPTED"
       >
-        Validate
+        Valider
       </Button>
       {transition.state === "submitting" && (
         <CircularProgress
@@ -66,7 +66,7 @@ export default function ValidateAccomplishmentForm({
         value="REFUSED"
         id="validation"
       >
-        Refuse
+        Refuser
       </Button>
       {transition.state === "submitting" && (
         <CircularProgress

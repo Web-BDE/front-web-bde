@@ -180,8 +180,6 @@ async function handleAccomplishmentCreation(
     );
   }
 
-  console.log(createAccomplishmentResponse.accomplishmentId);
-
   const { code: uploadCode, ...proofUploadResponse } = await putProof(
     token,
     createAccomplishmentResponse.accomplishmentId,
@@ -555,7 +553,7 @@ export default function Challenge() {
   return (
     <Container style={{ marginTop: "50px" }}>
       <Container maxWidth="md" style={{ marginTop: "50px" }}>
-        <Typography variant="h4">Challenge</Typography>
+        <Typography variant="h4">Défi</Typography>
         {generateAlert("error", loaderData.challengeResponse?.error)}
         {generateAlert("error", actionData?.updateChallengeResponse?.error)}
         {generateAlert("success", actionData?.updateChallengeResponse?.success)}
@@ -580,7 +578,7 @@ export default function Challenge() {
               API_URL
             )}
             <Typography marginTop="50px" variant="h4">
-              Submit Proof
+              Envoyer une preuve
             </Typography>
             {generateAlert(
               "error",
@@ -599,7 +597,7 @@ export default function Challenge() {
       </Container>
       <Container style={{ marginTop: "50px" }}>
         <Typography marginBottom={"50px"} textAlign="center" variant="h4">
-          Your accomplishments
+          Vos réalisations du défi
         </Typography>
         {generateAlert(
           "error",

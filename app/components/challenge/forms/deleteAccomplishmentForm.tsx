@@ -31,7 +31,7 @@ export default function DeleteAccomplishmentForm({
           variant="contained"
           color="primary"
         >
-          Delete
+          Supprimer
         </Button>
         {transition.state === "submitting" && (
           <CircularProgress

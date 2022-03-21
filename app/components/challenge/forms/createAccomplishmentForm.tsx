@@ -57,7 +57,7 @@ export default function CreateAccomplishmentForm({
           variant="contained"
           color="primary"
         >
-          Soumettre l'accomplissement
+          Envoyer
         </Button>
         {transition.state === "submitting" && (
           <CircularProgress

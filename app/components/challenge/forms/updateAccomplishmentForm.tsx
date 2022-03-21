@@ -84,7 +84,7 @@ export default function AccomplishmentDisplay({
         </b>
       </Typography>
       <Typography variant="h5" style={{ marginTop: "10px" }}>
-        Etat :{" "}
+        État :{" "}
         {accomplishment.validation +
           (accomplishment.validation === "REFUSED"
             ? `, ${accomplishment.refusedComment}`

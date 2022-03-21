@@ -50,7 +50,7 @@ export default function AccomplishmentDisplay({
         {accomplishment.comment}
       </Typography>
       <Typography variant="h5" style={{ marginTop: "10px" }}>
-        State :{" "}
+        État :{" "}
         {accomplishment.validation +
           (accomplishment.validation === "REFUSED"
             ? `, ${accomplishment.refusedComment}`
