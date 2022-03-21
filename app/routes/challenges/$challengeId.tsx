@@ -58,6 +58,7 @@ import { getSelft, getUser } from "~/services/user";
 import { User } from "~/models/User";
 import AccomplishmentAdminList from "~/components/challenge/accomplishmentAdminList";
 import AccomplishmentList from "~/components/challenge/accomplishmentList";
+import { NodeOnDiskFile } from "@remix-run/node";
 
 type LoaderData = {
   challengeResponse?: {
@@ -154,7 +155,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 async function handleAccomplishmentCreation(
   token: string,
   challengeId: number,
-  proof: Blob,
+  proof?: NodeOnDiskFile,
   comment?: string
 ) {
   const fields = { comment, proof };
@@ -180,28 +181,40 @@ async function handleAccomplishmentCreation(
     );
   }
 
-  const { code: uploadCode, ...proofUploadResponse } = await putProof(
-    token,
-    createAccomplishmentResponse.accomplishmentId,
-    proof
-  );
+  if (proof) {
+    const { code: uploadCode, ...proofUploadResponse } = await putProof(
+      token,
+      createAccomplishmentResponse.accomplishmentId,
+      proof
+    );
+
+    return json(
+      {
+        createAccomplishmentResponse: {
+          ...proofUploadResponse,
+          formData: { fields },
+        },
+      } as ActionData,
+      uploadCode
+    );
+  }
 
   return json(
     {
       createAccomplishmentResponse: {
-        ...proofUploadResponse,
+        ...createAccomplishmentResponse,
         formData: { fields },
       },
     } as ActionData,
-    uploadCode
+    code
   );
 }
 
 async function handleAccomplishmentUpdate(
   token: string,
   accomplishmentId: number,
-  proof: Blob,
-  comment: string
+  comment: string,
+  proof?: NodeOnDiskFile
 ) {
   const fields = { comment, proof };
 
@@ -223,20 +236,32 @@ async function handleAccomplishmentUpdate(
     );
   }
 
-  const { code: uploadCode, ...uploadProofResponse } = await putProof(
-    token,
-    accomplishmentId,
-    proof
-  );
+  if (proof) {
+    const { code: uploadCode, ...uploadProofResponse } = await putProof(
+      token,
+      accomplishmentId,
+      proof
+    );
+
+    return json(
+      {
+        updateAccomplishmentResponse: {
+          ...uploadProofResponse,
+          formData: { fields },
+        },
+      } as ActionData,
+      uploadCode
+    );
+  }
 
   return json(
     {
       updateAccomplishmentResponse: {
-        ...uploadProofResponse,
+        ...updateAccomplishmentResponse,
         formData: { fields },
       },
     } as ActionData,
-    uploadCode
+    code
   );
 }
 
@@ -261,7 +286,7 @@ async function handleChallengeUpdate(
   reward: number,
   maxAtempts: number,
   challengeId: number,
-  picture?: Blob
+  picture?: NodeOnDiskFile
 ) {
   //Check fields format errors
   const fields = { name, description, reward, maxAtempts, picture };
@@ -367,7 +392,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   //Decalare all fields
   const form = await unstable_parseMultipartFormData(
     request,
-    unstable_createMemoryUploadHandler({ maxFileSize: 100_000_000 })
+    unstable_createFileUploadHandler({ maxFileSize: 100_000_000 })
   );
   const kind = form.get("kind");
 
@@ -377,7 +402,10 @@ export const action: ActionFunction = async ({ request, params }) => {
       const comment = form.get("comment");
       const proof = form.get("proof");
 
-      if (typeof comment !== "string" || !(proof instanceof Blob)) {
+      if (
+        typeof comment !== "string" ||
+        (!(proof instanceof NodeOnDiskFile) && proof !== null)
+      ) {
         return json(
           {
             createAccomplishmentResponse: {
@@ -391,7 +419,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       return await handleAccomplishmentCreation(
         token,
         parseInt(params.challengeId),
-        proof,
+        proof?.size ? proof : undefined,
         comment
       );
     case "PATCH":
@@ -414,7 +442,10 @@ export const action: ActionFunction = async ({ request, params }) => {
             );
           }
 
-          if (typeof comment !== "string" || !(proof instanceof Blob)) {
+          if (
+            typeof comment !== "string" ||
+            (!(proof instanceof NodeOnDiskFile) && proof !== null)
+          ) {
             return json(
               {
                 updateAccomplishmentResponse: {
@@ -429,8 +460,8 @@ export const action: ActionFunction = async ({ request, params }) => {
           return await handleAccomplishmentUpdate(
             token,
             parseInt(accomplishmentId),
-            proof,
-            comment
+            comment,
+            proof?.size ? proof : undefined
           );
 
         case "challenge":
@@ -447,7 +478,7 @@ export const action: ActionFunction = async ({ request, params }) => {
               typeof description !== "undefined") ||
             typeof reward !== "string" ||
             typeof maxAtempts !== "string" ||
-            !(picture instanceof Blob)
+            (!(picture instanceof NodeOnDiskFile) && picture !== null)
           ) {
             return json(
               {
@@ -467,7 +498,7 @@ export const action: ActionFunction = async ({ request, params }) => {
             parseInt(reward),
             parseInt(maxAtempts),
             parseInt(params.challengeId),
-            picture.name ? picture : undefined
+            picture?.size ? picture : undefined
           );
 
         default:

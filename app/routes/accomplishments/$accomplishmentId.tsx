@@ -4,7 +4,6 @@ import {
   LoaderFunction,
   redirect,
   unstable_createFileUploadHandler,
-  unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
   useActionData,
   useCatch,
@@ -47,6 +46,7 @@ import DeleteAccomplishmentForm from "~/components/challenge/forms/deleteAccompl
 import AccomplishmentDisplay from "~/components/challenge/accomplishmentDisplay";
 import { blue } from "@mui/material/colors";
 import ValidateAccomplishmentForm from "~/components/challenge/forms/validateAccomplishmentForm";
+import { NodeOnDiskFile } from "@remix-run/node";
 
 type LoaderData = {
   accomplishmentResponse?: {
@@ -98,7 +98,7 @@ async function handleAccomplishmentUpdate(
   token: string,
   accomplishmentId: number,
   comment: string,
-  proof?: Blob
+  proof?: NodeOnDiskFile
 ) {
   const fields = { comment, proof };
 
@@ -179,7 +179,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   //Decalare all fields
   const form = await unstable_parseMultipartFormData(
     request,
-    unstable_createMemoryUploadHandler({ maxFileSize: 100_000_000 })
+    unstable_createFileUploadHandler({ maxFileSize: 100_000_000 })
   );
   const kind = form.get("kind");
 
@@ -189,7 +189,10 @@ export const action: ActionFunction = async ({ request, params }) => {
       const proof = form.get("proof");
       const comment = form.get("comment");
 
-      if (typeof comment !== "string" || !(proof instanceof Blob)) {
+      if (
+        typeof comment !== "string" ||
+        (!(proof instanceof NodeOnDiskFile) && proof !== null)
+      ) {
         return json(
           {
             updateAccomplishmentResponse: {
@@ -205,7 +208,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         token,
         parseInt(params.accomplishmentId),
         comment,
-        proof.name ? proof : undefined
+        proof?.size ? proof : undefined
       );
 
     case "DELETE":

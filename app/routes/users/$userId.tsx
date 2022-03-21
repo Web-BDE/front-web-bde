@@ -3,6 +3,7 @@ import {
   json,
   LoaderFunction,
   redirect,
+  unstable_createFileUploadHandler,
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
   useActionData,
@@ -36,6 +37,7 @@ import { ContextData } from "~/root";
 import { getSelft } from "~/services/user";
 import { UpdateUserFormData, User } from "~/models/User";
 import { blue } from "@mui/material/colors";
+import { NodeOnDiskFile } from "@remix-run/node";
 
 type LoaderData = {
   userResponse?: {
@@ -102,7 +104,7 @@ async function handleUpdateUser(
   wallet: number,
   privilege: number,
   userId: number,
-  avatar?: Blob
+  avatar?: NodeOnDiskFile
 ) {
   const fields = {
     pseudo,
@@ -178,7 +180,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   const form = await unstable_parseMultipartFormData(
     request,
-    unstable_createMemoryUploadHandler({ maxFileSize: 100_000_000 })
+    unstable_createFileUploadHandler({ maxFileSize: 6_000_000 })
   );
   const pseudo = form.get("pseudo");
   const name = form.get("name");
@@ -193,7 +195,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     (typeof surname !== "string" && surname !== null) ||
     typeof wallet !== "string" ||
     typeof privilege !== "string" ||
-    !(avatar instanceof Blob)
+    (!(avatar instanceof NodeOnDiskFile) && avatar !== null)
   ) {
     return json(
       {
@@ -213,7 +215,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     parseInt(wallet),
     parseInt(privilege),
     parseInt(params.userId),
-    avatar.name ? avatar : undefined
+    avatar?.size ? avatar : undefined
   );
 };
 

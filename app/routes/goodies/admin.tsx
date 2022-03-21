@@ -3,6 +3,7 @@ import {
   json,
   LoaderFunction,
   redirect,
+  unstable_createFileUploadHandler,
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
   useActionData,
@@ -30,6 +31,7 @@ import { CreateGoodiesFormData } from "~/models/Goodies";
 import { Purchase } from "~/models/Purchase";
 import { getManyPurchase } from "~/services/purchase";
 import { blue } from "@mui/material/colors";
+import { NodeOnDiskFile } from "@remix-run/node";
 
 type LoaderData = {
   undeliveredPurchaseResponse: {
@@ -101,7 +103,7 @@ async function handleCreateGoodies(
   price: number,
   buyLimit: number,
   stock: number,
-  picture: Blob,
+  picture: NodeOnDiskFile,
   description?: string
 ) {
   const fields = {
@@ -166,7 +168,7 @@ export const action: ActionFunction = async ({ request }) => {
       const token = await requireAuth(request, "/goodies/admin");
       const form = await unstable_parseMultipartFormData(
         request,
-        unstable_createMemoryUploadHandler({ maxFileSize: 100_000_000 })
+        unstable_createFileUploadHandler({ maxFileSize: 6_000_000 })
       );
       //Goodies fields
       const name = form.get("name");
@@ -183,7 +185,7 @@ export const action: ActionFunction = async ({ request }) => {
         typeof price !== "string" ||
         typeof buyLimit !== "string" ||
         typeof stock !== "string" ||
-        !(picture instanceof Blob)
+        !(picture instanceof NodeOnDiskFile)
       ) {
         return json(
           {

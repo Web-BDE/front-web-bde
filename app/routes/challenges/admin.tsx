@@ -117,7 +117,7 @@ export async function handleChallengeCreation(
   name: string,
   reward: number,
   maxAtempts: number,
-  picture: Blob,
+  picture?: NodeOnDiskFile,
   description?: string
 ) {
   //Check fields format errors
@@ -153,23 +153,25 @@ export async function handleChallengeCreation(
     );
   }
 
-  const { code: UploadCode, ...uploadPictureResponse } =
-    await putChallengePicture(
-      token,
-      createChallengeResponse.challengeId,
-      picture
-    );
+  if (picture) {
+    const { code: UploadCode, ...uploadPictureResponse } =
+      await putChallengePicture(
+        token,
+        createChallengeResponse.challengeId,
+        picture
+      );
 
-  if (uploadPictureResponse.error) {
-    return json(
-      {
-        createChallengeResponse: {
-          ...uploadPictureResponse,
-          formData: { fields, fieldsError },
-        },
-      } as ActionData,
-      UploadCode
-    );
+    if (uploadPictureResponse.error) {
+      return json(
+        {
+          createChallengeResponse: {
+            ...uploadPictureResponse,
+            formData: { fields, fieldsError },
+          },
+        } as ActionData,
+        UploadCode
+      );
+    }
   }
 
   return redirect("/challenges");
@@ -180,7 +182,7 @@ export const action: ActionFunction = async ({ request }) => {
   const token = await requireAuth(request, `/challenges/admin`);
 
   const uploadHandler = unstable_createFileUploadHandler({
-    maxFileSize: 100_000_000,
+    maxFileSize: 6_000_000,
     file: ({ filename }) => filename,
   });
 
@@ -237,6 +239,7 @@ export const action: ActionFunction = async ({ request }) => {
       const reward = form.get("reward");
       const maxAtempts = form.get("max-atempts");
       const picture = form.get("picture");
+      console.log(picture);
 
       //Check for undefined values
       if (
@@ -244,7 +247,7 @@ export const action: ActionFunction = async ({ request }) => {
         (typeof description !== "string" && description !== null) ||
         typeof reward !== "string" ||
         typeof maxAtempts !== "string" ||
-        !(picture instanceof NodeOnDiskFile)
+        (!(picture instanceof NodeOnDiskFile) && picture !== null)
       ) {
         return json(
           {
@@ -262,7 +265,7 @@ export const action: ActionFunction = async ({ request }) => {
         name,
         parseInt(reward),
         parseInt(maxAtempts),
-        picture,
+        picture?.size ? picture : undefined,
         description ? description : undefined
       );
 

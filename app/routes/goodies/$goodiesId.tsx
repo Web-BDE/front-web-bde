@@ -3,6 +3,7 @@ import {
   json,
   LoaderFunction,
   redirect,
+  unstable_createFileUploadHandler,
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
   useActionData,
@@ -55,6 +56,7 @@ import { ContextData } from "~/root";
 import { User } from "~/models/User";
 import { getSelft, getUser } from "~/services/user";
 import { blue } from "@mui/material/colors";
+import { NodeOnDiskFile } from "@remix-run/node";
 
 type LoaderData = {
   goodiesResponse?: {
@@ -179,7 +181,7 @@ async function handleUpdateGoodies(
   buyLimit: number,
   stock: number,
   goodiesId: number,
-  picture?: Blob,
+  picture?: NodeOnDiskFile,
   description?: string
 ) {
   const fields = {
@@ -299,7 +301,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   //Initialize form fields
   const form = await unstable_parseMultipartFormData(
     request,
-    unstable_createMemoryUploadHandler({ maxFileSize: 100_000_000 })
+    unstable_createFileUploadHandler({ maxFileSize: 6_000_000 })
   );
 
   const kind = form.get("kind");
@@ -335,7 +337,7 @@ export const action: ActionFunction = async ({ request, params }) => {
             typeof price !== "string" ||
             typeof buyLimit !== "string" ||
             typeof stock !== "string" ||
-            !(picture instanceof Blob)
+            (!(picture instanceof NodeOnDiskFile) && picture !== null)
           ) {
             return json(
               {
@@ -355,7 +357,7 @@ export const action: ActionFunction = async ({ request, params }) => {
             parseInt(buyLimit),
             parseInt(stock),
             parseInt(params.goodiesId),
-            picture.name ? picture : undefined,
+            picture?.size ? picture : undefined,
             description ? description : undefined
           );
         case "purchase":
