@@ -199,6 +199,9 @@ export async function putGoodiesPicture(
       axios.isAxiosError(err) &&
       typeof err.response?.data.message === "string"
     ) {
+      if(err.response.data.message.includes("request file too large")){
+        return {error: "Fichier trop volumineux, veuiller envoyer un fichier plus léger"}
+      }
       return { error: err.response.data.message, code: err.response.status };
     }
     console.error(err);
