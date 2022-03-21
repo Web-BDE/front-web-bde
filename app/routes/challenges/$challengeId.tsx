@@ -261,7 +261,7 @@ async function handleChallengeUpdate(
   reward: number,
   maxAtempts: number,
   challengeId: number,
-  picture: Blob
+  picture?: Blob
 ) {
   //Check fields format errors
   const fields = { name, description, reward, maxAtempts, picture };
@@ -297,21 +297,33 @@ async function handleChallengeUpdate(
     );
   }
 
-  const { code: uploadCode, ...uploadPictureResponse } =
-    await putChallengePicture(
-      token,
-      updateChallengeResponse.challengeId,
-      picture
+  if (picture) {
+    const { code: uploadCode, ...uploadPictureResponse } =
+      await putChallengePicture(
+        token,
+        updateChallengeResponse.challengeId,
+        picture
+      );
+
+    return json(
+      {
+        updateChallengeResponse: {
+          ...uploadPictureResponse,
+          formData: { fields },
+        },
+      } as ActionData,
+      uploadCode
     );
+  }
 
   return json(
     {
       updateChallengeResponse: {
-        ...uploadPictureResponse,
-        formData: { fields },
+        ...updateChallengeResponse,
+        formData: { fields, fieldsError },
       },
     } as ActionData,
-    uploadCode
+    code
   );
 }
 
@@ -455,7 +467,7 @@ export const action: ActionFunction = async ({ request, params }) => {
             parseInt(reward),
             parseInt(maxAtempts),
             parseInt(params.challengeId),
-            picture
+            picture.name ? picture : undefined
           );
 
         default:

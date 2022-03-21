@@ -179,7 +179,7 @@ async function handleUpdateGoodies(
   buyLimit: number,
   stock: number,
   goodiesId: number,
-  picture: Blob,
+  picture?: Blob,
   description?: string
 ) {
   const fields = {
@@ -221,17 +221,29 @@ async function handleUpdateGoodies(
     );
   }
 
-  const { code: UploadCode, ...uploadPictureResponse } =
-    await putGoodiesPicture(token, updateGoodiesResponse.goodiesId, picture);
+  if (picture) {
+    const { code: UploadCode, ...uploadPictureResponse } =
+      await putGoodiesPicture(token, updateGoodiesResponse.goodiesId, picture);
+
+    return json(
+      {
+        updateGoodiesResponse: {
+          ...uploadPictureResponse,
+          formData: { fields, fieldsError },
+        },
+      } as ActionData,
+      UploadCode
+    );
+  }
 
   return json(
     {
       updateGoodiesResponse: {
-        ...uploadPictureResponse,
+        ...updateGoodiesResponse,
         formData: { fields, fieldsError },
       },
     } as ActionData,
-    UploadCode
+    code
   );
 }
 
@@ -343,7 +355,7 @@ export const action: ActionFunction = async ({ request, params }) => {
             parseInt(buyLimit),
             parseInt(stock),
             parseInt(params.goodiesId),
-            picture,
+            picture.name ? picture : undefined,
             description ? description : undefined
           );
         case "purchase":

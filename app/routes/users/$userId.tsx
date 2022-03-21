@@ -102,7 +102,7 @@ async function handleUpdateUser(
   wallet: number,
   privilege: number,
   userId: number,
-  avatar: Blob
+  avatar?: Blob
 ) {
   const fields = {
     pseudo,
@@ -138,20 +138,29 @@ async function handleUpdateUser(
     );
   }
 
-  const { code: uploadCode, ...uploadAvatarResponse } = await putAvatar(
-    token,
-    updateUserResponse.userId,
-    avatar
-  );
+  if (avatar) {
+    const { code: uploadCode, ...uploadAvatarResponse } = await putAvatar(
+      token,
+      updateUserResponse.userId,
+      avatar
+    );
+
+    return json(
+      {
+        updateUserResponse: {
+          ...uploadAvatarResponse,
+          formData: { fields, fieldsError },
+        },
+      } as ActionData,
+      uploadCode
+    );
+  }
 
   return json(
     {
-      updateUserResponse: {
-        ...uploadAvatarResponse,
-        formData: { fields, fieldsError },
-      },
+      updateUserResponse,
     } as ActionData,
-    uploadCode
+    code
   );
 }
 
@@ -196,7 +205,6 @@ export const action: ActionFunction = async ({ request, params }) => {
       400
     );
   }
-
   return await handleUpdateUser(
     token,
     pseudo,
@@ -205,7 +213,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     parseInt(wallet),
     parseInt(privilege),
     parseInt(params.userId),
-    avatar
+    avatar.name ? avatar : undefined
   );
 };
 

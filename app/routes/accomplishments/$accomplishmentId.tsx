@@ -97,8 +97,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 async function handleAccomplishmentUpdate(
   token: string,
   accomplishmentId: number,
-  proof: Blob,
-  comment: string
+  comment: string,
+  proof?: Blob
 ) {
   const fields = { comment, proof };
 
@@ -120,20 +120,32 @@ async function handleAccomplishmentUpdate(
     );
   }
 
-  const { code: uploadCode, ...uploadProofResponse } = await putProof(
-    token,
-    accomplishmentId,
-    proof
-  );
+  if (proof) {
+    const { code: uploadCode, ...uploadProofResponse } = await putProof(
+      token,
+      accomplishmentId,
+      proof
+    );
+
+    return json(
+      {
+        updateAccomplishmentResponse: {
+          ...uploadProofResponse,
+          formData: { fields },
+        },
+      } as ActionData,
+      uploadCode
+    );
+  }
 
   return json(
     {
       updateAccomplishmentResponse: {
-        ...uploadProofResponse,
+        ...updateAccomplishmentResponse,
         formData: { fields },
       },
     } as ActionData,
-    uploadCode
+    code
   );
 }
 
@@ -192,8 +204,8 @@ export const action: ActionFunction = async ({ request, params }) => {
       return await handleAccomplishmentUpdate(
         token,
         parseInt(params.accomplishmentId),
-        proof,
-        comment
+        comment,
+        proof.name ? proof : undefined
       );
 
     case "DELETE":
