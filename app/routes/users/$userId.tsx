@@ -189,13 +189,15 @@ export const action: ActionFunction = async ({ request, params }) => {
   const privilege = form.get("privilege");
   const avatar = form.get("avatar");
 
+  console.log(privilege, wallet, pseudo);
+
   if (
     typeof pseudo !== "string" ||
     (typeof name !== "string" && name !== null) ||
     (typeof surname !== "string" && surname !== null) ||
     (typeof wallet !== "string" && wallet !== null) ||
     (typeof privilege !== "string" && privilege !== null) ||
-    (!(avatar instanceof NodeOnDiskFile) && avatar !== null)
+    (!(avatar instanceof Blob) && avatar !== null)
   ) {
     return json(
       {
