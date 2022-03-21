@@ -119,7 +119,9 @@ export default function RegisterForm({
       </Box>
       <Grid container>
         <Grid item>
-          <Link to="/login">{"Vous avez déjà un compte ? Se connecter"}</Link>
+          <Link style={{ color: "#552516" }} to="/login">
+            {"Vous avez déjà un compte ? Se connecter"}
+          </Link>
         </Grid>
       </Grid>
     </Form>

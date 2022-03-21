@@ -68,10 +68,14 @@ export default function LoginForm({
       </Box>
       <Grid justifyContent="space-between" container>
         <Grid item>
-          <Link to="/register">{"S'enregister"}</Link>
+          <Link style={{ color: "#552516" }} to="/register">
+            {"S'enregister"}
+          </Link>
         </Grid>
         <Grid item>
-          <Link to="/recover">{"Mot de passe oublié ?"}</Link>
+          <Link style={{ color: "#552516" }} to="/recover">
+            {"Mot de passe oublié ?"}
+          </Link>
         </Grid>
       </Grid>
     </Form>
