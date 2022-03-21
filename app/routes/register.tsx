@@ -62,7 +62,7 @@ async function handleLogin(
   password: string,
   redirectTo: string
 ) {
-  const fields = { email };
+  const fields = { email: email.trim().toLocaleLowerCase() };
 
   const { code, ...loginResult } = await loginUser({ ...fields, password });
 
@@ -87,7 +87,7 @@ async function handleRegister(
   surname?: string
 ) {
   const fields = {
-    email: email.trim(),
+    email: email.trim().toLocaleLowerCase(),
     pseudo,
     name,
     surname,
