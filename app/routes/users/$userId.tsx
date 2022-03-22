@@ -228,7 +228,7 @@ function displayUser(
   API_URL?: string,
   userInfo?: User
 ) {
-  if (user.id === userId || (userPrivilege && userPrivilege >= 2)) {
+  if (user.id === userId || (userPrivilege && userPrivilege >= 1)) {
     return (
       <div>
         <UpdateUserForm
