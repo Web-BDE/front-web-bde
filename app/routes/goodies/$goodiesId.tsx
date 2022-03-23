@@ -273,14 +273,15 @@ async function handleRefundGoodies(token: string, purchaseId: number) {
 
 async function handleDeliverGoodies(
   token: string,
-  delivered: boolean,
+  delivered: number,
   purchaseId: number
 ) {
   const { code, ...deliverGoodiesResponse } = await UpdatePurchase(
     token,
     purchaseId,
-    delivered
+    delivered === 1 ? true : false
   );
+  console.log(delivered);
 
   return json({ deliverGoodiesResponse } as ActionData, code);
 }
@@ -390,7 +391,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
           return handleDeliverGoodies(
             token,
-            Boolean(delivered),
+            parseInt(delivered),
             parseInt(purchaseId)
           );
         default:
@@ -521,7 +522,7 @@ export default function Goodies() {
       </Container>
       <Container style={{ marginTop: "50px" }}>
         <Typography textAlign="center" variant="h4">
-          Achats non livrés pour ce Goodies
+          Vos achats
         </Typography>
         {generateAlert("error", loaderData.purchaseResponse?.error)}
         {generateAlert("error", actionData?.purchaseGoodiesResponse?.error)}
@@ -537,12 +538,14 @@ export default function Goodies() {
             : undefined
         )}
         {loaderData.purchaseResponse?.purchases &&
-          loaderData.purchaseResponse?.purchases.length !== 0 && (
-            <PurchasesGrid
-              purchases={loaderData.purchaseResponse.purchases}
-              formData={actionData?.refundGoodiesResponse?.formData}
-            />
-          )}
+        loaderData.purchaseResponse?.purchases.length !== 0 ? (
+          <PurchasesGrid
+            purchases={loaderData.purchaseResponse.purchases}
+            formData={actionData?.refundGoodiesResponse?.formData}
+          />
+        ) : (
+          generateAlert("info", "Vous n'avez pas d'achats pour ce goodies")
+        )}
       </Container>
       {transition.state === "submitting" && (
         <CircularProgress

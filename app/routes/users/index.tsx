@@ -29,6 +29,8 @@ type LoaderData = {
 async function loadUsers(token: string) {
   const { code, ...userResponse } = await getManyUser(token, 1000);
 
+  console.log(userResponse.users);
+
   return json({ userResponse } as LoaderData, code);
 }
 

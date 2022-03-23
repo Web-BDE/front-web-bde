@@ -5,6 +5,7 @@ export type Purchase = {
   goodiesId?: number;
   goodies?: { id: number; name: string; price: number };
   createdAt: string; //But should be converted as Date
+  delivered: boolean;
 };
 
 export type PurchaseGoodiesFormData = {};

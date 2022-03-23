@@ -5,13 +5,13 @@ import { Purchase } from "~/models/Purchase";
 
 export default function DeliverGoodiesForm({
   purchase,
+  delivered,
 }: {
   purchase: Purchase;
+  delivered: boolean;
 }) {
   const transition = useTransition();
-
   return (
-    //TODO mark as delivered
     <Form
       method="patch"
       action={`/goodies/${
@@ -21,16 +21,29 @@ export default function DeliverGoodiesForm({
       <input type="hidden" name="kind" value="purchase" />
       <input type="hidden" name="delivered" value="true" />
       <Box>
-        <Button
-          disabled={transition.state === "submitting"}
-          size="small"
-          type="submit"
-          name="refund"
-          id="refund"
-          value="1"
-        >
-          Marquer comme livré 
-        </Button>
+        {!delivered ? (
+          <Button
+            disabled={transition.state === "submitting"}
+            size="small"
+            type="submit"
+            name="delivered"
+            id="delivered"
+            value="1"
+          >
+            Marquer comme livré
+          </Button>
+        ) : (
+          <Button
+            disabled={transition.state === "submitting"}
+            size="small"
+            type="submit"
+            name="delivered"
+            id="delivered"
+            value="-1"
+          >
+            Marquer comme non livré
+          </Button>
+        )}
         {transition.state === "submitting" && (
           <CircularProgress
             size={24}

@@ -22,7 +22,7 @@ export default function PurchaseTile({
   formData?: RefundGoodiesFormData;
 }) {
   return (
-    <Card>
+    <Card sx={{ minWidth: 275 }}>
       <CardContent>
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           {new Date(purchase.createdAt).toLocaleDateString()}
@@ -47,12 +47,17 @@ export default function PurchaseTile({
             </Typography>
           </Link>
         )}
+        <Typography variant="h5">
+          {purchase.delivered ? "Livré" : "Pas encore livré"}
+        </Typography>
       </CardContent>
-      {userPrivilege && userPrivilege >= 2 ? (
+      {userPrivilege && userPrivilege >= 1 ? (
         <CardActions>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <RefundGoodiesForm purchase={purchase} />
-            <DeliverGoodiesForm purchase={purchase} />
+            <DeliverGoodiesForm
+              delivered={purchase.delivered}
+              purchase={purchase}
+            />
           </div>
         </CardActions>
       ) : (

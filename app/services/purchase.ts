@@ -78,6 +78,7 @@ export async function UpdatePurchase(
   purchaseId: number,
   delivered: boolean
 ) {
+  console.log(delivered);
   try {
     const reply = await axios.patch<{ message: string; purchaseId: number }>(
       `/purchase/${purchaseId}`,
