@@ -93,7 +93,7 @@ async function handleRegister(
     surname,
   };
   const fieldsError = {
-    email: validateEmail(email),
+    email: validateEmail(email.trim().toLocaleLowerCase()),
     password: validatePasswordAndConfirm(password, confirm),
     confirm: validatePasswordAndConfirm(password, confirm),
     pseudo: validatePseudo(pseudo),
