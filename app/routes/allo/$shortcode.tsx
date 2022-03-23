@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { blue } from "@mui/material/colors";
 import { Box } from "@mui/system";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -52,16 +53,26 @@ interface Payload {
 
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
-  const shortcode = form.get("shortcode");
+  const phone = form.get("phone");
 
-  if (typeof shortcode !== "string") {
+  if (typeof phone !== "string") {
     return json(
       { error: "Something went wrong, please try again" } as ActionData,
       400
     );
   }
 
-  return redirect(`/allo/${shortcode}`);
+  let reply;
+  try {
+    reply = await axios.get<{ shortCode: string }>(
+      `https://back.polytech.iosus.fr/api/orders-tracking/${phone}`,
+      {}
+    );
+  } catch (err) {
+    return "";
+  }
+
+  return redirect(`/allo/${reply.data.shortCode}`);
 };
 
 const OrderDisplay = () => {
@@ -72,6 +83,8 @@ const OrderDisplay = () => {
 
   const [orderState, setOrderState] = useState<number>(1);
   const [dates, setDates] = useState<(Date | null)[]>([]);
+
+  const ctrl = new AbortController();
 
   useEffect(() => {
     fetchEventSource(
@@ -95,6 +108,7 @@ const OrderDisplay = () => {
           });
           setDates(data.dates.map((d) => (d ? new Date(d) : null)));
         },
+        signal: ctrl.signal,
       }
     );
   }, [shortcode]);
@@ -103,16 +117,20 @@ const OrderDisplay = () => {
     <Container maxWidth="md" sx={{ marginTop: "100px" }}>
       <Typography variant="h4">Allôs</Typography>
       {generateAlert("error", actionData?.error)}
-      <Form method="post" action={`/allo/${shortcode}/`}>
+      <Form
+        method="post"
+        action={`/allo/${shortcode}/`}
+        onSubmit={() => ctrl.abort}
+      >
         <div style={{ display: "flex" }}>
           <TextField
             variant="outlined"
             margin="normal"
             fullWidth
-            id="shortcode"
-            label="Cherchez votre Allô via le code dans le lien"
-            name="shortcode"
-            autoComplete="shortcode"
+            id="phone"
+            label="Entrez votre numéro de téléphone"
+            name="phone"
+            autoComplete="phone"
             autoFocus
             required
             defaultValue={actionData?.formData?.fields?.shortcode}
