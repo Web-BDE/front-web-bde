@@ -157,6 +157,10 @@ export default function NavBar({
       {
         name: "Allôs",
         link: "/allo/track",
+      },
+      {
+        name: "Soutiens",
+        link: "/soutiens",
       }
     );
 
