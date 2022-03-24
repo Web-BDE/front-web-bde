@@ -6,6 +6,10 @@ export default function Soutiens() {
       ville: "Tours",
       link: "https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2FflibustechBDE2020%2Fvideos%2F5311122275587247%2F&show_text=false&width=560&t=0",
     },
+    {
+      ville: "Annecy",
+      link: "https://www.facebook.com/plugins/video.php?height=322&href=https%3A%2F%2Fwww.facebook.com%2FflibustechBDE2022%2Fvideos%2F339203664684792%2F&show_text=false&width=560&t=0",
+    },
   ];
 
   return (
