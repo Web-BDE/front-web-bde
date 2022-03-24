@@ -1,11 +1,13 @@
-import { CircularProgress, Container, Typography } from "@mui/material";
+import { CircularProgress, Container, Pagination as PaginationMui, Typography } from "@mui/material";
 
 import {
+  ActionFunction,
   json,
   LoaderFunction,
   useCatch,
   useLoaderData,
   useOutletContext,
+  useSubmit,
   useTransition,
 } from "remix";
 
@@ -16,23 +18,65 @@ import {
 } from "~/utils/error";
 
 import { requireAuth } from "~/services/authentication";
-import { getManyGoodies } from "~/services/goodies";
+import { getGoodiesCount, getManyGoodies } from "~/services/goodies";
 import GoodiesGrid from "~/components/goodies/grids/goodiesGrid";
 import { Goodies } from "~/models/Goodies";
 import { ContextData } from "~/root";
 import { blue } from "@mui/material/colors";
+import { Pagination } from "~/utils/pagination";
 
 type LoaderData = {
-  goodiesResponse?: { error?: string; goodies?: Goodies[]; success?: string };
+  goodiesResponse?: {
+    error?: string;
+    data?: Pagination<Goodies>;
+    success?: string
+  };
 };
 
-async function loadGoodies(token: string) {
-  const { code, ...goodiesResponse } = await getManyGoodies(token, 100, 0);
+const rowPerPage = 100;
 
-  return json({ goodiesResponse } as LoaderData, code);
+async function loadGoodies(token: string, page: number = 0) {
+  const goodiesResponse = await getManyGoodies(token, rowPerPage, page * rowPerPage);
+  const countResponse = await getGoodiesCount(token);
+
+  if (goodiesResponse.error) {
+    return json(
+      { goodiesResponse: { error: goodiesResponse.error } } as LoaderData,
+      goodiesResponse.code
+    );
+  }
+
+  if (countResponse.error) {
+    return json(
+      { goodiesResponse: { error: countResponse.error } } as LoaderData,
+      countResponse.code
+    );
+  }
+
+  return json({
+    goodiesResponse: {
+      pagination: {
+        page: page,
+        count: countResponse.count,
+        items: goodiesResponse.goodies,
+      }
+    }
+  } as LoaderData, Math.max(goodiesResponse.code || 200, countResponse.code || 200));
 }
 
-//Function that handle GET resuests
+export const action: ActionFunction = async ({ request }) => {
+  const token = await requireAuth(request, "/goodies");
+  const formData = await request.formData();
+  const page = Number(formData.get("page"));
+
+  if (isNaN(page)) {
+    return json({ challengeResponse: { error: "Bad form data: page must be a number" } }, 400)
+  }
+
+  return await loadGoodies(token, page);
+}
+
+//Function that handle GET requests
 export const loader: LoaderFunction = async ({ request }) => {
   const token = await requireAuth(request, "/goodies");
 
@@ -41,10 +85,17 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function Shop() {
   const loaderData = useLoaderData<LoaderData>();
-
   const { API_URL } = useOutletContext<ContextData>();
-
   const transition = useTransition();
+  const submit = useSubmit();
+
+  const handleChangePage = async (event: React.ChangeEvent<unknown>, value: number) => {
+    const formData = new FormData();
+    //Page starts from 1 instead of 0 for MUI Pagination component
+    formData.append("page", (value - 1).toString());
+    submit(formData);
+  };
+
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
       <Typography style={{ textAlign: "center" }} variant="h2">
@@ -54,16 +105,16 @@ export default function Shop() {
       {generateAlert(
         "info",
         loaderData.goodiesResponse?.success &&
-          (!loaderData.goodiesResponse?.goodies ||
-            loaderData.goodiesResponse.goodies.length === 0)
+          (!loaderData.goodiesResponse?.data?.items ||
+            loaderData.goodiesResponse?.data?.items.length === 0)
           ? "Il n'y a pas de goodies pour l'instant"
           : undefined
       )}
-      {loaderData.goodiesResponse?.goodies &&
-        loaderData.goodiesResponse.goodies.length !== 0 && (
+      {loaderData.goodiesResponse?.data?.items &&
+        loaderData.goodiesResponse?.data?.items.length !== 0 && (
           <GoodiesGrid
             API_URL={API_URL}
-            goodies={loaderData.goodiesResponse.goodies}
+            goodies={loaderData.goodiesResponse?.data?.items}
           />
         )}
       {transition.state === "submitting" && (
@@ -78,6 +129,11 @@ export default function Shop() {
           }}
         />
       )}
+      <PaginationMui
+        count={Math.ceil((loaderData.goodiesResponse?.data?.count || 0) / rowPerPage)}
+        page={(loaderData.goodiesResponse?.data?.page || 0) + 1}
+        onChange={handleChangePage}
+      />
     </Container>
   );
 }

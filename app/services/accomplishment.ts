@@ -307,3 +307,42 @@ export async function deleteProof(token: string, accomplishmentId: number) {
     };
   }
 }
+
+export async function getAccomplishmentCount(
+  token: string,
+  challengeId?: number,
+  userId?: number,
+  validation?: Validation
+) {
+  const searchParams = buildSearchParams(
+    { key: "challengeId", val: challengeId?.toString() },
+    { key: "userId", val: userId?.toString() },
+    { key: "status", val: validation }
+  );
+  try {
+    const reply = await axios.get<{
+      message: string;
+      count: number;
+    }>(`/accomplishment/count${searchParams}`, {
+      headers: buildAxiosHeaders(token),
+    });
+
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      count: reply.data.count,
+    };
+  } catch (err) {
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
+  }
+}

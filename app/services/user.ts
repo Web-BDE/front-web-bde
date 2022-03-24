@@ -262,8 +262,8 @@ export async function putAvatar(token: string, userId: number, avatar: Blob) {
       axios.isAxiosError(err) &&
       typeof err.response?.data.message === "string"
     ) {
-      if(err.response.data.message.includes("request file too large")){
-        return {error: "Fichier trop volumineux, veuiller envoyer un fichier plus léger"}
+      if (err.response.data.message.includes("request file too large")) {
+        return { error: "Fichier trop volumineux, veuiller envoyer un fichier plus léger" }
       }
       return { error: err.response.data.message, code: err.response.status };
     }
@@ -320,6 +320,37 @@ export async function deleteAvatar(token: string, userId: number) {
     return {
       success: reply.data.message,
       code: reply.status,
+    };
+  } catch (err) {
+    if (
+      axios.isAxiosError(err) &&
+      typeof err.response?.data.message === "string"
+    ) {
+      return { error: err.response.data.message, code: err.response.status };
+    }
+    console.error(err);
+    return {
+      error:
+        "Sorry, it seems there is some problem reaching our API. Please contact and administrator.",
+    };
+  }
+}
+
+export async function getUserCount(
+  token: string,
+) {
+  try {
+    const reply = await axios.get<{
+      message: string;
+      count: number;
+    }>("/purchase/count", {
+      headers: buildAxiosHeaders(token),
+    });
+
+    return {
+      success: reply.data.message,
+      code: reply.status,
+      count: reply.data.count,
     };
   } catch (err) {
     if (
