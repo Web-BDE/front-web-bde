@@ -1,11 +1,13 @@
-import { CircularProgress, Container, Typography } from "@mui/material";
+import { CircularProgress, Container, Pagination as PaginationMui, Typography } from "@mui/material";
 
 import {
+  ActionFunction,
   json,
   LoaderFunction,
   useCatch,
   useLoaderData,
   useOutletContext,
+  useSubmit,
   useTransition,
 } from "remix";
 
@@ -18,35 +20,81 @@ import {
 import UserList from "~/components/user/userList";
 import { requireAuth } from "~/services/authentication";
 import { User } from "~/models/User";
-import { getManyUser } from "~/services/user";
+import { getManyUser, getUserCount } from "~/services/user";
 import { ContextData } from "~/root";
 import { blue } from "@mui/material/colors";
+import { Pagination } from "~/utils/pagination";
 
 type LoaderData = {
-  userResponse?: { error?: string; users?: User[]; success?: string };
+  userResponse?: {
+    error?: string;
+    data?: Pagination<User>;
+    success?: string;
+  };
 };
 
-async function loadUsers(token: string) {
-  const { code, ...userResponse } = await getManyUser(token, 1000);
+const rowPerPage = 100;
 
-  console.log(userResponse.users);
+async function loadUsers(token: string, page: number = 0) {
+  const userResponse = await getManyUser(token, rowPerPage, page * rowPerPage);
+  const countResponse = await getUserCount(token);
 
-  return json({ userResponse } as LoaderData, code);
+  if (userResponse.error) {
+    return json(
+      { userResponse: { error: userResponse.error } } as LoaderData,
+      userResponse.code
+    );
+  }
+
+  if (countResponse.error) {
+    return json(
+      { userResponse: { error: countResponse.error } } as LoaderData,
+      countResponse.code
+    );
+  }
+
+  return json({
+    userResponse: {
+      pagination: {
+        page: page,
+        count: countResponse.count,
+        items: userResponse.users,
+      }
+    }
+  } as LoaderData, Math.max(userResponse.code || 200, countResponse.code || 200));
+}
+
+export const action: ActionFunction = async ({ request }) => {
+  const token = await requireAuth(request, "/users");
+  const formData = await request.formData();
+  const page = Number(formData.get("page"));
+
+  if (isNaN(page)) {
+    return json({ challengeResponse: { error: "Bad form data: page must be a number" } }, 400)
+  }
+
+  return await loadUsers(token, page);
 }
 
 //Function that handle GET resuests
 export const loader: LoaderFunction = async ({ request }) => {
-  const token = await requireAuth(request, "/goodies");
+  const token = await requireAuth(request, "/users");
 
   return await loadUsers(token);
 };
 
 export default function Users() {
   const loaderData = useLoaderData<LoaderData>();
-
   const { API_URL } = useOutletContext<ContextData>();
-
   const transition = useTransition();
+  const submit = useSubmit();
+
+  const handleChangePage = async (event: React.ChangeEvent<unknown>, value: number) => {
+    const formData = new FormData();
+    //Page starts from 1 instead of 0 for MUI Pagination component
+    formData.append("page", (value - 1).toString());
+    submit(formData);
+  };
 
   return (
     <Container component="main" style={{ marginTop: "50px" }}>
@@ -57,17 +105,17 @@ export default function Users() {
       {generateAlert(
         "info",
         loaderData.userResponse?.success &&
-          (!loaderData.userResponse?.users ||
-            loaderData.userResponse?.users.length === 0)
+          (!loaderData.userResponse?.data?.items ||
+            loaderData.userResponse?.data?.items.length === 0)
           ? "Il n'y a aucun utilisateur à afficher"
           : undefined
       )}
-      {loaderData.userResponse?.users &&
-        loaderData.userResponse?.users.length !== 0 && (
+      {loaderData.userResponse?.data?.items &&
+        loaderData.userResponse?.data?.items.length !== 0 && (
           <div style={{ marginTop: "50px" }}>
             <UserList
               API_URL={API_URL}
-              users={loaderData.userResponse.users.sort(
+              users={loaderData.userResponse?.data?.items.sort(
                 (a, b) => b.totalEarnedPoints - a.totalEarnedPoints
               )}
             />
@@ -85,6 +133,11 @@ export default function Users() {
           }}
         />
       )}
+      <PaginationMui
+        count={Math.ceil((loaderData.userResponse?.data?.count || 0) / rowPerPage)}
+        page={(loaderData.userResponse?.data?.page || 0) + 1}
+        onChange={handleChangePage}
+      />
     </Container>
   );
 }

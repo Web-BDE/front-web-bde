@@ -44,7 +44,7 @@ export default function Soutiens() {
                   width="560"
                   style={{ border: "none", overflow: "hidden" }}
                   scrolling="no"
-                  allowFullScreen="true"
+                  allowFullScreen={true}
                   allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
                 ></iframe>
               </CardContent>
